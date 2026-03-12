@@ -62,9 +62,9 @@ const ProgressMetricCard: React.FC<ProgressMetricCardProps> = ({
 export const ProgressOverview: React.FC = () => {
   return (
     <div className="space-y-4">
-      <h2 className="text-sm font-display font-bold flex items-center gap-2">
-        <Trophy size={14} className="text-primary" />
-        <ShimmerText variant="orange" duration={2} delay={3}>Seu progresso</ShimmerText>
+      <h2 className="text-base font-display font-bold flex items-center gap-2">
+        <Trophy size={16} className="text-primary" />
+        <ShimmerText variant="orange" duration={2.5} delay={3}>Seu progresso</ShimmerText>
       </h2>
       <div className="grid grid-cols-2 gap-3">
         <ProgressMetricCard title="Sequência atual" value="12 dias" icon={Flame} trendChange="+2 dias nesta semana" trendType="up" />

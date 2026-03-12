@@ -31,7 +31,6 @@ interface ShimmerTextProps {
   variant?: Variant;
   duration?: number;
   delay?: number;
-  spread?: number;
 }
 
 const variantMap: Record<Variant, string> = {
@@ -61,16 +60,29 @@ export function ShimmerText({
   children,
   className,
   variant = "default",
-  duration = 1.5,
-  delay = 1.5,
+  duration = 2,
+  delay = 1,
 }: ShimmerTextProps) {
   return (
-    <span className={cn("relative inline-block", variantMap[variant], className)}>
+    <span
+      className={cn(
+        "relative inline-block bg-clip-text",
+        variantMap[variant],
+        className
+      )}
+    >
+      {children}
       <motion.span
-        className="absolute inset-0 overflow-hidden"
-        style={{ WebkitMaskImage: `linear-gradient(-75deg, hsl(var(--primary)) calc(var(--shimmer-x) - 25%), transparent calc(var(--shimmer-x)), hsl(var(--primary)) calc(var(--shimmer-x) + 25%))` } as React.CSSProperties}
-        initial={{ "--shimmer-x": "-100%" } as any}
-        animate={{ "--shimmer-x": "200%" } as any}
+        className="absolute inset-0 bg-clip-text pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(-75deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%)",
+          backgroundSize: "200% 100%",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }}
+        initial={{ backgroundPosition: "200% 0" }}
+        animate={{ backgroundPosition: "-200% 0" }}
         transition={{
           repeat: Infinity,
           repeatType: "loop",
@@ -79,11 +91,8 @@ export function ShimmerText({
           ease: "linear",
         }}
       >
-        <span className="opacity-50">
-          {children}
-        </span>
+        {children}
       </motion.span>
-      {children}
     </span>
   );
 }
