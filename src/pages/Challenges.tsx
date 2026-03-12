@@ -328,8 +328,8 @@ const Challenges = () => {
         type={currentType}
         leagueId={hasLeague ? userLeagueIds[0] : null}
         onCreated={() => {
-          // Invalidate queries to refresh
-          window.location.reload();
+          queryClient.invalidateQueries({ queryKey: ["challenges"] });
+          queryClient.invalidateQueries({ queryKey: ["challenge_progress"] });
         }}
       />
     </div>
