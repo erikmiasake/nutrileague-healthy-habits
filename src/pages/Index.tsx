@@ -3,6 +3,7 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import nutrileagueLogo from "@/assets/nutrileague-logo.png";
+import AppSidebar from "@/components/AppSidebar";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useLeagueRanking } from "@/hooks/useLeagueRanking";
 import { useChallenges } from "@/hooks/useChallenges";
