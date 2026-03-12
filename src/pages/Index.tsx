@@ -43,23 +43,25 @@ const Index = () => {
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
         <div>
-          <p className="text-xs text-muted-foreground tracking-widest uppercase font-medium">Olá,</p>
-          <h1 className="text-xl font-display font-bold">
+          <p className="text-[11px] text-muted-foreground tracking-widest uppercase font-medium">Olá,</p>
+          <h1 className="text-2xl font-display font-bold leading-tight">
             <ShimmerText variant="orange" duration={2.5} delay={2}>{userName}</ShimmerText>
           </h1>
         </div>
-        <img
-          src={nutrileagueLogo}
-          alt="NutriLeague"
-          className="h-12 w-auto object-contain"
-        />
-        <button
-          onClick={() => navigate("/registrar")}
-          className="w-11 h-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-md active:scale-90 transition-transform hover:scale-105"
-          aria-label="Registrar refeição"
-        >
-          <Plus size={22} strokeWidth={2.5} />
-        </button>
+        <div className="flex items-center gap-3">
+          <img
+            src={nutrileagueLogo}
+            alt="NutriLeague"
+            className="h-8 w-auto object-contain"
+          />
+          <button
+            onClick={() => navigate("/registrar")}
+            className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-md active:scale-90 transition-transform hover:scale-105"
+            aria-label="Registrar refeição"
+          >
+            <Plus size={20} strokeWidth={2.5} />
+          </button>
+        </div>
       </motion.header>
 
       {/* Streak Hero */}
