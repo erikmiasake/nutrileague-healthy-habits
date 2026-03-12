@@ -65,7 +65,6 @@ const Index = () => {
       <div className="mb-6 animate-slide-up" style={{ animationDelay: "0.1s" }}>
         <ProgressOverview />
       </div>
-      </div>
 
       {/* XP Progress */}
       <div className="bg-card rounded-xl p-4 border border-border mb-6 animate-slide-up" style={{ animationDelay: "0.15s" }}>
