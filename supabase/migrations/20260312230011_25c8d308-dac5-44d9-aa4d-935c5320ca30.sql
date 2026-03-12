@@ -1,0 +1,1 @@
+ALTER TABLE public.meal_logs ADD COLUMN meal_type text NOT NULL DEFAULT 'snack';

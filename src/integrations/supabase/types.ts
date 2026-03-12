@@ -156,6 +156,7 @@ export type Database = {
           date: string
           id: string
           image_url: string | null
+          meal_type: string
           user_id: string
         }
         Insert: {
@@ -164,6 +165,7 @@ export type Database = {
           date?: string
           id?: string
           image_url?: string | null
+          meal_type?: string
           user_id: string
         }
         Update: {
@@ -172,6 +174,7 @@ export type Database = {
           date?: string
           id?: string
           image_url?: string | null
+          meal_type?: string
           user_id?: string
         }
         Relationships: []
