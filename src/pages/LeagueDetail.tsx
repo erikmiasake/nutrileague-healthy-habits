@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Crown, Flame, Users, Copy, Check, Share2, Plus, X, Zap, Trophy } from "lucide-react";
+import { ArrowLeft, Crown, Flame, Users, Copy, Check, Share2, Zap, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 interface MemberRanking {
