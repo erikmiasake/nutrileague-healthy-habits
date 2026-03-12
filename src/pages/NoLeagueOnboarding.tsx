@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Plus, LogIn, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { GradientButton } from "@/components/ui/gradient-button";
 
 const NoLeagueOnboarding = () => {
   const navigate = useNavigate();
