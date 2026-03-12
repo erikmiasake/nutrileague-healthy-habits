@@ -1,10 +1,15 @@
-import { Trophy, Zap, Star, Crown, Flame } from "lucide-react";
+import { useState } from "react";
+import { Trophy, Zap, Star, Crown, Flame, Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useChallenges, type ChallengeWithProgress } from "@/hooks/useChallenges";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useChallenges, type ChallengeWithProgress, type ChallengeType } from "@/hooks/useChallenges";
 import LeagueChallengeCard from "@/components/LeagueChallengeCard";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 const ChallengeCard = ({
@@ -114,9 +119,89 @@ const EmptyState = ({ message, cta }: { message: string; cta?: { label: string; 
   </motion.div>
 );
 
+/* ── Create Challenge Dialog ── */
+const CreateChallengeDialog = ({
+  open,
+  onOpenChange,
+  type,
+  leagueId,
+  onCreated,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  type: ChallengeType;
+  leagueId?: string | null;
+  onCreated: () => void;
+}) => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [days, setDays] = useState("7");
+  const [xp, setXp] = useState("100");
+  const [submitting, setSubmitting] = useState(false);
+
+  const labels: Record<ChallengeType, string> = {
+    personal: "Novo desafio pessoal",
+    league: "Novo desafio da liga",
+    event: "Novo evento especial",
+  };
+
+  const handleCreate = async () => {
+    if (!title.trim()) { toast.error("Dê um título ao desafio"); return; }
+    if (type === "league" && !leagueId) { toast.error("Você precisa estar em uma liga"); return; }
+    setSubmitting(true);
+    const { error } = await supabase.from("challenges").insert({
+      title: title.trim(),
+      description: description.trim() || title.trim(),
+      type,
+      duration_days: Math.max(1, parseInt(days) || 7),
+      xp_reward: Math.max(0, parseInt(xp) || 100),
+      league_id: type === "league" ? leagueId : null,
+    });
+    setSubmitting(false);
+    if (error) { toast.error("Erro ao criar desafio"); return; }
+    toast.success("Desafio criado! 🔥");
+    setTitle(""); setDescription(""); setDays("7"); setXp("100");
+    onOpenChange(false);
+    onCreated();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[360px] rounded-2xl">
+        <DialogHeader>
+          <DialogTitle className="font-display">{labels[type]}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3 mt-2">
+          <Input placeholder="Título do desafio" value={title} onChange={(e) => setTitle(e.target.value)} className="rounded-xl" />
+          <Textarea placeholder="Descrição (opcional)" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} className="rounded-xl resize-none" />
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="text-[10px] text-muted-foreground font-medium mb-1 block">Duração (dias)</label>
+              <Input type="number" value={days} onChange={(e) => setDays(e.target.value)} min={1} className="rounded-xl" />
+            </div>
+            <div className="flex-1">
+              <label className="text-[10px] text-muted-foreground font-medium mb-1 block">XP de recompensa</label>
+              <Input type="number" value={xp} onChange={(e) => setXp(e.target.value)} min={0} className="rounded-xl" />
+            </div>
+          </div>
+          <button
+            onClick={handleCreate}
+            disabled={submitting}
+            className="w-full bg-primary text-primary-foreground font-bold text-sm py-2.5 rounded-xl active:scale-95 transition-transform disabled:opacity-50"
+          >
+            {submitting ? "Criando..." : "Criar desafio"}
+          </button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 const Challenges = () => {
   const { personal, league, event, userLeagueIds, loading, joinChallenge } = useChallenges();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<string>("personal");
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   if (loading) {
     return (
@@ -131,6 +216,8 @@ const Challenges = () => {
   }
 
   const hasLeague = userLeagueIds.length > 0;
+  const currentType = activeTab as ChallengeType;
+  const canCreate = activeTab !== "league" || hasLeague;
 
   return (
     <div className="min-h-screen bg-background pb-24 px-4 pt-6 max-w-[430px] mx-auto">
@@ -143,7 +230,7 @@ const Challenges = () => {
         <p className="text-sm text-muted-foreground mb-5">Participe e ganhe XP extra</p>
       </motion.div>
 
-      <Tabs defaultValue="personal" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="w-full bg-secondary/50 rounded-xl p-1 mb-4">
           <TabsTrigger
             value="personal"
@@ -221,6 +308,28 @@ const Challenges = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Floating + button */}
+      {canCreate && (
+        <button
+          onClick={() => setDialogOpen(true)}
+          className="fixed bottom-24 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg active:scale-95 transition-transform"
+          aria-label="Criar desafio"
+        >
+          <Plus size={28} strokeWidth={2.5} />
+        </button>
+      )}
+
+      <CreateChallengeDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        type={currentType}
+        leagueId={hasLeague ? userLeagueIds[0] : null}
+        onCreated={() => {
+          // Invalidate queries to refresh
+          window.location.reload();
+        }}
+      />
     </div>
   );
 };
