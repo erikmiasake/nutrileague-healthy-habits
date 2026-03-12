@@ -1,67 +1,214 @@
-import { Trophy, Users, Zap } from "lucide-react";
-import { challenges } from "@/lib/mockData";
+import { Trophy, Users, Zap, Star, Crown, Flame, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useChallenges, type ChallengeWithProgress } from "@/hooks/useChallenges";
+import { cn } from "@/lib/utils";
+
+const ChallengeCard = ({
+  challenge,
+  index,
+  onJoin,
+  joining,
+}: {
+  challenge: ChallengeWithProgress;
+  index: number;
+  onJoin: (id: string) => void;
+  joining: boolean;
+}) => {
+  const joined = !!challenge.progress;
+  const progressDays = challenge.progress?.progress_days ?? 0;
+  const progressPct = Math.min((progressDays / challenge.duration_days) * 100, 100);
+  const completed = challenge.progress?.completed ?? false;
+
+  return (
+    <motion.div
+      className="bg-card rounded-2xl p-4 border border-border"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay: index * 0.05 }}
+    >
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-sm font-display font-semibold text-foreground">{challenge.title}</h3>
+          <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{challenge.description}</p>
+        </div>
+        <div className="flex items-center gap-1 bg-primary/10 text-primary rounded-full px-2 py-0.5 ml-2 shrink-0">
+          <Zap size={10} />
+          <span className="text-[10px] font-bold">{challenge.xp_reward} XP</span>
+        </div>
+      </div>
+
+      {joined && (
+        <div className="mb-3">
+          <div className="flex justify-between text-[10px] text-muted-foreground mb-1.5">
+            <span className="font-medium">Progresso</span>
+            <span className="font-bold text-foreground">
+              {progressDays}/{challenge.duration_days} dias
+            </span>
+          </div>
+          <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+            <motion.div
+              className="h-full rounded-full"
+              style={{
+                background: completed
+                  ? "hsl(var(--success))"
+                  : "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--streak-glow, var(--primary))))",
+              }}
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPct}%` }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-muted-foreground">
+          <Trophy size={12} />
+          <span className="text-[10px] font-medium">{challenge.duration_days} dias</span>
+        </div>
+        <button
+          onClick={() => {
+            if (!joined && !joining) {
+              onJoin(challenge.id);
+              toast.success("Você entrou no desafio! 💪");
+            }
+          }}
+          disabled={joined || joining}
+          className={cn(
+            "text-xs font-bold px-3.5 py-1.5 rounded-full transition-all active:scale-95",
+            completed
+              ? "bg-success/15 text-success"
+              : joined
+                ? "bg-secondary text-muted-foreground"
+                : "bg-primary text-primary-foreground"
+          )}
+        >
+          {completed ? "Concluído ✓" : joined ? "Participando" : "Participar"}
+        </button>
+      </div>
+    </motion.div>
+  );
+};
+
+const EmptyState = ({ message }: { message: string }) => (
+  <motion.div
+    className="text-center py-10"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ delay: 0.1 }}
+  >
+    <Trophy size={28} className="text-muted-foreground/40 mx-auto mb-2" />
+    <p className="text-xs text-muted-foreground">{message}</p>
+  </motion.div>
+);
 
 const Challenges = () => {
+  const { personal, league, event, loading, joinChallenge } = useChallenges();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <motion.div
+          className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background pb-24 px-4 pt-6 max-w-[430px] mx-auto">
-      <h1 className="text-2xl font-display font-bold mb-1 animate-slide-up">Desafios</h1>
-      <p className="text-sm text-muted-foreground mb-6 animate-slide-up">Participe e ganhe XP extra</p>
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+      >
+        <h1 className="text-2xl font-display font-bold text-foreground mb-0.5">Desafios</h1>
+        <p className="text-sm text-muted-foreground mb-5">Participe e ganhe XP extra</p>
+      </motion.div>
 
-      <div className="space-y-3">
-        {challenges.map((c, i) => (
-          <div
-            key={c.id}
-            className="bg-card rounded-xl p-4 border border-border animate-slide-up"
-            style={{ animationDelay: `${i * 0.05}s` }}
+      <Tabs defaultValue="personal" className="w-full">
+        <TabsList className="w-full bg-secondary/50 rounded-xl p-1 mb-4">
+          <TabsTrigger
+            value="personal"
+            className="flex-1 text-xs font-bold rounded-lg data-[state=active]:bg-card data-[state=active]:text-foreground"
           >
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex-1">
-                <h3 className="text-sm font-semibold">{c.title}</h3>
-                <p className="text-xs text-muted-foreground mt-0.5">{c.description}</p>
-              </div>
-              <div className="flex items-center gap-1 bg-primary/10 text-primary rounded-full px-2 py-0.5 ml-2 shrink-0">
-                <Zap size={10} />
-                <span className="text-[10px] font-semibold">{c.xpReward} XP</span>
-              </div>
-            </div>
+            <Star size={12} className="mr-1" />
+            Pessoais
+          </TabsTrigger>
+          <TabsTrigger
+            value="league"
+            className="flex-1 text-xs font-bold rounded-lg data-[state=active]:bg-card data-[state=active]:text-foreground"
+          >
+            <Crown size={12} className="mr-1" />
+            Liga
+          </TabsTrigger>
+          <TabsTrigger
+            value="event"
+            className="flex-1 text-xs font-bold rounded-lg data-[state=active]:bg-card data-[state=active]:text-foreground"
+          >
+            <Flame size={12} className="mr-1" />
+            Eventos
+          </TabsTrigger>
+        </TabsList>
 
-            {c.active && (
-              <div className="mb-3">
-                <div className="flex justify-between text-[10px] text-muted-foreground mb-1">
-                  <span>Progresso</span>
-                  <span>{c.progress}/{c.goal}</span>
-                </div>
-                <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-primary rounded-full transition-all duration-500"
-                    style={{ width: `${(c.progress / c.goal) * 100}%` }}
-                  />
-                </div>
-              </div>
+        <TabsContent value="personal">
+          <div className="space-y-3">
+            {personal.length === 0 ? (
+              <EmptyState message="Nenhum desafio pessoal disponível" />
+            ) : (
+              personal.map((c, i) => (
+                <ChallengeCard
+                  key={c.id}
+                  challenge={c}
+                  index={i}
+                  onJoin={(id) => joinChallenge.mutate(id)}
+                  joining={joinChallenge.isPending}
+                />
+              ))
             )}
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <Users size={12} />
-                <span className="text-[10px]">{c.participants} participantes</span>
-              </div>
-              <button
-                onClick={() => {
-                  if (!c.active) toast.success("Você entrou no desafio! 💪");
-                }}
-                className={`text-xs font-semibold px-3 py-1 rounded-full transition-all active:scale-95 ${
-                  c.active
-                    ? "bg-secondary text-muted-foreground"
-                    : "bg-primary text-primary-foreground"
-                }`}
-              >
-                {c.active ? "Participando" : "Participar"}
-              </button>
-            </div>
           </div>
-        ))}
-      </div>
+        </TabsContent>
+
+        <TabsContent value="league">
+          <div className="space-y-3">
+            {league.length === 0 ? (
+              <EmptyState message="Nenhum desafio da liga ainda. Entre em uma liga para competir com amigos!" />
+            ) : (
+              league.map((c, i) => (
+                <ChallengeCard
+                  key={c.id}
+                  challenge={c}
+                  index={i}
+                  onJoin={(id) => joinChallenge.mutate(id)}
+                  joining={joinChallenge.isPending}
+                />
+              ))
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="event">
+          <div className="space-y-3">
+            {event.length === 0 ? (
+              <EmptyState message="Nenhum evento especial no momento" />
+            ) : (
+              event.map((c, i) => (
+                <ChallengeCard
+                  key={c.id}
+                  challenge={c}
+                  index={i}
+                  onJoin={(id) => joinChallenge.mutate(id)}
+                  joining={joinChallenge.isPending}
+                />
+              ))
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
