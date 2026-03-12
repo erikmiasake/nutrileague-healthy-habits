@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { BlurFade } from "@/components/ui/blur-fade";
 import logo from "@/assets/logo.png";
 
 interface SplashScreenProps {
@@ -24,14 +25,13 @@ const SplashScreen = ({ onFinish }: SplashScreenProps) => {
           transition={{ duration: 0.4 }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-background"
         >
-          <motion.img
-            src={logo}
-            alt="NutriLeague"
-            className="w-44 h-44"
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          />
+          <BlurFade delay={0.1} duration={0.8} yOffset={12} blur="10px">
+            <img
+              src={logo}
+              alt="NutriLeague"
+              className="w-44 h-44"
+            />
+          </BlurFade>
         </motion.div>
       )}
     </AnimatePresence>
