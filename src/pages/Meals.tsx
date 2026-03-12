@@ -29,6 +29,11 @@ type MealLog = {
   caption: string | null;
   created_at: string;
   date: string;
+  calories: number | null;
+  protein: number | null;
+  carbs: number | null;
+  fat: number | null;
+  detected_foods: string[] | null;
 };
 
 const MealCard = ({ meal }: { meal: MealLog }) => {
