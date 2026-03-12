@@ -29,7 +29,9 @@ const Index = () => {
       <header className="flex items-center justify-between mb-8 animate-slide-up">
         <div>
           <p className="text-xs text-muted-foreground tracking-wide uppercase">Olá,</p>
-          <h1 className="text-xl font-display font-bold mt-0.5">{currentUser.name} 👋</h1>
+          <h1 className="text-xl font-display font-bold mt-0.5">
+            <ShimmerText variant="orange" duration={2} delay={2}>{currentUser.name}</ShimmerText> 👋
+          </h1>
         </div>
         <div className="flex items-center gap-2 bg-secondary/80 rounded-full px-4 py-2">
           <Zap size={14} className="text-xp" />
