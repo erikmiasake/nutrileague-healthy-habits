@@ -52,7 +52,7 @@ const Index = () => {
     <div className="min-h-screen bg-background pb-24 px-4 pt-5 max-w-[430px] mx-auto">
       {/* ── HEADER ── */}
       <motion.header
-        className="mb-5 flex items-center gap-3 px-1"
+        className="mb-5 flex items-center justify-center gap-3 px-1"
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
@@ -67,10 +67,12 @@ const Index = () => {
             </p>
           )}
         </div>
-        <img
+        <motion.img
           src={nutrileagueLogo}
           alt="NutriLeague"
-          className="h-6 w-auto object-contain opacity-70"
+          className="h-10 w-auto object-contain opacity-80"
+          whileHover={{ scale: 1.15, rotate: 3 }}
+          transition={{ type: "spring", stiffness: 300, damping: 15 }}
         />
       </motion.header>
 
