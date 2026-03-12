@@ -1,17 +1,40 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, Loader2 } from "lucide-react";
 import { mealCategories } from "@/lib/mockData";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const RegisterMeal = () => {
   const [selected, setSelected] = useState<string | null>(null);
   const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    if (!selected) return;
-    toast.success("Refeição registrada! 🎉 +10 XP");
+  const handleSubmit = async () => {
+    if (!selected || loading) return;
+    setLoading(true);
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("Você precisa estar logado para registrar.");
+      setLoading(false);
+      return;
+    }
+
+    const { error } = await supabase.from("meal_logs").insert({
+      user_id: user.id,
+      date: new Date().toISOString().split("T")[0],
+    });
+
+    setLoading(false);
+
+    if (error) {
+      toast.error("Erro ao registrar refeição.");
+      return;
+    }
+
+    toast.success("Refeição registrada! 🎉 Streak atualizado!");
     navigate("/");
   };
 
@@ -54,11 +77,11 @@ const RegisterMeal = () => {
 
       <button
         onClick={handleSubmit}
-        disabled={!selected}
+        disabled={!selected || loading}
         className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 mt-6 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        <Check size={18} />
-        Registrar
+        {loading ? <Loader2 size={18} className="animate-spin" /> : <Check size={18} />}
+        {loading ? "Registrando..." : "Registrar"}
       </button>
     </div>
   );
