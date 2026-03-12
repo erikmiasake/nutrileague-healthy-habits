@@ -18,6 +18,7 @@ const consistencyLevels = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
   const { currentStreak, longestStreak, totalMeals, weeklyMeals, weekActivity, userName, loading } = useDashboardData();
 
   if (loading) {
