@@ -1,5 +1,7 @@
-import { Trophy, ChevronRight, TrendingUp } from "lucide-react";
+import { Trophy, ChevronRight, TrendingUp, Plus } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import nutrileagueLogo from "@/assets/nutrileague-logo.png";
 import StreakHero from "@/components/StreakHero";
 import { ConsistencyCard } from "@/components/ConsistencyCard";
 import { ProgressOverview } from "@/components/ui/dashboard-overview";
@@ -16,6 +18,7 @@ const consistencyLevels = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
   const { currentStreak, longestStreak, totalMeals, weeklyMeals, weekActivity, userName, loading } = useDashboardData();
 
   if (loading) {
@@ -34,15 +37,31 @@ const Index = () => {
     <div className="min-h-screen bg-background pb-24 px-4 pt-8 max-w-[430px] mx-auto">
       {/* Header */}
       <motion.header
-        className="mb-6"
+        className="mb-6 flex items-center justify-between"
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        <p className="text-xs text-muted-foreground tracking-widest uppercase font-medium">Olá,</p>
-        <h1 className="text-2xl font-display font-bold mt-1">
-          <ShimmerText variant="orange" duration={2.5} delay={2}>{userName}</ShimmerText>
-        </h1>
+        <div className="flex items-center gap-3">
+          <img
+            src={nutrileagueLogo}
+            alt="NutriLeague"
+            className="h-10 w-auto rounded-lg object-contain"
+          />
+          <div>
+            <p className="text-xs text-muted-foreground tracking-widest uppercase font-medium">Olá,</p>
+            <h1 className="text-xl font-display font-bold">
+              <ShimmerText variant="orange" duration={2.5} delay={2}>{userName}</ShimmerText>
+            </h1>
+          </div>
+        </div>
+        <button
+          onClick={() => navigate("/registrar")}
+          className="w-11 h-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-md active:scale-90 transition-transform hover:scale-105"
+          aria-label="Registrar refeição"
+        >
+          <Plus size={22} strokeWidth={2.5} />
+        </button>
       </motion.header>
 
       {/* Streak Hero */}

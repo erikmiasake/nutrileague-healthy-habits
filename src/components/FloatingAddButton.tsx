@@ -5,7 +5,7 @@ const FloatingAddButton = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  if (location.pathname === "/login") return null;
+  if (location.pathname === "/login" || location.pathname === "/" || location.pathname === "/onboarding") return null;
 
   return (
     <button
