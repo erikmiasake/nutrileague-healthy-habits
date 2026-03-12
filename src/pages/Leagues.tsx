@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, LogIn, Users, Crown, Copy, Check, ArrowRight, X, Share2 } from "lucide-react";
+import { GradientButton } from "@/components/ui/gradient-button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
