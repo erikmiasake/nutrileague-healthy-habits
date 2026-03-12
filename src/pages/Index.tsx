@@ -95,7 +95,7 @@ const Index = () => {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-display font-bold flex items-center gap-2">
             <Trophy size={14} className="text-primary" />
-            Refeições recentes
+            <ShimmerText variant="orange" duration={2} delay={3.5}>Refeições recentes</ShimmerText>
           </h2>
           <button className="text-xs text-muted-foreground flex items-center gap-0.5 hover:text-foreground transition-colors">
             Ver todas <ChevronRight size={12} />
