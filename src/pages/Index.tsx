@@ -1,9 +1,10 @@
-import { Flame, Zap, Trophy, ChevronRight, TrendingUp } from "lucide-react";
+import { Flame, Zap, Trophy, ChevronRight, TrendingUp, BarChart3 } from "lucide-react";
 import { motion } from "framer-motion";
 import StreakRing from "@/components/StreakRing";
 import { ConsistencyCard } from "@/components/ConsistencyCard";
 import { ProgressOverview } from "@/components/ui/dashboard-overview";
 import { ShimmerText } from "@/components/ui/shimmer-text";
+import AnalyticsDashboardCard from "@/components/ui/interactive-3d-analytics-dashboard-card";
 import { currentUser, recentMeals, weekDays, weekActivity } from "@/lib/mockData";
 
 const consistencyData = {
