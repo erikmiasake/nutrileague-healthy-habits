@@ -11,6 +11,8 @@ import Login from "./pages/Login";
 import RegisterMeal from "./pages/RegisterMeal";
 import Challenges from "./pages/Challenges";
 import Ranking from "./pages/Ranking";
+import Leagues from "./pages/Leagues";
+import LeagueDetail from "./pages/LeagueDetail";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
