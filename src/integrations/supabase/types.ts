@@ -14,6 +14,88 @@ export type Database = {
   }
   public: {
     Tables: {
+      challenge_progress: {
+        Row: {
+          challenge_id: string
+          completed: boolean
+          id: string
+          joined_at: string
+          progress_days: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          completed?: boolean
+          id?: string
+          joined_at?: string
+          progress_days?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          completed?: boolean
+          id?: string
+          joined_at?: string
+          progress_days?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_progress_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenges: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string
+          duration_days: number
+          id: string
+          league_id: string | null
+          title: string
+          type: Database["public"]["Enums"]["challenge_type"]
+          xp_reward: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description: string
+          duration_days: number
+          id?: string
+          league_id?: string | null
+          title: string
+          type: Database["public"]["Enums"]["challenge_type"]
+          xp_reward?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string
+          duration_days?: number
+          id?: string
+          league_id?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["challenge_type"]
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenges_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       league_members: {
         Row: {
           id: string
@@ -147,7 +229,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      challenge_type: "personal" | "league" | "event"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -274,6 +356,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      challenge_type: ["personal", "league", "event"],
+    },
   },
 } as const
