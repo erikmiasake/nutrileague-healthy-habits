@@ -76,10 +76,17 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = async () => {
+    if (loading) return;
+    setLoading(true);
+
     const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}/login`,
     });
-    if (error) toast.error("Erro ao entrar com Google.");
+
+    if (error) {
+      toast.error("Erro ao entrar com Google.");
+      setLoading(false);
+    }
   };
 
   const handleResendEmail = async () => {
