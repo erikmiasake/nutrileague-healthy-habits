@@ -59,7 +59,13 @@ const ProgressMetricCard: React.FC<ProgressMetricCardProps> = ({
   );
 };
 
-export const ProgressOverview: React.FC = () => {
+interface ProgressOverviewProps {
+  currentStreak: number;
+  totalMeals: number;
+  weeklyMeals: number;
+}
+
+export const ProgressOverview: React.FC<ProgressOverviewProps> = ({ currentStreak, totalMeals, weeklyMeals }) => {
   return (
     <div className="space-y-4">
       <h2 className="text-base font-display font-bold flex items-center gap-2">
@@ -67,14 +73,13 @@ export const ProgressOverview: React.FC = () => {
         <ShimmerText variant="orange" duration={2.5} delay={3}>Seu progresso</ShimmerText>
       </h2>
       <div className="grid grid-cols-2 gap-3">
-        <ProgressMetricCard title="Sequência atual" value="12 dias" icon={Flame} trendChange="+2 dias nesta semana" trendType="up" />
-        <ProgressMetricCard title="Refeições saudáveis" value="28" icon={UtensilsCrossed} trendChange="+6 nesta semana" trendType="up" />
-        <ProgressMetricCard title="Desafios ativos" value="3" icon={Target} trendChange="1 concluído recentemente" trendType="neutral" />
-        <ProgressMetricCard title="Posição no ranking" value="#2" icon={Trophy} trendChange="Subiu 1 posição" trendType="up" />
+        <ProgressMetricCard title="Sequência atual" value={`${currentStreak} dias`} icon={Flame} trendChange={currentStreak > 0 ? "Ativo" : "Comece hoje!"} trendType={currentStreak > 0 ? "up" : "neutral"} />
+        <ProgressMetricCard title="Refeições saudáveis" value={`${totalMeals}`} icon={UtensilsCrossed} trendChange={`+${weeklyMeals} nesta semana`} trendType={weeklyMeals > 0 ? "up" : "neutral"} />
+        <ProgressMetricCard title="Nível" value={`${Math.floor(totalMeals / 10) + 1}`} icon={Target} trendChange={`${totalMeals * 10} XP total`} trendType="neutral" />
+        <ProgressMetricCard title="Maior sequência" value={`${currentStreak} dias`} icon={Trophy} trendChange="Recorde pessoal" trendType="up" />
       </div>
     </div>
   );
 };
-
 export default ProgressOverview;
 export { ProgressMetricCard };
