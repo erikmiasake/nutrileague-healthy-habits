@@ -1,8 +1,10 @@
-import { Trophy, Users, Zap, Star, Crown, Flame, ChevronRight } from "lucide-react";
+import { Trophy, Zap, Star, Crown, Flame } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useChallenges, type ChallengeWithProgress } from "@/hooks/useChallenges";
+import LeagueChallengeCard from "@/components/LeagueChallengeCard";
 import { cn } from "@/lib/utils";
 
 const ChallengeCard = ({
@@ -92,7 +94,7 @@ const ChallengeCard = ({
   );
 };
 
-const EmptyState = ({ message }: { message: string }) => (
+const EmptyState = ({ message, cta }: { message: string; cta?: { label: string; onClick: () => void } }) => (
   <motion.div
     className="text-center py-10"
     initial={{ opacity: 0 }}
@@ -100,12 +102,21 @@ const EmptyState = ({ message }: { message: string }) => (
     transition={{ delay: 0.1 }}
   >
     <Trophy size={28} className="text-muted-foreground/40 mx-auto mb-2" />
-    <p className="text-xs text-muted-foreground">{message}</p>
+    <p className="text-xs text-muted-foreground mb-3">{message}</p>
+    {cta && (
+      <button
+        onClick={cta.onClick}
+        className="text-xs font-bold bg-primary text-primary-foreground px-4 py-2 rounded-full active:scale-95 transition-transform"
+      >
+        {cta.label}
+      </button>
+    )}
   </motion.div>
 );
 
 const Challenges = () => {
-  const { personal, league, event, loading, joinChallenge } = useChallenges();
+  const { personal, league, event, userLeagueIds, loading, joinChallenge } = useChallenges();
+  const navigate = useNavigate();
 
   if (loading) {
     return (
@@ -118,6 +129,8 @@ const Challenges = () => {
       </div>
     );
   }
+
+  const hasLeague = userLeagueIds.length > 0;
 
   return (
     <div className="min-h-screen bg-background pb-24 px-4 pt-6 max-w-[430px] mx-auto">
@@ -175,17 +188,16 @@ const Challenges = () => {
 
         <TabsContent value="league">
           <div className="space-y-3">
-            {league.length === 0 ? (
-              <EmptyState message="Nenhum desafio da liga ainda. Entre em uma liga para competir com amigos!" />
+            {!hasLeague ? (
+              <EmptyState
+                message="Você ainda não está em nenhuma liga. Entre em uma para competir com amigos!"
+                cta={{ label: "Entrar em uma Liga", onClick: () => navigate("/ligas") }}
+              />
+            ) : league.length === 0 ? (
+              <EmptyState message="Nenhum desafio da liga disponível no momento" />
             ) : (
               league.map((c, i) => (
-                <ChallengeCard
-                  key={c.id}
-                  challenge={c}
-                  index={i}
-                  onJoin={(id) => joinChallenge.mutate(id)}
-                  joining={joinChallenge.isPending}
-                />
+                <LeagueChallengeCard key={c.id} challenge={c} index={i} />
               ))
             )}
           </div>
