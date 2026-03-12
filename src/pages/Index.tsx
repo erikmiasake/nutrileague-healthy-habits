@@ -46,7 +46,7 @@ const Index = () => {
         transition={{ duration: 0.3 }}
       >
         <AppSidebar />
-        <TextHoverEffect text="NutriLeague" className="text-lg" />
+        <TextHoverEffect text="NutriLeague" icon={nutrileagueIcon} />
       </motion.header>
 
       {/* ── BLOCK 1: Streak + Position ── */}
