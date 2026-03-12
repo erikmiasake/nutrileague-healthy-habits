@@ -1,4 +1,4 @@
-import { Flame, Zap, Trophy, ChevronRight, TrendingUp, BarChart3 } from "lucide-react";
+import { Flame, Zap, Trophy, ChevronRight, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import StreakRing from "@/components/StreakRing";
 import { ConsistencyCard } from "@/components/ConsistencyCard";
