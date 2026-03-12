@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Crown, Flame, Users, Copy, Check, Share2, Plus, X, Zap, Trophy } from "lucide-react";
+import { ArrowLeft, Crown, Flame, Users, Copy, Check, Share2, Zap, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 interface MemberRanking {
@@ -16,93 +13,33 @@ interface MemberRanking {
   isCurrentUser: boolean;
 }
 
-/* ── League Challenges Section ── */
+/* ── League Challenges Section (read-only list) ── */
 const LeagueChallengesSection = ({ leagueId }: { leagueId: string }) => {
   const [challenges, setChallenges] = useState<{ id: string; title: string; description: string; duration_days: number; xp_reward: number }[]>([]);
-  const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [days, setDays] = useState("7");
-  const [xp, setXp] = useState("100");
-  const [submitting, setSubmitting] = useState(false);
 
-  const fetchChallenges = async () => {
-    const { data } = await supabase
-      .from("challenges")
-      .select("id, title, description, duration_days, xp_reward")
-      .eq("league_id", leagueId)
-      .eq("type", "league")
-      .eq("active", true)
-      .order("created_at", { ascending: false });
-    setChallenges(data ?? []);
-  };
-
-  useEffect(() => { fetchChallenges(); }, [leagueId]);
-
-  const handleCreate = async () => {
-    if (!title.trim()) { toast.error("Dê um título ao desafio"); return; }
-    setSubmitting(true);
-    const { error } = await supabase.from("challenges").insert({
-      title: title.trim(),
-      description: description.trim() || `Desafio da liga: ${title.trim()}`,
-      type: "league" as const,
-      duration_days: Math.max(1, parseInt(days) || 7),
-      xp_reward: Math.max(0, parseInt(xp) || 100),
-      league_id: leagueId,
-    });
-    setSubmitting(false);
-    if (error) { toast.error("Erro ao criar desafio"); return; }
-    toast.success("Desafio criado! 🔥");
-    setTitle(""); setDescription(""); setDays("7"); setXp("100");
-    setOpen(false);
-    fetchChallenges();
-  };
+  useEffect(() => {
+    const fetch = async () => {
+      const { data } = await supabase
+        .from("challenges")
+        .select("id, title, description, duration_days, xp_reward")
+        .eq("league_id", leagueId)
+        .eq("type", "league")
+        .eq("active", true)
+        .order("created_at", { ascending: false });
+      setChallenges(data ?? []);
+    };
+    fetch();
+  }, [leagueId]);
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-6">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base font-display font-bold flex items-center gap-2">
-          <Trophy size={16} className="text-primary" />
-          Desafios da liga
-        </h2>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <button className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground active:scale-90 transition-transform">
-              <Plus size={16} />
-            </button>
-          </DialogTrigger>
-          <DialogContent className="max-w-[360px] rounded-2xl">
-            <DialogHeader>
-              <DialogTitle className="font-display">Novo desafio</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3 mt-2">
-              <Input placeholder="Título do desafio" value={title} onChange={(e) => setTitle(e.target.value)} className="rounded-xl" />
-              <Textarea placeholder="Descrição (opcional)" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} className="rounded-xl resize-none" />
-              <div className="flex gap-3">
-                <div className="flex-1">
-                  <label className="text-[10px] text-muted-foreground font-medium mb-1 block">Duração (dias)</label>
-                  <Input type="number" value={days} onChange={(e) => setDays(e.target.value)} min={1} className="rounded-xl" />
-                </div>
-                <div className="flex-1">
-                  <label className="text-[10px] text-muted-foreground font-medium mb-1 block">XP de recompensa</label>
-                  <Input type="number" value={xp} onChange={(e) => setXp(e.target.value)} min={0} className="rounded-xl" />
-                </div>
-              </div>
-              <button
-                onClick={handleCreate}
-                disabled={submitting}
-                className="w-full bg-primary text-primary-foreground font-bold text-sm py-2.5 rounded-xl active:scale-95 transition-transform disabled:opacity-50"
-              >
-                {submitting ? "Criando..." : "Criar desafio"}
-              </button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-
+      <h2 className="text-base font-display font-bold flex items-center gap-2 mb-3">
+        <Trophy size={16} className="text-primary" />
+        Desafios da liga
+      </h2>
       {challenges.length === 0 ? (
         <div className="bg-card rounded-2xl border border-border p-4 text-center">
-          <p className="text-xs text-muted-foreground">Nenhum desafio ainda. Crie o primeiro!</p>
+          <p className="text-xs text-muted-foreground">Nenhum desafio ainda</p>
         </div>
       ) : (
         <div className="space-y-2">
