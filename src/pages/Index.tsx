@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import nutrileagueLogo from "@/assets/nutrileague-logo.png";
 import AppSidebar from "@/components/AppSidebar";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import TextHoverEffect from "@/components/ui/shimmer-bg-text";
 import { useLeagueRanking } from "@/hooks/useLeagueRanking";
 import { useChallenges } from "@/hooks/useChallenges";
 import { useLeagueActivity } from "@/hooks/useLeagueActivity";
@@ -45,13 +46,7 @@ const Index = () => {
         transition={{ duration: 0.3 }}
       >
         <AppSidebar />
-        <motion.img
-          src={nutrileagueLogo}
-          alt="NutriLeague"
-          className="h-9 w-auto object-contain opacity-80"
-          whileHover={{ scale: 1.1 }}
-          transition={{ type: "spring", stiffness: 300, damping: 15 }}
-        />
+        <TextHoverEffect text="NutriLeague" className="text-lg" />
       </motion.header>
 
       {/* ── BLOCK 1: Streak + Position ── */}
