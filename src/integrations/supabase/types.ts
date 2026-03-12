@@ -151,21 +151,27 @@ export type Database = {
       }
       meal_logs: {
         Row: {
+          caption: string | null
           created_at: string
           date: string
           id: string
+          image_url: string | null
           user_id: string
         }
         Insert: {
+          caption?: string | null
           created_at?: string
           date?: string
           id?: string
+          image_url?: string | null
           user_id: string
         }
         Update: {
+          caption?: string | null
           created_at?: string
           date?: string
           id?: string
+          image_url?: string | null
           user_id?: string
         }
         Relationships: []
