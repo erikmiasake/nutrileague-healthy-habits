@@ -3,6 +3,7 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import nutrileagueLogo from "@/assets/nutrileague-logo.png";
+import AppSidebar from "@/components/AppSidebar";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useLeagueRanking } from "@/hooks/useLeagueRanking";
 import { useChallenges } from "@/hooks/useChallenges";
@@ -43,12 +44,7 @@ const Index = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground font-medium">Olá,</p>
-          <h1 className="text-lg font-display font-bold text-foreground leading-tight truncate">
-            {userName}
-          </h1>
-        </div>
+        <AppSidebar />
         <motion.img
           src={nutrileagueLogo}
           alt="NutriLeague"
