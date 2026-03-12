@@ -90,6 +90,11 @@ const Index = () => {
         </div>
       </div>
 
+      {/* Consistency Card */}
+      <div className="mb-6 animate-slide-up" style={{ animationDelay: "0.18s" }}>
+        <ConsistencyCard {...consistencyData} />
+      </div>
+
       {/* Recent Meals */}
       <div className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
         <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
