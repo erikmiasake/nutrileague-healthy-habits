@@ -59,6 +59,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<ProtectedRoute session={session}><Index /></ProtectedRoute>} />
             <Route path="/registrar" element={<ProtectedRoute session={session}><RegisterMeal /></ProtectedRoute>} />
+            <Route path="/refeicoes" element={<ProtectedRoute session={session}><Meals /></ProtectedRoute>} />
             <Route path="/desafios" element={<ProtectedRoute session={session}><Challenges /></ProtectedRoute>} />
             <Route path="/onboarding" element={<ProtectedRoute session={session}><NoLeagueOnboarding /></ProtectedRoute>} />
             <Route path="/ligas" element={<ProtectedRoute session={session}><Leagues /></ProtectedRoute>} />

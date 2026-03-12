@@ -255,6 +255,9 @@ const Index = () => {
         </div>
       </motion.section>
 
+      {/* ── BLOCK: Today's Meals ── */}
+      <HomeMealsBlock />
+
       {/* ── BLOCK 4: League Activity Feed ── */}
       <motion.section
         className="rounded-2xl border border-border bg-card overflow-hidden card-elevated"
