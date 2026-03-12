@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from "@/lib/utils";
 import { ArrowDown, ArrowUp, Minus, Flame, UtensilsCrossed, Target, Trophy } from 'lucide-react';
+import { ShimmerText } from "@/components/ui/shimmer-text";
 
 type IconType = React.ElementType;
 export type TrendType = 'up' | 'down' | 'neutral';
