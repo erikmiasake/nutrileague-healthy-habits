@@ -62,6 +62,22 @@ const Leagues = () => {
 
   useEffect(() => { fetchLeagues(); }, []);
 
+  // Handle navigation state from onboarding
+  useEffect(() => {
+    const state = location.state as { action?: string } | null;
+    if (state?.action === "create") {
+      setShowCreate(true);
+      setShowJoin(false);
+    } else if (state?.action === "join") {
+      setShowJoin(true);
+      setShowCreate(false);
+    }
+    // Clear location state
+    if (state?.action) {
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
   const handleCreate = async () => {
     if (!newName.trim() || submitting) return;
     setSubmitting(true);

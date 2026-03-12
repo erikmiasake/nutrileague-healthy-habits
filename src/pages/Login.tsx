@@ -23,7 +23,7 @@ export default function LoginPage() {
         if (memberships && memberships.length > 0) {
           navigate("/", { replace: true });
         } else {
-          navigate("/ligas", { replace: true });
+          navigate("/onboarding", { replace: true });
         }
       }
     });
