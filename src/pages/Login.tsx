@@ -5,10 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import LoginCardSection from "@/components/ui/login-signup";
+import EmailVerificationNotice from "@/components/EmailVerificationNotice";
 
 export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,17 +40,29 @@ export default function LoginPage() {
     setLoading(true);
 
     if (isSignUp) {
-      const { error } = await supabase.auth.signUp({
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: { data: { name: data.name }, emailRedirectTo: window.location.origin },
       });
       if (error) { toast.error(error.message); setLoading(false); return; }
-      toast.success("Conta criada! Verifique seu email para confirmar.");
+
+      // Show verification notice
+      if (signUpData.user && !signUpData.session) {
+        setPendingEmail(data.email);
+      }
       setLoading(false);
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email: data.email, password: data.password });
-      if (error) { toast.error("Email ou senha incorretos."); setLoading(false); return; }
+      if (error) {
+        if (error.message.toLowerCase().includes("email not confirmed")) {
+          toast.error("Verifique seu email antes de fazer login.");
+        } else {
+          toast.error("Email ou senha incorretos.");
+        }
+        setLoading(false);
+        return;
+      }
     }
   };
 
@@ -59,6 +73,30 @@ export default function LoginPage() {
     });
     if (error) toast.error("Erro ao entrar com Google.");
   };
+
+  const handleResendEmail = async () => {
+    if (!pendingEmail) return;
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: pendingEmail,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    if (error) {
+      toast.error("Erro ao reenviar email.");
+    } else {
+      toast.success("Email reenviado!");
+    }
+  };
+
+  if (pendingEmail) {
+    return (
+      <EmailVerificationNotice
+        email={pendingEmail}
+        onResend={handleResendEmail}
+        onBack={() => { setPendingEmail(null); setIsSignUp(false); }}
+      />
+    );
+  }
 
   return (
     <LoginCardSection
