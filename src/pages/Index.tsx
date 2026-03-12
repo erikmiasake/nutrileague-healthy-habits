@@ -59,7 +59,7 @@ const Index = () => {
       >
         <div className="flex-1 min-w-0">
           <h1 className="text-xl font-display font-bold text-foreground leading-tight">
-            {userName} 👋
+            {userName}
           </h1>
           {league.leagueName && (
             <p className="text-[11px] text-muted-foreground font-medium mt-0.5">
