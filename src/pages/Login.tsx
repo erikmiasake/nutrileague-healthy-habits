@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Eye, EyeOff, Lock, Mail, ArrowRight, User, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, ArrowRight, User, Loader2, Chrome } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
@@ -31,8 +31,21 @@ export default function LoginCardSection() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
-      if (session) navigate("/", { replace: true });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
+      if (session) {
+        // Check if user is in any league
+        const { data: memberships } = await supabase
+          .from("league_members")
+          .select("league_id")
+          .eq("user_id", session.user.id)
+          .limit(1);
+
+        if (memberships && memberships.length > 0) {
+          navigate("/", { replace: true });
+        } else {
+          navigate("/ligas", { replace: true });
+        }
+      }
     });
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) navigate("/", { replace: true });
@@ -111,29 +124,50 @@ export default function LoginCardSection() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
+    });
+    if (error) toast.error("Erro ao entrar com Google.");
+  };
+
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background">
       <style>{`
         @keyframes drawX{0%{transform:scaleX(0);opacity:0}60%{opacity:.95}100%{transform:scaleX(1);opacity:.7}}
         @keyframes drawY{0%{transform:scaleY(0);opacity:0}60%{opacity:.95}100%{transform:scaleY(1);opacity:.7}}
-        @keyframes shimmer{0%{opacity:0}35%{opacity:.25}100%{opacity:0}}
         .card-animate {
           opacity: 0;
-          transform: translateY(20px);
-          animation: fadeUp 0.8s cubic-bezier(.22,.61,.36,1) 0.4s forwards;
+          transform: translateY(24px);
+          animation: fadeUp 0.9s cubic-bezier(.22,.61,.36,1) 0.3s forwards;
         }
         @keyframes fadeUp {
           to { opacity: 1; transform: translateY(0); }
+        }
+        .logo-animate {
+          opacity: 0;
+          transform: scale(0.8) translateY(12px);
+          animation: logoIn 0.7s cubic-bezier(.22,.61,.36,1) 0.1s forwards;
+        }
+        @keyframes logoIn {
+          to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .btn-glow {
+          box-shadow: 0 0 20px hsl(var(--primary) / 0.3), 0 4px 12px hsl(var(--primary) / 0.2);
+        }
+        .btn-glow:hover {
+          box-shadow: 0 0 28px hsl(var(--primary) / 0.4), 0 6px 16px hsl(var(--primary) / 0.3);
         }
       `}</style>
 
       {/* Vignette */}
       <div className="pointer-events-none fixed inset-0 z-[1]" style={{
-        background: "radial-gradient(ellipse at center, transparent 40%, hsl(var(--background)) 100%)",
+        background: "radial-gradient(ellipse at center, transparent 30%, hsl(var(--background)) 100%)",
       }} />
 
       {/* Accent lines */}
-      <div className="pointer-events-none fixed inset-0 z-[2] overflow-hidden opacity-60">
+      <div className="pointer-events-none fixed inset-0 z-[2] overflow-hidden opacity-50">
         {[20, 40, 60, 80].map((pos, i) => (
           <div key={`h-${i}`} className="absolute h-px w-full" style={{
             top: `${pos}%`,
@@ -155,117 +189,148 @@ export default function LoginCardSection() {
       {/* Particles */}
       <canvas ref={canvasRef} className="pointer-events-none fixed inset-0 z-[3]" />
 
-      {/* Login Card */}
-      <div className="relative z-10 w-full max-w-sm px-4 card-animate">
+      {/* Content */}
+      <div className="relative z-10 w-full max-w-[380px] px-5">
         {/* Logo */}
-        <div className="flex flex-col items-center mb-8">
+        <div className="flex flex-col items-center mb-10 logo-animate">
           <img
             src={logo}
             alt="NutriLeague"
-            className="w-32 h-32 rounded-3xl mb-4 object-contain"
-            style={{ filter: "drop-shadow(0 0 30px hsl(var(--primary) / 0.35))" }}
+            className="w-40 h-40 rounded-[2rem] mb-2 object-contain"
+            style={{ filter: "drop-shadow(0 0 40px hsl(var(--primary) / 0.4))" }}
           />
         </div>
 
-        <Card className="border-border/50 bg-card/80 backdrop-blur-xl shadow-2xl">
-          <CardHeader className="text-center pb-4">
-            <CardTitle className="text-2xl font-display font-bold">
-              {isSignUp ? "Criar conta" : "Bem-vindo"}
-            </CardTitle>
-            <CardDescription className="text-muted-foreground">
-              {isSignUp ? "Crie sua conta e comece a jogar" : "Entre na sua conta"}
-            </CardDescription>
-          </CardHeader>
+        {/* Card */}
+        <div className="card-animate">
+          <Card className="border-border/40 bg-card/70 backdrop-blur-2xl shadow-[0_8px_40px_-12px_hsl(var(--primary)/0.15)] rounded-2xl overflow-hidden">
+            <CardHeader className="text-center pt-8 pb-2 px-8">
+              <CardTitle className="text-[1.65rem] font-display font-bold leading-tight tracking-tight">
+                {isSignUp ? "Criar conta" : "Bem-vindo ao NutriLeague"}
+              </CardTitle>
+              <CardDescription className="text-muted-foreground text-sm mt-2">
+                {isSignUp
+                  ? "Crie sua conta e comece a jogar"
+                  : "Entre para continuar sua jornada saudável"}
+              </CardDescription>
+            </CardHeader>
 
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {isSignUp && (
+            <CardContent className="px-8 pt-6 pb-2">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {isSignUp && (
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-xs font-medium text-muted-foreground">
+                      Nome
+                    </Label>
+                    <div className="relative">
+                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="Seu nome"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="h-11 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 transition-all"
+                        required
+                      />
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-xs text-muted-foreground">Nome</Label>
+                  <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">
+                    Email
+                  </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
                     <Input
-                      id="name"
-                      type="text"
-                      placeholder="Seu nome"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="pl-10 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
+                      id="email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="h-11 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 transition-all"
                       required
                     />
                   </div>
                 </div>
-              )}
 
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-xs text-muted-foreground">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
-                    required
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-xs font-medium text-muted-foreground">
+                    Senha
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Digite sua senha"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="h-11 pl-10 pr-11 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 transition-all"
+                      required
+                      minLength={6}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-xs text-muted-foreground">Senha</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
-                    required
-                    minLength={6}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                <div className="pt-1">
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full h-12 rounded-xl font-semibold text-[15px] gap-2 btn-glow transition-all duration-300"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+                    {loading ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <>
+                        {isSignUp ? "Criar conta" : "Entrar"}
+                        <ArrowRight className="h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
                 </div>
-              </div>
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full h-11 font-semibold gap-2"
-              >
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    {isSignUp ? "Criar conta" : "Entrar"}
-                    <ArrowRight className="h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            </form>
-          </CardContent>
+                {/* Divider */}
+                <div className="relative flex items-center py-1">
+                  <Separator className="flex-1 bg-border/40" />
+                  <span className="px-3 text-[11px] text-muted-foreground/60 uppercase tracking-wider">ou</span>
+                  <Separator className="flex-1 bg-border/40" />
+                </div>
 
-          <CardFooter className="flex justify-center pb-6">
-            <p className="text-sm text-muted-foreground">
-              {isSignUp ? "Já tem conta?" : "Não tem conta?"}{" "}
-              <button
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-primary font-medium hover:underline"
-              >
-                {isSignUp ? "Entrar" : "Criar conta"}
-              </button>
-            </p>
-          </CardFooter>
-        </Card>
+                {/* Google */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleGoogleLogin}
+                  className="w-full h-11 rounded-xl border-border/50 bg-secondary/30 hover:bg-secondary/60 text-foreground font-medium gap-2.5 transition-all"
+                >
+                  <Chrome className="h-4 w-4" />
+                  Entrar com Google
+                </Button>
+              </form>
+            </CardContent>
+
+            <CardFooter className="flex justify-center pt-4 pb-8 px-8">
+              <p className="text-sm text-muted-foreground">
+                {isSignUp ? "Já tem conta?" : "Ainda não tem conta?"}{" "}
+                <button
+                  onClick={() => setIsSignUp(!isSignUp)}
+                  className="text-primary font-semibold hover:underline underline-offset-2 transition-all"
+                >
+                  {isSignUp ? "Entrar" : "Criar conta"}
+                </button>
+              </p>
+            </CardFooter>
+          </Card>
+        </div>
       </div>
     </div>
   );
