@@ -10,6 +10,7 @@ import { useLeagueRanking } from "@/hooks/useLeagueRanking";
 import { useChallenges } from "@/hooks/useChallenges";
 import { useLeagueActivity } from "@/hooks/useLeagueActivity";
 import { cn } from "@/lib/utils";
+import HomeMealsBlock from "@/components/HomeMealsBlock";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -253,6 +254,9 @@ const Index = () => {
           )}
         </div>
       </motion.section>
+
+      {/* ── BLOCK: Today's Meals ── */}
+      <HomeMealsBlock />
 
       {/* ── BLOCK 4: League Activity Feed ── */}
       <motion.section
