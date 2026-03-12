@@ -68,7 +68,7 @@ const Login = () => {
           <motion.img
             src={logo}
             alt="NutriLeague"
-            className="w-28 h-28 rounded-3xl mb-5 object-contain"
+            className="w-44 h-44 rounded-3xl mb-5 object-contain"
             initial={{ scale: 0.7, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.15, type: "spring", stiffness: 150 }}
