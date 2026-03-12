@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Check, Loader2 } from "lucide-react";
+import { GradientButton } from "@/components/ui/gradient-button";
 import { mealCategories } from "@/lib/mockData";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
