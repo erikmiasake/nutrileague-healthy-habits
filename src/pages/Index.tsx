@@ -1,5 +1,7 @@
-import { Trophy, ChevronRight, TrendingUp } from "lucide-react";
+import { Trophy, ChevronRight, TrendingUp, Plus } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import nutrileagueLogo from "@/assets/nutrileague-logo.png";
 import StreakHero from "@/components/StreakHero";
 import { ConsistencyCard } from "@/components/ConsistencyCard";
 import { ProgressOverview } from "@/components/ui/dashboard-overview";
