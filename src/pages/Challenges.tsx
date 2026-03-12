@@ -12,6 +12,7 @@ import { useChallenges, type ChallengeWithProgress, type ChallengeType } from "@
 import LeagueChallengeCard from "@/components/LeagueChallengeCard";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { GradientButton } from "@/components/ui/gradient-button";
 
 const ChallengeCard = ({
   challenge,
