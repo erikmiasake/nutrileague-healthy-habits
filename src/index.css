@@ -103,31 +103,31 @@
 
   @property --color-1 {
     syntax: '<color>';
-    initial-value: #000;
+    initial-value: #1a0a00;
     inherits: false;
   }
 
   @property --color-2 {
     syntax: '<color>';
-    initial-value: #08012c;
+    initial-value: #3d1800;
     inherits: false;
   }
 
   @property --color-3 {
     syntax: '<color>';
-    initial-value: #4e1e40;
+    initial-value: #8b3a00;
     inherits: false;
   }
 
   @property --color-4 {
     syntax: '<color>';
-    initial-value: #70464e;
+    initial-value: #c75b00;
     inherits: false;
   }
 
   @property --color-5 {
     syntax: '<color>';
-    initial-value: #88394c;
+    initial-value: #e07020;
     inherits: false;
   }
 
@@ -139,13 +139,13 @@
 
   @property --border-color-1 {
     syntax: '<color>';
-    initial-value: hsla(340, 75%, 60%, 0.2);
+    initial-value: hsla(24, 100%, 60%, 0.25);
     inherits: true;
   }
 
   @property --border-color-2 {
     syntax: '<color>';
-    initial-value: hsla(340, 75%, 40%, 0.75);
+    initial-value: hsla(24, 100%, 45%, 0.75);
     inherits: true;
   }
 
@@ -232,14 +232,14 @@
     --pos-y: 91.51%;
     --spread-x: 120.24%;
     --spread-y: 103.18%;
-    --color-1: #c96287;
-    --color-2: #c66c64;
-    --color-3: #cc7d23;
-    --color-4: #37140a;
-    --color-5: #000;
+    --color-1: #e08530;
+    --color-2: #d06a10;
+    --color-3: #c75b00;
+    --color-4: #3d1800;
+    --color-5: #1a0a00;
     --border-angle: 190deg;
-    --border-color-1: hsla(340, 78%, 90%, 0.1);
-    --border-color-2: hsla(340, 75%, 90%, 0.6);
+    --border-color-1: hsla(24, 100%, 90%, 0.15);
+    --border-color-2: hsla(24, 100%, 70%, 0.6);
     --stop-1: 0%;
     --stop-2: 8.8%;
     --stop-3: 21.44%;
