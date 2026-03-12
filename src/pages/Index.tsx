@@ -167,25 +167,24 @@ const Index = () => {
               </button>
             </div>
           )}
-
-          {/* Main CTA */}
-          <button
-            onClick={() => navigate("/registrar")}
-            className={cn(
-              "w-full py-3 rounded-xl font-display font-bold text-sm",
-              "flex items-center justify-center gap-2",
-              "bg-primary text-primary-foreground",
-              "active:scale-[0.97] transition-all duration-150",
-            )}
-            style={{
-              boxShadow: "0 4px 14px hsl(var(--primary) / 0.3)",
-            }}
-          >
-            <Utensils size={16} strokeWidth={2.5} />
-            Registrar refeição
-          </button>
         </div>
       </motion.section>
+
+      {/* ── MAIN CTA: Registrar Refeição ── */}
+      <motion.div
+        className="my-5 flex justify-center"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4, delay: 0.12 }}
+      >
+        <GradientButton
+          onClick={() => navigate("/registrar")}
+          className="w-full py-4 text-sm font-display font-bold gap-2"
+        >
+          <Utensils size={18} strokeWidth={2.5} />
+          Registrar refeição
+        </GradientButton>
+      </motion.div>
 
       {/* ── BLOCK 3: Top 3 Ranking ── */}
       <motion.section
