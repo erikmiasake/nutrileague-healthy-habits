@@ -130,6 +130,18 @@ const LeagueDetail = () => {
           <button onClick={copyCode} className="text-muted-foreground hover:text-primary transition-colors">
             {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
           </button>
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({ title: `Liga ${league?.name}`, text: `Entre na minha liga no NutriLeague! Código: ${league?.invite_code}` });
+              } else {
+                copyCode();
+              }
+            }}
+            className="text-muted-foreground hover:text-primary transition-colors"
+          >
+            <Share2 size={14} />
+          </button>
         </div>
       </motion.div>
 
