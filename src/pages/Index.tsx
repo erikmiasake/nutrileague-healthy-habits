@@ -42,19 +42,17 @@ const Index = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        <div className="flex items-center gap-3">
-          <img
-            src={nutrileagueLogo}
-            alt="NutriLeague"
-            className="h-10 w-auto rounded-lg object-contain"
-          />
-          <div>
-            <p className="text-xs text-muted-foreground tracking-widest uppercase font-medium">Olá,</p>
-            <h1 className="text-xl font-display font-bold">
-              <ShimmerText variant="orange" duration={2.5} delay={2}>{userName}</ShimmerText>
-            </h1>
-          </div>
+        <div>
+          <p className="text-xs text-muted-foreground tracking-widest uppercase font-medium">Olá,</p>
+          <h1 className="text-xl font-display font-bold">
+            <ShimmerText variant="orange" duration={2.5} delay={2}>{userName}</ShimmerText>
+          </h1>
         </div>
+        <img
+          src={nutrileagueLogo}
+          alt="NutriLeague"
+          className="h-12 w-auto object-contain"
+        />
         <button
           onClick={() => navigate("/registrar")}
           className="w-11 h-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-md active:scale-90 transition-transform hover:scale-105"
