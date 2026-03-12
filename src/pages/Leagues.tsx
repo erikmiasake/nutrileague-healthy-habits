@@ -15,6 +15,7 @@ interface League {
 
 const Leagues = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [leagues, setLeagues] = useState<League[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
