@@ -2,6 +2,7 @@ import { Flame, Zap, Trophy, ChevronRight } from "lucide-react";
 import StreakRing from "@/components/StreakRing";
 import { ConsistencyCard } from "@/components/ConsistencyCard";
 import { ProgressOverview } from "@/components/ui/dashboard-overview";
+import { ShimmerText } from "@/components/ui/shimmer-text";
 import { currentUser, recentMeals, weekDays, weekActivity } from "@/lib/mockData";
 
 const consistencyData = {
