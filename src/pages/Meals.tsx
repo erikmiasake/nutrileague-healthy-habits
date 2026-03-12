@@ -91,12 +91,12 @@ const Meals = () => {
 
       const { data } = await supabase
         .from("meal_logs")
-        .select("id, meal_type, image_url, caption, created_at, date")
+        .select("id, meal_type, image_url, caption, created_at, date, calories, protein, carbs, fat, detected_foods")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(100);
 
-      setMeals(data || []);
+      setMeals((data as MealLog[]) || []);
       setLoading(false);
     };
     fetchMeals();
