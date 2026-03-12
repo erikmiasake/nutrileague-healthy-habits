@@ -61,20 +61,10 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Stats Row */}
-      <div className="grid grid-cols-3 gap-3 mb-6 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-        <div className="bg-card rounded-xl p-3 border border-border text-center">
-          <p className="text-xl font-display font-bold text-primary">{currentUser.level}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">Nível</p>
-        </div>
-        <div className="bg-card rounded-xl p-3 border border-border text-center">
-          <p className="text-xl font-display font-bold">{currentUser.mealsThisWeek}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">Refeições/semana</p>
-        </div>
-        <div className="bg-card rounded-xl p-3 border border-border text-center">
-          <p className="text-xl font-display font-bold text-xp">{currentUser.challengesCompleted}</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">Desafios</p>
-        </div>
+      {/* Progress Overview */}
+      <div className="mb-6 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+        <ProgressOverview />
+      </div>
       </div>
 
       {/* XP Progress */}
