@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Crown, Flame, Users, Copy, Check } from "lucide-react";
+import { ArrowLeft, Crown, Flame, Users, Copy, Check, Share2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -129,6 +129,18 @@ const LeagueDetail = () => {
           <code className="text-xs font-mono text-foreground tracking-widest flex-1">{league?.invite_code}</code>
           <button onClick={copyCode} className="text-muted-foreground hover:text-primary transition-colors">
             {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
+          </button>
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({ title: `Liga ${league?.name}`, text: `Entre na minha liga no NutriLeague! Código: ${league?.invite_code}` });
+              } else {
+                copyCode();
+              }
+            }}
+            className="text-muted-foreground hover:text-primary transition-colors"
+          >
+            <Share2 size={14} />
           </button>
         </div>
       </motion.div>
