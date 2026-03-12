@@ -1,6 +1,6 @@
-import { Flame, Zap, Trophy, ChevronRight, TrendingUp } from "lucide-react";
+import { Flame, Trophy, ChevronRight, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
-import StreakRing from "@/components/StreakRing";
+import StreakHero from "@/components/StreakHero";
 import { ConsistencyCard } from "@/components/ConsistencyCard";
 import { ProgressOverview } from "@/components/ui/dashboard-overview";
 import { ShimmerText } from "@/components/ui/shimmer-text";
