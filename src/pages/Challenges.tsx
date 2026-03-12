@@ -201,6 +201,7 @@ const CreateChallengeDialog = ({
 const Challenges = () => {
   const { personal, league, event, userLeagueIds, loading, joinChallenge } = useChallenges();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("personal");
   const [dialogOpen, setDialogOpen] = useState(false);
 
