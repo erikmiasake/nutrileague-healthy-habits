@@ -1,29 +1,23 @@
-import { Flame, CheckCircle2, AlertCircle, ChevronRight, Crown, Plus, Users } from "lucide-react";
+import { Flame, ChevronRight, Crown, Plus, Utensils, Trophy, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import nutrileagueLogo from "@/assets/nutrileague-logo.png";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useLeagueRanking } from "@/hooks/useLeagueRanking";
+import { useChallenges } from "@/hooks/useChallenges";
+import { useLeagueActivity } from "@/hooks/useLeagueActivity";
 import { cn } from "@/lib/utils";
-
-const getStreakMotivation = (streak: number): string => {
-  if (streak === 0) return "Comece hoje! Seu primeiro dia te espera 🚀";
-  if (streak === 1) return "Primeiro passo concluído 🚀";
-  if (streak < 7) return "Continue assim! Falta pouco para sua primeira semana 💪";
-  if (streak < 14) return "Uma semana completa! Você está voando 🔥";
-  if (streak < 21) return "Duas semanas! Isso já virou hábito 🏆";
-  if (streak < 30) return "Quase lá! A meta do mês está perto ⭐";
-  return "Meta do mês alcançada! Você é incrível 🎉";
-};
 
 const Index = () => {
   const navigate = useNavigate();
   const { currentStreak, userName, loggedToday, loading } = useDashboardData();
   const league = useLeagueRanking();
+  const { personal, league: leagueChallenges, event } = useChallenges();
+  const { activities, loading: activityLoading } = useLeagueActivity();
 
-  const goal = 30;
-  const progress = Math.min(currentStreak / goal, 1);
-  const streakLabel = currentStreak === 1 ? "dia" : "dias";
+  // Find the first active (joined but not completed) challenge
+  const allChallenges = [...personal, ...leagueChallenges, ...event];
+  const activeChallenge = allChallenges.find(c => c.progress && !c.progress.completed);
 
   if (loading) {
     return (
@@ -37,183 +31,186 @@ const Index = () => {
     );
   }
 
-  // Competition insight
-  const getCompetitionInsight = () => {
-    if (!league.userPosition || league.members.length <= 1) return null;
-    if (league.userPosition === 1) return "🏆 Você está liderando!";
-    const above = league.members[league.userPosition - 2];
-    if (!above) return null;
-    const diff = above.currentStreak - currentStreak;
-    if (diff <= 0) return "🔥 Você está empatado na liderança!";
-    return `Faltam ${diff} ${diff === 1 ? "dia" : "dias"} para ultrapassar ${above.name.split(" ")[0]}`;
-  };
+  const streakLabel = currentStreak === 1 ? "dia" : "dias";
 
   return (
     <div className="min-h-screen bg-background pb-24 px-4 pt-5 max-w-[430px] mx-auto">
       {/* ── HEADER ── */}
       <motion.header
-        className="mb-5 flex items-center justify-center gap-3 px-1"
+        className="mb-5 flex items-center justify-between"
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35 }}
+        transition={{ duration: 0.3 }}
       >
-        <div className="flex-1 min-w-0">
-          <h1 className="text-xl font-display font-bold text-foreground leading-tight">
+        <div className="min-w-0">
+          <p className="text-xs text-muted-foreground font-medium">Olá,</p>
+          <h1 className="text-lg font-display font-bold text-foreground leading-tight truncate">
             {userName}
           </h1>
-          {league.leagueName && (
-            <p className="text-[11px] text-muted-foreground font-medium mt-0.5">
-              Liga: {league.leagueName}
-            </p>
-          )}
         </div>
         <motion.img
           src={nutrileagueLogo}
           alt="NutriLeague"
-          className="h-10 w-auto object-contain opacity-80"
-          whileHover={{ scale: 1.15, rotate: 3 }}
+          className="h-9 w-auto object-contain opacity-80"
+          whileHover={{ scale: 1.1 }}
           transition={{ type: "spring", stiffness: 300, damping: 15 }}
         />
       </motion.header>
 
-      {/* ── BLOCK 1: Streak Card ── */}
+      {/* ── BLOCK 1: Streak + Position ── */}
       <motion.section
-        className="relative rounded-2xl border border-border bg-card overflow-hidden card-elevated mb-4"
-        initial={{ opacity: 0, y: 16 }}
+        className="rounded-2xl border border-border bg-card overflow-hidden card-elevated mb-4"
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, delay: 0.04 }}
+        transition={{ duration: 0.4, delay: 0.05 }}
       >
-        {/* Ambient glow */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div
-            className="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full blur-[70px] opacity-[0.08]"
-            style={{ background: "hsl(var(--primary))" }}
-          />
-        </div>
-
-        <div className="relative z-10 p-5">
-          {/* Streak number with glow */}
-          <div className="text-center mb-3">
-            <motion.div
-              className="inline-flex items-baseline gap-2"
-              initial={{ scale: 0.7, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.1, type: "spring", stiffness: 150 }}
+        <div className="p-4 flex items-center gap-4">
+          {/* Streak ring */}
+          <div className="relative flex-shrink-0">
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center"
+              style={{
+                background: `conic-gradient(hsl(var(--primary)) ${Math.min(currentStreak / 30, 1) * 360}deg, hsl(var(--secondary)) 0deg)`,
+              }}
             >
-              <Flame className="text-primary self-center" size={28} />
+              <div className="w-[52px] h-[52px] rounded-full bg-card flex items-center justify-center">
+                <div className="text-center">
+                  <Flame size={14} className="text-primary mx-auto" />
+                  <span className="text-lg font-display font-extrabold text-foreground leading-none">
+                    {currentStreak}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-display font-bold text-foreground">
+              {currentStreak} {streakLabel} de sequência
+            </p>
+            {league.leagueName && league.userPosition && (
+              <p className="text-xs text-muted-foreground mt-0.5">
+                <Crown size={10} className="inline text-xp mr-1" />
+                {league.userPosition}º lugar na {league.leagueName}
+              </p>
+            )}
+            <div className="flex items-center gap-1.5 mt-1.5">
               <span
-                className="text-5xl font-display font-extrabold text-foreground tracking-tighter"
-                style={{
-                  textShadow: "0 0 24px hsl(var(--primary) / 0.35), 0 0 48px hsl(var(--primary) / 0.15)",
-                }}
+                className={cn(
+                  "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold",
+                  loggedToday
+                    ? "bg-success/15 text-success"
+                    : "bg-destructive/15 text-destructive"
+                )}
               >
-                {currentStreak}
+                {loggedToday ? "✓ Hoje registrado" : "⚠ Falta registrar hoje"}
               </span>
-              <span className="text-base font-display font-bold text-muted-foreground">
-                {streakLabel}
-              </span>
-            </motion.div>
-            <p className="text-xs text-muted-foreground font-medium mt-0.5">Sequência atual</p>
-          </div>
-
-          {/* Today status */}
-          <motion.div
-            className={cn(
-              "flex items-center gap-2 rounded-xl px-3.5 py-2.5 mb-3",
-              loggedToday
-                ? "bg-success/8 border border-success/15"
-                : "bg-destructive/8 border border-destructive/15"
-            )}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.25 }}
-          >
-            {loggedToday ? (
-              <>
-                <CheckCircle2 size={16} className="text-success shrink-0" />
-                <span className="text-xs font-medium text-success">Refeição registrada hoje</span>
-              </>
-            ) : (
-              <>
-                <AlertCircle size={16} className="text-destructive shrink-0" />
-                <span className="text-xs font-medium text-destructive">Falta registrar refeição hoje</span>
-              </>
-            )}
-          </motion.div>
-
-          {/* Monthly progress */}
-          <div className="mb-2">
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-[11px] text-muted-foreground font-medium">Progresso do mês</span>
-              <span className="text-[11px] font-bold text-primary">{currentStreak} de {goal} dias</span>
-            </div>
-            <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-              <motion.div
-                className="h-full rounded-full"
-                style={{
-                  background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--streak-glow)))",
-                  boxShadow: "0 0 8px hsl(var(--primary) / 0.3)",
-                }}
-                initial={{ width: 0 }}
-                animate={{ width: `${progress * 100}%` }}
-                transition={{ duration: 0.9, delay: 0.35, ease: "easeOut" }}
-              />
             </div>
           </div>
-
-          {/* Streak motivation */}
-          <motion.p
-            className="text-[11px] text-center text-muted-foreground/70 font-medium"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            {getStreakMotivation(currentStreak)}
-          </motion.p>
         </div>
       </motion.section>
 
-      {/* ── BLOCK 2: Action Button ── */}
-      <motion.div
-        className="mb-5"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: 0.12 }}
-      >
-        <button
-          onClick={() => navigate("/registrar")}
-          className={cn(
-            "w-full py-3.5 rounded-2xl font-display font-bold text-[15px]",
-            "flex items-center justify-center gap-2",
-            "bg-primary text-primary-foreground",
-            "active:scale-[0.97] transition-all duration-150",
-          )}
-          style={{
-            boxShadow: "0 4px 16px hsl(var(--primary) / 0.3)",
-          }}
-        >
-          <Plus size={18} strokeWidth={2.5} />
-          Registrar refeição
-        </button>
-      </motion.div>
-
-      {/* ── BLOCK 3: League Ranking ── */}
+      {/* ── BLOCK 2: Active Challenge + CTA ── */}
       <motion.section
-        className="rounded-2xl border border-border bg-card overflow-hidden card-elevated"
-        initial={{ opacity: 0, y: 16 }}
+        className="rounded-2xl border border-border bg-card overflow-hidden card-elevated mb-4"
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, delay: 0.2 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
       >
         <div className="p-4">
           <div className="flex items-center gap-2 mb-3">
-            <Crown size={14} className="text-xp" />
-            <h2 className="text-sm font-display font-bold text-foreground">
-              {league.leagueName ? `Ranking — ${league.leagueName}` : "Ranking da liga"}
-            </h2>
+            <Trophy size={14} className="text-xp" />
+            <h2 className="text-sm font-display font-bold text-foreground">Desafio ativo</h2>
+          </div>
+
+          {activeChallenge ? (
+            <>
+              <p className="text-sm font-medium text-foreground mb-1">
+                {activeChallenge.title}
+              </p>
+              <p className="text-xs text-muted-foreground mb-3">
+                {activeChallenge.description}
+              </p>
+
+              {/* Progress bar */}
+              <div className="mb-3">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-[11px] text-muted-foreground font-medium">Progresso</span>
+                  <span className="text-[11px] font-bold text-primary">
+                    {activeChallenge.progress?.progress_days ?? 0} / {activeChallenge.duration_days} dias
+                  </span>
+                </div>
+                <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full rounded-full"
+                    style={{
+                      background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--streak-glow)))",
+                    }}
+                    initial={{ width: 0 }}
+                    animate={{
+                      width: `${Math.min(((activeChallenge.progress?.progress_days ?? 0) / activeChallenge.duration_days) * 100, 100)}%`,
+                    }}
+                    transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-3">
+              <p className="text-xs text-muted-foreground mb-2">Nenhum desafio ativo</p>
+              <button
+                onClick={() => navigate("/desafios")}
+                className="text-xs font-semibold text-primary hover:underline"
+              >
+                Ver desafios disponíveis →
+              </button>
+            </div>
+          )}
+
+          {/* Main CTA */}
+          <button
+            onClick={() => navigate("/registrar")}
+            className={cn(
+              "w-full py-3 rounded-xl font-display font-bold text-sm",
+              "flex items-center justify-center gap-2",
+              "bg-primary text-primary-foreground",
+              "active:scale-[0.97] transition-all duration-150",
+            )}
+            style={{
+              boxShadow: "0 4px 14px hsl(var(--primary) / 0.3)",
+            }}
+          >
+            <Utensils size={16} strokeWidth={2.5} />
+            Registrar refeição
+          </button>
+        </div>
+      </motion.section>
+
+      {/* ── BLOCK 3: Top 3 Ranking ── */}
+      <motion.section
+        className="rounded-2xl border border-border bg-card overflow-hidden card-elevated mb-4"
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.15 }}
+      >
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Crown size={14} className="text-xp" />
+              <h2 className="text-sm font-display font-bold text-foreground">Top 3 da liga</h2>
+            </div>
+            {league.members.length > 3 && (
+              <button
+                onClick={() => navigate(league.leagueId ? `/ligas/${league.leagueId}` : "/ligas")}
+                className="text-[11px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-0.5 transition-colors"
+              >
+                Ver todos <ChevronRight size={10} />
+              </button>
+            )}
           </div>
 
           {league.loading ? (
-            <div className="py-5 flex justify-center">
+            <div className="py-4 flex justify-center">
               <motion.div
                 className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full"
                 animate={{ rotate: 360 }}
@@ -221,8 +218,8 @@ const Index = () => {
               />
             </div>
           ) : league.members.length === 0 ? (
-            <div className="text-center py-5">
-              <p className="text-xs text-muted-foreground mb-3">Você ainda não está em uma liga</p>
+            <div className="text-center py-4">
+              <p className="text-xs text-muted-foreground mb-2">Você não está em uma liga</p>
               <button
                 onClick={() => navigate("/ligas")}
                 className="text-xs font-semibold text-primary hover:underline"
@@ -230,83 +227,91 @@ const Index = () => {
                 Entrar em uma liga →
               </button>
             </div>
-          ) : league.members.length === 1 ? (
-            <div className="text-center py-5">
-              <Users size={20} className="text-muted-foreground mx-auto mb-2" />
-              <p className="text-xs text-muted-foreground mb-3">Convide amigos para competir na sua liga</p>
-              <button
-                onClick={() => navigate(league.leagueId ? `/ligas/${league.leagueId}` : "/ligas")}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary/10 text-xs font-semibold text-primary hover:bg-primary/15 transition-colors"
-              >
-                Convidar amigos
-              </button>
-            </div>
           ) : (
-            <>
-              <div className="space-y-1.5 mb-3">
-                {league.members.slice(0, 5).map((member, i) => (
+            <div className="space-y-1.5">
+              {league.members.slice(0, 3).map((member, i) => {
+                const medals = ["🥇", "🥈", "🥉"];
+                return (
                   <motion.div
                     key={member.userId}
                     className={cn(
-                      "flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all",
+                      "flex items-center gap-2.5 px-3 py-2 rounded-lg",
                       member.isCurrentUser
                         ? "bg-primary/8 border border-primary/15"
                         : "bg-secondary/30"
                     )}
-                    initial={{ opacity: 0, x: -10 }}
+                    initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.25 + i * 0.04 }}
+                    transition={{ delay: 0.2 + i * 0.05 }}
                   >
-                    <span
-                      className={cn(
-                        "text-xs font-display font-bold w-5 text-center",
-                        i === 0 && "text-xp",
-                        i > 0 && "text-muted-foreground"
+                    <span className="text-sm">{medals[i]}</span>
+                    <p className="flex-1 text-xs font-medium text-foreground truncate">
+                      {member.name}
+                      {member.isCurrentUser && (
+                        <span className="text-primary text-[9px] ml-1 font-bold">(você)</span>
                       )}
-                    >
-                      {i + 1}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-foreground truncate">
-                        {member.name}
-                        {member.isCurrentUser && (
-                          <span className="text-primary text-[9px] ml-1 font-bold">(você)</span>
-                        )}
-                      </p>
-                    </div>
+                    </p>
                     <div className="flex items-center gap-1">
                       <Flame size={10} className="text-primary" />
-                      <span className="text-xs font-bold text-foreground">
-                        {member.currentStreak}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground">
-                        {member.currentStreak === 1 ? "dia" : "dias"}
-                      </span>
+                      <span className="text-xs font-bold text-foreground">{member.currentStreak}</span>
                     </div>
                   </motion.div>
-                ))}
-              </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </motion.section>
 
-              {/* Competition insight */}
-              {getCompetitionInsight() && (
-                <motion.p
-                  className="text-[11px] text-center text-muted-foreground font-medium mb-3 px-2"
+      {/* ── BLOCK 4: League Activity Feed ── */}
+      <motion.section
+        className="rounded-2xl border border-border bg-card overflow-hidden card-elevated"
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      >
+        <div className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Activity size={14} className="text-primary" />
+            <h2 className="text-sm font-display font-bold text-foreground">Atividade da liga</h2>
+          </div>
+
+          {activityLoading ? (
+            <div className="py-4 flex justify-center">
+              <motion.div
+                className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              />
+            </div>
+          ) : activities.length === 0 ? (
+            <p className="text-xs text-muted-foreground text-center py-4">
+              Nenhuma atividade recente
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {activities.map((item, i) => (
+                <motion.div
+                  key={item.id}
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-secondary/20"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.55 }}
+                  transition={{ delay: 0.25 + i * 0.04 }}
                 >
-                  {getCompetitionInsight()}
-                </motion.p>
-              )}
-
-              <button
-                onClick={() => navigate(league.leagueId ? `/ligas/${league.leagueId}` : "/ligas")}
-                className="w-full flex items-center justify-center gap-1 py-2 rounded-lg bg-secondary/50 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-              >
-                Ver ranking completo
-                <ChevronRight size={12} />
-              </button>
-            </>
+                  <span className="text-sm flex-shrink-0">
+                    {item.type === "meal" ? "🍽️" : "🔥"}
+                  </span>
+                  <p className="flex-1 text-xs text-foreground/80 font-medium truncate">
+                    {item.detail}
+                  </p>
+                  {item.timeAgo && (
+                    <span className="text-[10px] text-muted-foreground flex-shrink-0">
+                      {item.timeAgo}
+                    </span>
+                  )}
+                </motion.div>
+              ))}
+            </div>
           )}
         </div>
       </motion.section>
