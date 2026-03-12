@@ -37,31 +37,29 @@ const Index = () => {
     <div className="min-h-screen bg-background pb-24 px-4 pt-8 max-w-[430px] mx-auto">
       {/* Header */}
       <motion.header
-        className="mb-6 flex items-center justify-between"
+        className="mb-6 flex items-center gap-4"
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        <div>
-          <p className="text-[11px] text-muted-foreground tracking-widest uppercase font-medium">Olá,</p>
-          <h1 className="text-2xl font-display font-bold leading-tight">
+        <div className="flex-1">
+          <p className="text-[10px] text-muted-foreground tracking-widest uppercase font-medium mb-0.5">Olá,</p>
+          <h1 className="text-[22px] font-display font-bold leading-none">
             <ShimmerText variant="orange" duration={2.5} delay={2}>{userName}</ShimmerText>
           </h1>
         </div>
-        <div className="flex items-center gap-3">
-          <img
-            src={nutrileagueLogo}
-            alt="NutriLeague"
-            className="h-8 w-auto object-contain"
-          />
-          <button
-            onClick={() => navigate("/registrar")}
-            className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-md active:scale-90 transition-transform hover:scale-105"
-            aria-label="Registrar refeição"
-          >
-            <Plus size={20} strokeWidth={2.5} />
-          </button>
-        </div>
+        <img
+          src={nutrileagueLogo}
+          alt="NutriLeague"
+          className="h-7 w-auto object-contain opacity-90"
+        />
+        <button
+          onClick={() => navigate("/registrar")}
+          className="w-9 h-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md active:scale-90 transition-transform hover:scale-105"
+          aria-label="Registrar refeição"
+        >
+          <Plus size={18} strokeWidth={2.5} />
+        </button>
       </motion.header>
 
       {/* Streak Hero */}
