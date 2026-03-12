@@ -128,12 +128,38 @@ const Index = () => {
         <p className="text-[10px] text-muted-foreground mt-2">Faltam {currentUser.xpToNext - currentUser.xp} XP para o nível {currentUser.level + 1}</p>
       </motion.section>
 
+      {/* Analytics Dashboard */}
+      <motion.section
+        className="mb-6"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.33 }}
+      >
+        <h2 className="text-base font-display font-bold flex items-center gap-2 mb-4">
+          <BarChart3 size={16} className="text-primary" />
+          <ShimmerText variant="orange" duration={2.5} delay={3.2}>Análise semanal</ShimmerText>
+        </h2>
+        <AnalyticsDashboardCard
+          title="Refeições Saudáveis"
+          subtitle="Desempenho mensal"
+          data={[
+            { month: 'Jan', value: 18 },
+            { month: 'Fev', value: 22 },
+            { month: 'Mar', value: 19 },
+            { month: 'Abr', value: 25 },
+            { month: 'Mai', value: 28 },
+            { month: 'Jun', value: 24 },
+            { month: 'Jul', value: 30 },
+          ]}
+        />
+      </motion.section>
+
       {/* Consistency Card */}
       <motion.section
         className="mb-6"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.35 }}
+        transition={{ duration: 0.5, delay: 0.38 }}
       >
         <ConsistencyCard {...consistencyData} />
       </motion.section>
