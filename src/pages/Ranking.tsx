@@ -1,7 +1,7 @@
 import { Flame, Crown } from "lucide-react";
 import { leaderboard } from "@/lib/mockData";
 
-const medalColors = ["text-yellow-400", "text-gray-300", "text-amber-600"];
+const medalColors = ["text-xp", "text-muted-foreground", "text-primary"];
 
 const Ranking = () => {
   return (
