@@ -16,6 +16,7 @@ import Leagues from "./pages/Leagues";
 import NoLeagueOnboarding from "./pages/NoLeagueOnboarding";
 import LeagueDetail from "./pages/LeagueDetail";
 import Profile from "./pages/Profile";
+import Meals from "./pages/Meals";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
