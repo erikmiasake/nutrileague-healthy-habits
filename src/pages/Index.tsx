@@ -29,68 +29,28 @@ const Index = () => {
     <div className="min-h-screen bg-background pb-24 px-4 pt-8 max-w-[430px] mx-auto">
       {/* Header */}
       <motion.header
-        className="flex items-center justify-between mb-8"
+        className="mb-6"
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        <div>
-          <p className="text-xs text-muted-foreground tracking-widest uppercase font-medium">Olá,</p>
-          <h1 className="text-2xl font-display font-bold mt-1">
-            <ShimmerText variant="orange" duration={2.5} delay={2}>{currentUser.name}</ShimmerText>
-          </h1>
-        </div>
-        <motion.div
-          className="flex items-center gap-2 bg-secondary/80 backdrop-blur-sm rounded-full px-4 py-2.5 border border-border/50"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Zap size={14} className="text-xp" />
-          <span className="text-sm font-bold">{currentUser.xp} XP</span>
-        </motion.div>
+        <p className="text-xs text-muted-foreground tracking-widest uppercase font-medium">Olá,</p>
+        <h1 className="text-2xl font-display font-bold mt-1">
+          <ShimmerText variant="orange" duration={2.5} delay={2}>{currentUser.name}</ShimmerText>
+        </h1>
       </motion.header>
 
-      {/* Streak Card */}
-      <motion.section
-        className="bg-card rounded-2xl p-8 mb-6 flex flex-col items-center border border-border card-elevated relative overflow-hidden"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        {/* Subtle glow behind ring */}
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full opacity-20 blur-3xl pointer-events-none"
-          style={{ background: "hsl(var(--primary))" }}
-        />
-        <StreakRing days={currentUser.streak} />
-        <p className="text-sm text-muted-foreground mt-3 flex items-center gap-1.5 font-medium">
-          <Flame className="text-primary" size={14} />
-          Sequência atual
-        </p>
+      {/* Streak Hero */}
+      <StreakHero
+        streak={currentUser.streak}
+        goal={30}
+        xp={currentUser.xp}
+        level={currentUser.level}
+        weekDays={weekDays}
+        weekActivity={weekActivity}
+      />
 
-        {/* Week Activity */}
-        <div className="flex gap-2.5 mt-6">
-          {weekDays.map((day, i) => (
-            <motion.div
-              key={i}
-              className="flex flex-col items-center gap-1.5"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 + i * 0.05, duration: 0.3 }}
-            >
-              <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-200 ${
-                  weekActivity[i]
-                    ? "bg-primary text-primary-foreground shadow-[0_0_12px_hsl(var(--primary)/0.3)]"
-                    : "bg-secondary text-muted-foreground"
-                }`}
-              >
-                {day}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.section>
+      <div className="h-6" />
 
       {/* Progress Overview */}
       <motion.section
