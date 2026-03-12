@@ -14,25 +14,33 @@ export default function LoginPage() {
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
-      if (session) {
-        const { data: memberships } = await supabase
-          .from("league_members")
-          .select("league_id")
-          .eq("user_id", session.user.id)
-          .limit(1);
+  const redirectAfterAuth = async (userId: string) => {
+    const { data: memberships } = await supabase
+      .from("league_members")
+      .select("league_id")
+      .eq("user_id", userId)
+      .limit(1);
 
-        if (memberships && memberships.length > 0) {
-          navigate("/", { replace: true });
-        } else {
-          navigate("/onboarding", { replace: true });
-        }
+    if (memberships && memberships.length > 0) {
+      navigate("/", { replace: true });
+    } else {
+      navigate("/onboarding", { replace: true });
+    }
+  };
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        void redirectAfterAuth(session.user.id);
       }
     });
+
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/", { replace: true });
+      if (session) {
+        void redirectAfterAuth(session.user.id);
+      }
     });
+
     return () => subscription.unsubscribe();
   }, [navigate]);
 
@@ -68,10 +76,17 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = async () => {
+    if (loading) return;
+    setLoading(true);
+
     const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}/login`,
     });
-    if (error) toast.error("Erro ao entrar com Google.");
+
+    if (error) {
+      toast.error("Erro ao entrar com Google.");
+      setLoading(false);
+    }
   };
 
   const handleResendEmail = async () => {
