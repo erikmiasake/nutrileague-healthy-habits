@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import RegisterMeal from "./pages/RegisterMeal";
 import Challenges from "./pages/Challenges";
 import Leagues from "./pages/Leagues";
+import NoLeagueOnboarding from "./pages/NoLeagueOnboarding";
 import LeagueDetail from "./pages/LeagueDetail";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -58,6 +59,7 @@ const App = () => {
             <Route path="/" element={<ProtectedRoute session={session}><Index /></ProtectedRoute>} />
             <Route path="/registrar" element={<ProtectedRoute session={session}><RegisterMeal /></ProtectedRoute>} />
             <Route path="/desafios" element={<ProtectedRoute session={session}><Challenges /></ProtectedRoute>} />
+            <Route path="/onboarding" element={<ProtectedRoute session={session}><NoLeagueOnboarding /></ProtectedRoute>} />
             <Route path="/ligas" element={<ProtectedRoute session={session}><Leagues /></ProtectedRoute>} />
             <Route path="/ligas/:id" element={<ProtectedRoute session={session}><LeagueDetail /></ProtectedRoute>} />
             <Route path="/perfil" element={<ProtectedRoute session={session}><Profile /></ProtectedRoute>} />

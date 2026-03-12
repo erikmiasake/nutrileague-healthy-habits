@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, LogIn, Users, Crown, Copy, Check, ArrowRight, X, Share2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +15,7 @@ interface League {
 
 const Leagues = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [leagues, setLeagues] = useState<League[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -60,6 +61,22 @@ const Leagues = () => {
   };
 
   useEffect(() => { fetchLeagues(); }, []);
+
+  // Handle navigation state from onboarding
+  useEffect(() => {
+    const state = location.state as { action?: string } | null;
+    if (state?.action === "create") {
+      setShowCreate(true);
+      setShowJoin(false);
+    } else if (state?.action === "join") {
+      setShowJoin(true);
+      setShowCreate(false);
+    }
+    // Clear location state
+    if (state?.action) {
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const handleCreate = async () => {
     if (!newName.trim() || submitting) return;
