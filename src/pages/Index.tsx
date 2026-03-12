@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import nutrileagueLogo from "@/assets/nutrileague-logo.png";
 import AppSidebar from "@/components/AppSidebar";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import TextHoverEffect from "@/components/ui/shimmer-bg-text";
 import { useLeagueRanking } from "@/hooks/useLeagueRanking";
 import { useChallenges } from "@/hooks/useChallenges";
 import { useLeagueActivity } from "@/hooks/useLeagueActivity";
