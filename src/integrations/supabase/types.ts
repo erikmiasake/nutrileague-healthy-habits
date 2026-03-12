@@ -151,30 +151,45 @@ export type Database = {
       }
       meal_logs: {
         Row: {
+          calories: number | null
           caption: string | null
+          carbs: number | null
           created_at: string
           date: string
+          detected_foods: string[] | null
+          fat: number | null
           id: string
           image_url: string | null
           meal_type: string
+          protein: number | null
           user_id: string
         }
         Insert: {
+          calories?: number | null
           caption?: string | null
+          carbs?: number | null
           created_at?: string
           date?: string
+          detected_foods?: string[] | null
+          fat?: number | null
           id?: string
           image_url?: string | null
           meal_type?: string
+          protein?: number | null
           user_id: string
         }
         Update: {
+          calories?: number | null
           caption?: string | null
+          carbs?: number | null
           created_at?: string
           date?: string
+          detected_foods?: string[] | null
+          fat?: number | null
           id?: string
           image_url?: string | null
           meal_type?: string
+          protein?: number | null
           user_id?: string
         }
         Relationships: []
