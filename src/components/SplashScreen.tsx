@@ -10,7 +10,7 @@ const SplashScreen = ({ onFinish }: SplashScreenProps) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(false), 1800);
+    const timer = setTimeout(() => setVisible(false), 4600);
     return () => clearTimeout(timer);
   }, []);
 
@@ -22,24 +22,16 @@ const SplashScreen = ({ onFinish }: SplashScreenProps) => {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background"
         >
           <motion.img
             src={logo}
             alt="NutriLeague"
-            className="w-24 h-24 mb-6"
-            initial={{ opacity: 0, scale: 0.8 }}
+            className="w-44 h-44"
+            initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
           />
-          <motion.span
-            className="text-2xl font-display font-bold text-foreground tracking-tight"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            NutriLeague
-          </motion.span>
         </motion.div>
       )}
     </AnimatePresence>
