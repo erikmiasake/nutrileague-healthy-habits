@@ -4,18 +4,22 @@ import React from 'react';
 interface TextHoverEffectProps {
   text?: string;
   className?: string;
+  icon?: string;
 }
 
-export default function TextHoverEffect({ text = "Hover Me", className = "" }: TextHoverEffectProps) {
+export default function TextHoverEffect({ text = "Hover Me", className = "", icon }: TextHoverEffectProps) {
   return (
-    <div className={`relative inline-block group cursor-pointer ${className}`}>
-      <span className="relative z-10 text-4xl font-display font-extrabold text-foreground transition-colors duration-300 group-hover:text-primary-foreground/90 px-4 py-2">
+    <div className={`relative inline-flex items-center group cursor-pointer ${className}`}>
+      {icon && (
+        <img src={icon} alt="" className="relative z-10 h-7 w-auto object-contain mr-1.5" />
+      )}
+      <span className="relative z-10 text-base font-display font-extrabold text-foreground transition-colors duration-300 group-hover:text-primary-foreground/90 px-2.5 py-1.5">
         {text}
       </span>
       <div
         className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-shimmer -z-0"
         style={{
-          background: "linear-gradient(90deg, hsl(24 60% 35%) 0%, hsl(24 70% 45%) 50%, hsl(24 60% 35%) 100%)",
+          background: "linear-gradient(90deg, hsl(24 80% 30% / 0.85) 0%, hsl(24 90% 40% / 0.85) 50%, hsl(24 80% 30% / 0.85) 100%)",
           backgroundSize: "200% 100%",
         }}
       />
