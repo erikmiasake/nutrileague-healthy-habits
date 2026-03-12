@@ -1,9 +1,10 @@
-import { Home, Trophy, BarChart3, User } from "lucide-react";
+import { Home, Trophy, BarChart3, User, Users } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const tabs = [
   { icon: Home, label: "Início", path: "/" },
   { icon: Trophy, label: "Desafios", path: "/desafios" },
+  { icon: Users, label: "Ligas", path: "/ligas" },
   { icon: BarChart3, label: "Ranking", path: "/ranking" },
   { icon: User, label: "Perfil", path: "/perfil" },
 ];
@@ -23,9 +24,9 @@ const BottomNav = () => {
             <button
               key={tab.path}
               onClick={() => navigate(tab.path)}
-              className={`flex flex-col items-center gap-1 py-3 px-5 transition-colors ${
-                i === 1 ? "mr-6" : i === 2 ? "ml-6" : ""
-              } ${active ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+              className={`flex flex-col items-center gap-1 py-3 px-3 transition-colors ${
+                active ? "text-primary" : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               <tab.icon size={20} strokeWidth={active ? 2.5 : 1.8} />
               <span className="text-[10px] font-semibold">{tab.label}</span>

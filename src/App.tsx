@@ -11,6 +11,8 @@ import Login from "./pages/Login";
 import RegisterMeal from "./pages/RegisterMeal";
 import Challenges from "./pages/Challenges";
 import Ranking from "./pages/Ranking";
+import Leagues from "./pages/Leagues";
+import LeagueDetail from "./pages/LeagueDetail";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
@@ -34,6 +36,8 @@ const App = () => {
             <Route path="/registrar" element={<RegisterMeal />} />
             <Route path="/desafios" element={<Challenges />} />
             <Route path="/ranking" element={<Ranking />} />
+            <Route path="/ligas" element={<Leagues />} />
+            <Route path="/ligas/:id" element={<LeagueDetail />} />
             <Route path="/perfil" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
