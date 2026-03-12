@@ -148,6 +148,9 @@ const LeagueDetail = () => {
         </div>
       </motion.div>
 
+      {/* League Challenges */}
+      <LeagueChallengesSection leagueId={id!} />
+
       {/* Ranking */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <h2 className="text-base font-display font-bold mb-4 flex items-center gap-2">
