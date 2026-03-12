@@ -166,18 +166,19 @@ const Leagues = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <button
+        <GradientButton
           onClick={() => { setShowCreate(true); setShowJoin(false); }}
-          className="flex-1 h-12 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 text-sm active:scale-95 transition-all"
+          className="flex-1 h-12 rounded-xl text-sm gap-2"
         >
           <Plus size={16} /> Criar liga
-        </button>
-        <button
+        </GradientButton>
+        <GradientButton
+          variant="variant"
           onClick={() => { setShowJoin(true); setShowCreate(false); }}
-          className="flex-1 h-12 rounded-xl bg-secondary text-foreground font-semibold flex items-center justify-center gap-2 text-sm active:scale-95 transition-all border border-border"
+          className="flex-1 h-12 rounded-xl text-sm gap-2"
         >
           <LogIn size={16} /> Entrar com código
-        </button>
+        </GradientButton>
       </motion.div>
 
       {/* Create modal */}
