@@ -230,13 +230,13 @@ const Leagues = () => {
               placeholder="Código de convite"
               className="w-full h-11 rounded-xl bg-secondary px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary transition mb-3 font-mono tracking-widest"
             />
-            <button
+            <GradientButton
               onClick={handleJoin}
               disabled={!joinCode.trim() || submitting}
-              className="w-full h-11 rounded-xl bg-primary text-primary-foreground font-semibold text-sm disabled:opacity-40 active:scale-95 transition-all"
+              className="w-full h-11 rounded-xl text-sm disabled:opacity-40"
             >
               {submitting ? "Entrando..." : "Entrar"}
-            </button>
+            </GradientButton>
           </motion.div>
         )}
       </AnimatePresence>

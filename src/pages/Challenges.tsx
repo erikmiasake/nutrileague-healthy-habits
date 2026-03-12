@@ -186,13 +186,13 @@ const CreateChallengeDialog = ({
               <Input type="number" value={xp} onChange={(e) => setXp(e.target.value)} min={0} className="rounded-xl" />
             </div>
           </div>
-          <button
+          <GradientButton
             onClick={handleCreate}
             disabled={submitting}
-            className="w-full bg-primary text-primary-foreground font-bold text-sm py-2.5 rounded-xl active:scale-95 transition-transform disabled:opacity-50"
+            className="w-full text-sm py-2.5 rounded-xl disabled:opacity-50"
           >
             {submitting ? "Criando..." : "Criar desafio"}
-          </button>
+          </GradientButton>
         </div>
       </DialogContent>
     </Dialog>

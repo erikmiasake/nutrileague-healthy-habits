@@ -34,22 +34,22 @@ const NoLeagueOnboarding = () => {
 
         {/* Buttons */}
         <div className="w-full space-y-3">
-          <Button
+          <GradientButton
             onClick={() => navigate("/ligas", { state: { action: "create" } })}
             className="w-full h-13 rounded-xl font-semibold text-[15px] gap-2.5"
           >
             <Plus size={18} />
             Criar uma liga
-          </Button>
+          </GradientButton>
 
-          <Button
-            variant="outline"
+          <GradientButton
+            variant="variant"
             onClick={() => navigate("/ligas", { state: { action: "join" } })}
-            className="w-full h-13 rounded-xl font-semibold text-[15px] gap-2.5 border-border/60 bg-secondary/30 hover:bg-secondary/60"
+            className="w-full h-13 rounded-xl font-semibold text-[15px] gap-2.5"
           >
             <LogIn size={18} />
             Entrar em uma liga
-          </Button>
+          </GradientButton>
         </div>
       </motion.div>
     </div>
