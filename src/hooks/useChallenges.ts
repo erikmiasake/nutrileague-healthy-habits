@@ -38,6 +38,21 @@ export interface LeagueChallengeRanking {
 export function useChallenges() {
   const queryClient = useQueryClient();
 
+  // Fetch user's league IDs
+  const userLeaguesQuery = useQuery({
+    queryKey: ["user_leagues"],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from("league_members")
+        .select("league_id")
+        .eq("user_id", user.id);
+      if (error) throw error;
+      return data.map((d) => d.league_id);
+    },
+  });
+
   const challengesQuery = useQuery({
     queryKey: ["challenges"],
     queryFn: async () => {
@@ -82,7 +97,8 @@ export function useChallenges() {
     },
   });
 
-  // Merge challenges with progress
+  // Auto-join league challenges
+  const userLeagueIds = userLeaguesQuery.data ?? [];
   const challenges = challengesQuery.data ?? [];
   const progress = progressQuery.data ?? [];
 
@@ -92,14 +108,28 @@ export function useChallenges() {
   }));
 
   const personal = withProgress.filter((c) => c.type === "personal");
-  const league = withProgress.filter((c) => c.type === "league");
+  // Only show league challenges that belong to user's leagues
+  const league = withProgress.filter(
+    (c) => c.type === "league" && c.league_id && userLeagueIds.includes(c.league_id)
+  );
   const event = withProgress.filter((c) => c.type === "event");
+
+  // Auto-join league challenges the user hasn't joined yet
+  const leagueNotJoined = league.filter((c) => !c.progress);
+  if (leagueNotJoined.length > 0 && !joinChallenge.isPending) {
+    // Auto-join first unjoinned one at a time
+    const first = leagueNotJoined[0];
+    if (first) {
+      joinChallenge.mutate(first.id);
+    }
+  }
 
   return {
     personal,
     league,
     event,
-    loading: challengesQuery.isLoading || progressQuery.isLoading,
+    userLeagueIds,
+    loading: challengesQuery.isLoading || progressQuery.isLoading || userLeaguesQuery.isLoading,
     joinChallenge,
   };
 }
@@ -117,8 +147,9 @@ export function useLeagueChallengeRanking(challengeId: string | null) {
         .order("progress_days", { ascending: false });
       if (error) throw error;
 
-      // Fetch profile names
       const userIds = data.map((d) => d.user_id);
+      if (userIds.length === 0) return [];
+      
       const { data: profiles } = await supabase
         .from("profiles")
         .select("user_id, name")
