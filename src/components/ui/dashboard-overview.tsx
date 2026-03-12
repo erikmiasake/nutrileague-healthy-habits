@@ -70,7 +70,7 @@ const ExampleUsage = () => {
         <DashboardMetricCard title="Revenue" value="$5.6M" icon={DollarSign} trendChange="1.2%" trendType="down" />
         <DashboardMetricCard title="Avg. Session" value="4m 32s" icon={Clock} trendChange="0.0%" trendType="neutral" />
         <DashboardMetricCard title="Incidents" value="3" icon={AlertCircle} trendChange="5.0%" trendType="up" />
-does      </div>
+</div>
     </div>
   );
 };
