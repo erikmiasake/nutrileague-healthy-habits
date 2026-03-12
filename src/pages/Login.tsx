@@ -205,9 +205,18 @@ export default function LoginCardSection() {
         <div className="card-animate">
           <Card className="border-border/40 bg-card/70 backdrop-blur-2xl shadow-[0_8px_40px_-12px_hsl(var(--primary)/0.15)] rounded-2xl overflow-hidden">
             <CardHeader className="text-center pt-8 pb-2 px-8">
-              <CardTitle className="text-[1.65rem] font-display font-bold leading-tight tracking-tight">
-                {isSignUp ? "Criar conta" : "Bem-vindo ao NutriLeague"}
-              </CardTitle>
+              {isSignUp ? (
+                <CardTitle className="text-[1.65rem] font-display font-bold leading-tight tracking-tight">
+                  Criar conta
+                </CardTitle>
+              ) : (
+                <img
+                  src={logo}
+                  alt="NutriLeague"
+                  className="w-44 h-44 rounded-2xl object-contain mx-auto"
+                  style={{ filter: "drop-shadow(0 0 30px hsl(var(--primary) / 0.35))" }}
+                />
+              )}
               <CardDescription className="text-muted-foreground text-sm mt-2">
                 {isSignUp
                   ? "Crie sua conta e comece a jogar"
