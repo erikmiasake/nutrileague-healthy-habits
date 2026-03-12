@@ -17,7 +17,7 @@ const Ranking = () => {
           return (
             <div key={user.rank} className="flex flex-col items-center">
               <div className={`relative ${isFirst ? "mb-2" : ""}`}>
-                {isFirst && <Crown size={18} className="text-yellow-400 absolute -top-5 left-1/2 -translate-x-1/2" />}
+                {isFirst && <Crown size={18} className="text-xp absolute -top-5 left-1/2 -translate-x-1/2" />}
                 <div
                   className={`rounded-full flex items-center justify-center font-display font-bold text-sm border-2 ${
                     isFirst ? "w-16 h-16 border-primary bg-primary/20 text-primary" : "w-12 h-12 border-border bg-secondary text-foreground"
