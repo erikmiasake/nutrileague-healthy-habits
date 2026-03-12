@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Trophy, Zap, Star, Crown, Flame, Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
