@@ -29,46 +29,75 @@ type MealLog = {
   caption: string | null;
   created_at: string;
   date: string;
+  calories: number | null;
+  protein: number | null;
+  carbs: number | null;
+  fat: number | null;
+  detected_foods: string[] | null;
 };
 
 const MealCard = ({ meal }: { meal: MealLog }) => {
   const meta = mealMeta[meal.meal_type] || mealMeta.snack;
   const time = format(new Date(meal.created_at), "HH:mm");
+  const hasNutrition = meal.calories != null;
 
   return (
     <motion.div
-      className="flex gap-3 p-3 rounded-xl bg-secondary/30 border border-border/40"
+      className="rounded-xl bg-secondary/30 border border-border/40 overflow-hidden"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      {/* Image */}
-      <div className="w-16 h-16 rounded-lg overflow-hidden bg-secondary/50 flex-shrink-0">
-        {meal.image_url ? (
-          <img
-            src={meal.image_url}
-            alt={meta.label}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-            <ImageOff size={20} />
+      <div className="flex gap-3 p-3">
+        {/* Image */}
+        <div className="w-16 h-16 rounded-lg overflow-hidden bg-secondary/50 flex-shrink-0">
+          {meal.image_url ? (
+            <img src={meal.image_url} alt={meta.label} className="w-full h-full object-cover" loading="lazy" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+              <ImageOff size={20} />
+            </div>
+          )}
+        </div>
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 mb-0.5">
+            <span className="text-sm">{meta.emoji}</span>
+            <p className="text-sm font-display font-bold text-foreground">{meta.label}</p>
+          </div>
+          <p className="text-xs text-muted-foreground">{time}</p>
+          {meal.caption && (
+            <p className="text-xs text-foreground/70 mt-1 truncate">{meal.caption}</p>
+          )}
+        </div>
+        {hasNutrition && (
+          <div className="flex-shrink-0 text-right">
+            <p className="text-sm font-display font-bold text-primary">{meal.calories}</p>
+            <p className="text-[10px] text-muted-foreground">kcal</p>
           </div>
         )}
       </div>
-
-      {/* Info */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 mb-0.5">
-          <span className="text-sm">{meta.emoji}</span>
-          <p className="text-sm font-display font-bold text-foreground">{meta.label}</p>
+      {hasNutrition && (
+        <div className="px-3 pb-3 pt-0">
+          <div className="flex gap-3 text-[10px] font-medium">
+            <span className="text-foreground/70">P: <span className="text-foreground font-bold">{meal.protein}g</span></span>
+            <span className="text-foreground/70">C: <span className="text-foreground font-bold">{meal.carbs}g</span></span>
+            <span className="text-foreground/70">G: <span className="text-foreground font-bold">{meal.fat}g</span></span>
+          </div>
+          {meal.detected_foods && meal.detected_foods.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1.5">
+              {meal.detected_foods.slice(0, 4).map((food, i) => (
+                <span key={i} className="px-1.5 py-0.5 rounded-full bg-primary/8 text-[9px] font-medium text-primary/80 border border-primary/10">
+                  {food}
+                </span>
+              ))}
+              {meal.detected_foods.length > 4 && (
+                <span className="text-[9px] text-muted-foreground self-center">+{meal.detected_foods.length - 4}</span>
+              )}
+            </div>
+          )}
         </div>
-        <p className="text-xs text-muted-foreground">{time}</p>
-        {meal.caption && (
-          <p className="text-xs text-foreground/70 mt-1 truncate">{meal.caption}</p>
-        )}
-      </div>
+      )}
     </motion.div>
   );
 };
@@ -86,12 +115,12 @@ const Meals = () => {
 
       const { data } = await supabase
         .from("meal_logs")
-        .select("id, meal_type, image_url, caption, created_at, date")
+        .select("id, meal_type, image_url, caption, created_at, date, calories, protein, carbs, fat, detected_foods")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(100);
 
-      setMeals(data || []);
+      setMeals((data as MealLog[]) || []);
       setLoading(false);
     };
     fetchMeals();
