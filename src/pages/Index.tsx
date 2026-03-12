@@ -1,4 +1,5 @@
-import { Flame, ChevronRight, Crown, Plus, Utensils, Trophy, Activity } from "lucide-react";
+import { Flame, ChevronRight, Crown, Utensils, Trophy, Activity } from "lucide-react";
+import { GradientButton } from "@/components/ui/gradient-button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import nutrileagueLogo from "@/assets/nutrileague-logo.png";
