@@ -2,7 +2,6 @@ import * as React from "react";
 import { motion, useSpring, useTransform, useInView } from "framer-motion";
 import { Flame, Users, TrendingUp, Share2, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -47,18 +46,20 @@ const AnimatedNumber = ({ value }: { value: number }) => {
 
 export const ConsistencyCard = React.forwardRef<HTMLDivElement, ConsistencyCardProps>(
   ({ className, currentStreak, percentageChange, leagueAverage, friends, levels, ...props }, ref) => {
-    const cardRef = React.useRef(null);
     const totalLevelValue = levels[levels.length - 1].value;
 
     return (
-      <Card ref={ref} className={cn("w-full border-border", className)} {...props}>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <div className="flex items-center gap-2">
-            <Flame size={18} className="text-primary" />
-            <CardTitle className="text-base font-semibold font-display">Consistência</CardTitle>
+      <div ref={ref} className={cn("bg-card rounded-2xl border border-border p-5 card-elevated", className)} {...props}>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center">
+              <Flame size={16} className="text-primary" />
+            </div>
+            <h3 className="text-base font-display font-bold">Consistência</h3>
           </div>
           <Select defaultValue="week">
-            <SelectTrigger className="w-auto h-8 text-xs gap-1.5 bg-secondary border-border">
+            <SelectTrigger className="w-auto h-8 text-xs gap-1.5 bg-secondary border-0 rounded-xl">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -66,82 +67,80 @@ export const ConsistencyCard = React.forwardRef<HTMLDivElement, ConsistencyCardP
               <SelectItem value="month">Mês</SelectItem>
             </SelectContent>
           </Select>
-        </CardHeader>
+        </div>
 
-        <CardContent ref={cardRef} className="space-y-5">
-          {/* Main Metric */}
-          <div className="flex items-start justify-between">
-            <div className="space-y-1">
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-4xl font-bold font-display text-primary">
-                  <AnimatedNumber value={currentStreak} />
-                </span>
-                <span className="text-sm text-muted-foreground font-medium">dias</span>
-              </div>
-              <p className={cn(
-                "text-xs font-medium flex items-center gap-1",
-                percentageChange > 0 ? "text-success" : "text-destructive"
-              )}>
-                <TrendingUp size={12} />
-                {percentageChange > 0 ? "+" : ""}{percentageChange}% em relação à última semana
-              </p>
+        {/* Main Metric */}
+        <div className="flex items-start justify-between mb-6">
+          <div className="space-y-1">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-4xl font-display font-bold text-primary">
+                <AnimatedNumber value={currentStreak} />
+              </span>
+              <span className="text-sm text-muted-foreground font-medium">dias</span>
             </div>
-            <div className="flex flex-col items-end">
-              <span className="text-[10px] text-muted-foreground">Média da liga</span>
-              <span className="text-sm font-semibold">{leagueAverage} dias</span>
-            </div>
-          </div>
-
-          {/* Friends */}
-          <div className="space-y-2.5">
-            <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-              <Users size={12} />
-              Amigos da liga
+            <p className={cn(
+              "text-xs font-medium flex items-center gap-1",
+              percentageChange > 0 ? "text-success" : "text-destructive"
+            )}>
+              <TrendingUp size={12} />
+              {percentageChange > 0 ? "+" : ""}{percentageChange}% em relação à última semana
             </p>
-            {friends.map((friend, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary text-xs font-semibold">
-                  {friend.avatar}
-                </div>
-                <span className="text-sm flex-1">{friend.name}</span>
-                <span className="text-sm font-medium text-primary">{friend.streak} dias</span>
+          </div>
+          <div className="flex flex-col items-end bg-secondary/60 rounded-xl px-3 py-2">
+            <span className="text-[10px] text-muted-foreground">Média da liga</span>
+            <span className="text-sm font-bold">{leagueAverage} dias</span>
+          </div>
+        </div>
+
+        {/* Friends */}
+        <div className="space-y-3 mb-6">
+          <p className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5 uppercase tracking-wide">
+            <Users size={12} />
+            Amigos da liga
+          </p>
+          {friends.map((friend, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary text-[11px] font-bold">
+                {friend.avatar}
               </div>
+              <span className="text-sm flex-1 font-medium">{friend.name}</span>
+              <span className="text-sm font-bold text-primary">{friend.streak} dias</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Consistency Levels */}
+        <div className="space-y-2 mb-6">
+          <div className="flex items-center gap-1.5">
+            <TrendingUp size={12} className="text-muted-foreground" />
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Níveis de consistência</span>
+          </div>
+          <div className="flex w-full h-2 rounded-full overflow-hidden">
+            {levels.map((level, i) => {
+              const prevValue = i > 0 ? levels[i - 1].value : 0;
+              const width = ((level.value - prevValue) / totalLevelValue) * 100;
+              return <div key={i} className={cn("h-full", level.color)} style={{ width: `${width}%` }} />;
+            })}
+          </div>
+          <div className="flex justify-between">
+            {levels.map((level, i) => (
+              <span key={i} className="text-[10px] text-muted-foreground font-medium">{level.label}</span>
             ))}
           </div>
+        </div>
 
-          {/* Consistency Levels */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-1.5">
-              <TrendingUp size={12} className="text-muted-foreground" />
-              <span className="text-xs font-medium text-muted-foreground">Níveis de consistência</span>
-            </div>
-            <div className="flex w-full h-2 rounded-full overflow-hidden">
-              {levels.map((level, i) => {
-                const prevValue = i > 0 ? levels[i - 1].value : 0;
-                const width = ((level.value - prevValue) / totalLevelValue) * 100;
-                return <div key={i} className={cn("h-full", level.color)} style={{ width: `${width}%` }} />;
-              })}
-            </div>
-            <div className="flex justify-between">
-              {levels.map((level, i) => (
-                <span key={i} className="text-[10px] text-muted-foreground">{level.label}</span>
-              ))}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1 text-xs">
-              <Share2 size={14} className="mr-1.5" />
-              Compartilhar progresso
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1 text-xs">
-              <Trophy size={14} className="mr-1.5" />
-              Ver ranking completo
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          <Button variant="secondary" size="sm" className="flex-1 text-xs rounded-xl h-9">
+            <Share2 size={14} className="mr-1.5" />
+            Compartilhar
+          </Button>
+          <Button variant="secondary" size="sm" className="flex-1 text-xs rounded-xl h-9">
+            <Trophy size={14} className="mr-1.5" />
+            Ver ranking
+          </Button>
+        </div>
+      </div>
     );
   }
 );

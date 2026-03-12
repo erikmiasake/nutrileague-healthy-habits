@@ -1,4 +1,4 @@
-import { Flame, Zap, Trophy } from "lucide-react";
+import { Flame, Zap, Trophy, ChevronRight } from "lucide-react";
 import StreakRing from "@/components/StreakRing";
 import { ConsistencyCard } from "@/components/ConsistencyCard";
 import { ProgressOverview } from "@/components/ui/dashboard-overview";
@@ -20,35 +20,36 @@ const consistencyData = {
     { label: "Em alta", value: 30, color: "bg-success" },
   ],
 };
+
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background pb-24 px-4 pt-6 max-w-[430px] mx-auto">
+    <div className="min-h-screen bg-background pb-24 px-4 pt-8 max-w-[430px] mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 animate-slide-up">
+      <header className="flex items-center justify-between mb-8 animate-slide-up">
         <div>
-          <p className="text-sm text-muted-foreground">Olá,</p>
-          <h1 className="text-xl font-display font-bold">{currentUser.name} 👋</h1>
+          <p className="text-xs text-muted-foreground tracking-wide uppercase">Olá,</p>
+          <h1 className="text-xl font-display font-bold mt-0.5">{currentUser.name} 👋</h1>
         </div>
-        <div className="flex items-center gap-2 bg-secondary rounded-full px-3 py-1.5">
+        <div className="flex items-center gap-2 bg-secondary/80 rounded-full px-4 py-2">
           <Zap size={14} className="text-xp" />
           <span className="text-sm font-semibold">{currentUser.xp} XP</span>
         </div>
-      </div>
+      </header>
 
       {/* Streak Card */}
-      <div className="bg-card rounded-2xl p-6 mb-4 flex flex-col items-center border border-border animate-slide-up">
+      <section className="bg-card rounded-2xl p-8 mb-6 flex flex-col items-center border border-border card-elevated animate-slide-up">
         <StreakRing days={currentUser.streak} />
-        <p className="text-sm text-muted-foreground mt-2">
-          <Flame className="inline text-primary mr-1" size={14} />
+        <p className="text-sm text-muted-foreground mt-3 flex items-center gap-1.5">
+          <Flame className="text-primary" size={14} />
           Sequência atual
         </p>
 
         {/* Week Activity */}
-        <div className="flex gap-3 mt-4">
+        <div className="flex gap-2.5 mt-6">
           {weekDays.map((day, i) => (
-            <div key={i} className="flex flex-col items-center gap-1">
+            <div key={i} className="flex flex-col items-center gap-1.5">
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
                   weekActivity[i]
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary text-muted-foreground"
@@ -59,54 +60,60 @@ const Index = () => {
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* Progress Overview */}
-      <div className="mb-6 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+      <section className="mb-6 animate-slide-up" style={{ animationDelay: "0.08s" }}>
         <ProgressOverview />
-      </div>
+      </section>
 
       {/* XP Progress */}
-      <div className="bg-card rounded-xl p-4 border border-border mb-6 animate-slide-up" style={{ animationDelay: "0.15s" }}>
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-xs text-muted-foreground">Próximo nível</span>
-          <span className="text-xs font-medium text-primary">{currentUser.xp}/{currentUser.xpToNext} XP</span>
+      <section className="bg-card rounded-2xl p-5 border border-border mb-6 card-elevated animate-slide-up" style={{ animationDelay: "0.12s" }}>
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-xs text-muted-foreground font-medium">Próximo nível</span>
+          <span className="text-xs font-semibold text-primary">{currentUser.xp}/{currentUser.xpToNext} XP</span>
         </div>
-        <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+        <div className="w-full h-2.5 bg-secondary rounded-full overflow-hidden">
           <div
             className="h-full bg-primary rounded-full transition-all duration-700"
             style={{ width: `${(currentUser.xp / currentUser.xpToNext) * 100}%` }}
           />
         </div>
-      </div>
+        <p className="text-[10px] text-muted-foreground mt-2">Faltam {currentUser.xpToNext - currentUser.xp} XP para o nível {currentUser.level + 1}</p>
+      </section>
 
       {/* Consistency Card */}
-      <div className="mb-6 animate-slide-up" style={{ animationDelay: "0.18s" }}>
+      <section className="mb-6 animate-slide-up" style={{ animationDelay: "0.16s" }}>
         <ConsistencyCard {...consistencyData} />
-      </div>
+      </section>
 
       {/* Recent Meals */}
-      <div className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
-        <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          <Trophy size={14} className="text-primary" />
-          Refeições recentes
-        </h2>
-        <div className="space-y-2">
+      <section className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-display font-bold flex items-center gap-2">
+            <Trophy size={14} className="text-primary" />
+            Refeições recentes
+          </h2>
+          <button className="text-xs text-muted-foreground flex items-center gap-0.5 hover:text-foreground transition-colors">
+            Ver todas <ChevronRight size={12} />
+          </button>
+        </div>
+        <div className="space-y-2.5">
           {recentMeals.map((meal) => (
             <div
               key={meal.id}
-              className="bg-card rounded-xl p-3 border border-border flex items-center gap-3"
+              className="bg-card rounded-2xl p-4 border border-border flex items-center gap-4 card-elevated"
             >
               <span className="text-2xl">{meal.emoji}</span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{meal.description}</p>
-                <p className="text-[10px] text-muted-foreground">{meal.category} • {meal.time}</p>
+                <p className="text-sm font-semibold truncate">{meal.description}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">{meal.category} • {meal.time}</p>
               </div>
-              <span className="text-[10px] text-muted-foreground">{meal.date}</span>
+              <span className="text-[11px] text-muted-foreground font-medium">{meal.date}</span>
             </div>
           ))}
         </div>
-      </div>
+      </section>
     </div>
   );
 };

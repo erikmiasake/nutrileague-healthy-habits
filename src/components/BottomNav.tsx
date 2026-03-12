@@ -15,7 +15,7 @@ const BottomNav = () => {
   if (location.pathname === "/login") return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-t border-border">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-xl border-t border-border/60">
       <div className="flex items-center justify-around px-2 pb-[env(safe-area-inset-bottom)] max-w-[430px] mx-auto">
         {tabs.map((tab, i) => {
           const active = location.pathname === tab.path;
@@ -23,12 +23,12 @@ const BottomNav = () => {
             <button
               key={tab.path}
               onClick={() => navigate(tab.path)}
-              className={`flex flex-col items-center gap-1 py-3 px-4 transition-colors ${
+              className={`flex flex-col items-center gap-1 py-3 px-5 transition-colors ${
                 i === 1 ? "mr-6" : i === 2 ? "ml-6" : ""
-              } ${active ? "text-primary" : "text-muted-foreground"}`}
+              } ${active ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
             >
-              <tab.icon size={22} strokeWidth={active ? 2.5 : 2} />
-              <span className="text-[10px] font-medium">{tab.label}</span>
+              <tab.icon size={20} strokeWidth={active ? 2.5 : 1.8} />
+              <span className="text-[10px] font-semibold">{tab.label}</span>
             </button>
           );
         })}
