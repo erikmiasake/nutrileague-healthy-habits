@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Check, Loader2 } from "lucide-react";
+import { GradientButton } from "@/components/ui/gradient-button";
 import { mealCategories } from "@/lib/mockData";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -75,14 +76,14 @@ const RegisterMeal = () => {
         />
       </div>
 
-      <button
+      <GradientButton
         onClick={handleSubmit}
         disabled={!selected || loading}
-        className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 mt-6 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full h-12 rounded-xl mt-6 gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {loading ? <Loader2 size={18} className="animate-spin" /> : <Check size={18} />}
         {loading ? "Registrando..." : "Registrar"}
-      </button>
+      </GradientButton>
     </div>
   );
 };

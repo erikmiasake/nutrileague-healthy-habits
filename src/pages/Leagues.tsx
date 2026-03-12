@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, LogIn, Users, Crown, Copy, Check, ArrowRight, X, Share2 } from "lucide-react";
+import { GradientButton } from "@/components/ui/gradient-button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -165,18 +166,19 @@ const Leagues = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <button
+        <GradientButton
           onClick={() => { setShowCreate(true); setShowJoin(false); }}
-          className="flex-1 h-12 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 text-sm active:scale-95 transition-all"
+          className="flex-1 h-12 rounded-xl text-sm gap-2"
         >
           <Plus size={16} /> Criar liga
-        </button>
-        <button
+        </GradientButton>
+        <GradientButton
+          variant="variant"
           onClick={() => { setShowJoin(true); setShowCreate(false); }}
-          className="flex-1 h-12 rounded-xl bg-secondary text-foreground font-semibold flex items-center justify-center gap-2 text-sm active:scale-95 transition-all border border-border"
+          className="flex-1 h-12 rounded-xl text-sm gap-2"
         >
           <LogIn size={16} /> Entrar com código
-        </button>
+        </GradientButton>
       </motion.div>
 
       {/* Create modal */}
@@ -198,13 +200,13 @@ const Leagues = () => {
               placeholder="Nome da liga"
               className="w-full h-11 rounded-xl bg-secondary px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary transition mb-3"
             />
-            <button
+            <GradientButton
               onClick={handleCreate}
               disabled={!newName.trim() || submitting}
-              className="w-full h-11 rounded-xl bg-primary text-primary-foreground font-semibold text-sm disabled:opacity-40 active:scale-95 transition-all"
+              className="w-full h-11 rounded-xl text-sm disabled:opacity-40"
             >
               {submitting ? "Criando..." : "Criar liga"}
-            </button>
+            </GradientButton>
           </motion.div>
         )}
       </AnimatePresence>
@@ -228,13 +230,13 @@ const Leagues = () => {
               placeholder="Código de convite"
               className="w-full h-11 rounded-xl bg-secondary px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary transition mb-3 font-mono tracking-widest"
             />
-            <button
+            <GradientButton
               onClick={handleJoin}
               disabled={!joinCode.trim() || submitting}
-              className="w-full h-11 rounded-xl bg-primary text-primary-foreground font-semibold text-sm disabled:opacity-40 active:scale-95 transition-all"
+              className="w-full h-11 rounded-xl text-sm disabled:opacity-40"
             >
               {submitting ? "Entrando..." : "Entrar"}
-            </button>
+            </GradientButton>
           </motion.div>
         )}
       </AnimatePresence>
