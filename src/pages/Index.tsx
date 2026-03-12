@@ -1,7 +1,24 @@
 import { Flame, Zap, Trophy } from "lucide-react";
 import StreakRing from "@/components/StreakRing";
+import { ConsistencyCard } from "@/components/ConsistencyCard";
 import { currentUser, recentMeals, weekDays, weekActivity } from "@/lib/mockData";
 
+const consistencyData = {
+  currentStreak: currentUser.streak,
+  percentageChange: 20,
+  leagueAverage: 9,
+  friends: [
+    { name: "Marina Silva", avatar: "MS", streak: 15 },
+    { name: "Rafael Costa", avatar: "RC", streak: 11 },
+    { name: "Lucas Oliveira", avatar: "LO", streak: 9 },
+  ],
+  levels: [
+    { label: "Início", value: 3, color: "bg-destructive" },
+    { label: "Evoluindo", value: 7, color: "bg-xp" },
+    { label: "Consistente", value: 14, color: "bg-primary" },
+    { label: "Em alta", value: 30, color: "bg-success" },
+  ],
+};
 const Index = () => {
   return (
     <div className="min-h-screen bg-background pb-24 px-4 pt-6 max-w-[430px] mx-auto">
@@ -71,6 +88,11 @@ const Index = () => {
             style={{ width: `${(currentUser.xp / currentUser.xpToNext) * 100}%` }}
           />
         </div>
+      </div>
+
+      {/* Consistency Card */}
+      <div className="mb-6 animate-slide-up" style={{ animationDelay: "0.18s" }}>
+        <ConsistencyCard {...consistencyData} />
       </div>
 
       {/* Recent Meals */}
