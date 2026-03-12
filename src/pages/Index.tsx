@@ -2,6 +2,7 @@ import { Flame, Zap, Trophy, ChevronRight } from "lucide-react";
 import StreakRing from "@/components/StreakRing";
 import { ConsistencyCard } from "@/components/ConsistencyCard";
 import { ProgressOverview } from "@/components/ui/dashboard-overview";
+import { ShimmerText } from "@/components/ui/shimmer-text";
 import { currentUser, recentMeals, weekDays, weekActivity } from "@/lib/mockData";
 
 const consistencyData = {
@@ -28,7 +29,9 @@ const Index = () => {
       <header className="flex items-center justify-between mb-8 animate-slide-up">
         <div>
           <p className="text-xs text-muted-foreground tracking-wide uppercase">Olá,</p>
-          <h1 className="text-xl font-display font-bold mt-0.5">{currentUser.name} 👋</h1>
+          <h1 className="text-xl font-display font-bold mt-0.5">
+            <ShimmerText variant="orange" duration={2} delay={2}>{currentUser.name}</ShimmerText> 👋
+          </h1>
         </div>
         <div className="flex items-center gap-2 bg-secondary/80 rounded-full px-4 py-2">
           <Zap size={14} className="text-xp" />
@@ -92,7 +95,7 @@ const Index = () => {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-display font-bold flex items-center gap-2">
             <Trophy size={14} className="text-primary" />
-            Refeições recentes
+            <ShimmerText variant="orange" duration={2} delay={3.5}>Refeições recentes</ShimmerText>
           </h2>
           <button className="text-xs text-muted-foreground flex items-center gap-0.5 hover:text-foreground transition-colors">
             Ver todas <ChevronRight size={12} />
