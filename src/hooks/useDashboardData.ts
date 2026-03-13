@@ -93,6 +93,7 @@ export function useDashboardData(): DashboardData {
         currentStreak: streak?.current_streak ?? 0,
         longestStreak: streak?.longest_streak ?? 0,
         totalMeals: totalMeals ?? 0,
+        todayMeals: todayCount ?? 0,
         weeklyMeals: weekMeals?.length ?? 0,
         weekActivity,
         userName: profile?.name || user.email?.split("@")[0] || "Usuário",
