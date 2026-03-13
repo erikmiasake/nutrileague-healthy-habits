@@ -4,16 +4,17 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Crown, Flame, Users, Copy, Check, Share2, Zap, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import UserAvatar from "@/components/UserAvatar";
 
 interface MemberRanking {
   user_id: string;
   name: string;
-  avatar: string;
+  avatarUrl: string | null;
   current_streak: number;
   isCurrentUser: boolean;
 }
 
-/* ── League Challenges Section (read-only list) ── */
+/* ── League Challenges Section ── */
 const LeagueChallengesSection = ({ leagueId }: { leagueId: string }) => {
   const [challenges, setChallenges] = useState<{ id: string; title: string; description: string; duration_days: number; xp_reward: number }[]>([]);
 
@@ -22,9 +23,7 @@ const LeagueChallengesSection = ({ leagueId }: { leagueId: string }) => {
       const { data } = await supabase
         .from("challenges")
         .select("id, title, description, duration_days, xp_reward")
-        .eq("league_id", leagueId)
-        .eq("type", "league")
-        .eq("active", true)
+        .eq("league_id", leagueId).eq("type", "league").eq("active", true)
         .order("created_at", { ascending: false });
       setChallenges(data ?? []);
     };
@@ -72,52 +71,32 @@ const LeagueDetail = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!id) return;
-
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Fetch league info
-      const { data: leagueData } = await supabase
-        .from("leagues")
-        .select("name, invite_code")
-        .eq("id", id)
-        .single();
-
+      const { data: leagueData } = await supabase.from("leagues").select("name, invite_code").eq("id", id).single();
       setLeague(leagueData);
 
-      // Fetch members
-      const { data: memberData } = await supabase
-        .from("league_members")
-        .select("user_id")
-        .eq("league_id", id);
-
+      const { data: memberData } = await supabase.from("league_members").select("user_id").eq("league_id", id);
       if (!memberData?.length) { setLoading(false); return; }
 
       const userIds = memberData.map(m => m.user_id);
 
-      // Fetch profiles and streaks for members
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("user_id, name")
-        .in("user_id", userIds);
-
-      const { data: streaks } = await supabase
-        .from("streaks")
-        .select("user_id, current_streak")
-        .in("user_id", userIds);
+      const [{ data: profiles }, { data: streaks }] = await Promise.all([
+        supabase.from("profiles").select("user_id, name, avatar_url").in("user_id", userIds),
+        supabase.from("streaks").select("user_id, current_streak").in("user_id", userIds),
+      ]);
 
       const profileMap = new Map((profiles || []).map(p => [p.user_id, p]));
       const streakMap = new Map((streaks || []).map(s => [s.user_id, s]));
 
       const ranked: MemberRanking[] = userIds.map(uid => {
         const profile = profileMap.get(uid);
-        const streak = streakMap.get(uid);
-        const name = profile?.name || "Usuário";
         return {
           user_id: uid,
-          name,
-          avatar: name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase(),
-          current_streak: streak?.current_streak ?? 0,
+          name: profile?.name || "Usuário",
+          avatarUrl: profile?.avatar_url || null,
+          current_streak: streakMap.get(uid)?.current_streak ?? 0,
           isCurrentUser: uid === user.id,
         };
       });
@@ -126,7 +105,6 @@ const LeagueDetail = () => {
       setMembers(ranked);
       setLoading(false);
     };
-
     fetchData();
   }, [id]);
 
@@ -156,11 +134,7 @@ const LeagueDetail = () => {
       </button>
 
       {/* League header */}
-      <motion.div
-        className="bg-card rounded-2xl border border-border p-5 mb-6 card-elevated"
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
+      <motion.div className="bg-card rounded-2xl border border-border p-5 mb-6 card-elevated" initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center gap-3 mb-4">
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
             <Crown size={22} className="text-primary" />
@@ -182,9 +156,7 @@ const LeagueDetail = () => {
             onClick={() => {
               if (navigator.share) {
                 navigator.share({ title: `Liga ${league?.name}`, text: `Entre na minha liga no NutriLeague! Código: ${league?.invite_code}` });
-              } else {
-                copyCode();
-              }
+              } else { copyCode(); }
             }}
             className="text-muted-foreground hover:text-primary transition-colors"
           >
@@ -193,7 +165,6 @@ const LeagueDetail = () => {
         </div>
       </motion.div>
 
-      {/* League Challenges */}
       <LeagueChallengesSection leagueId={id!} />
 
       {/* Ranking */}
@@ -214,11 +185,12 @@ const LeagueDetail = () => {
                 <div key={m.user_id} className="flex flex-col items-center">
                   <div className={`relative ${isFirst ? "mb-2" : ""}`}>
                     {isFirst && <Crown size={18} className="text-xp absolute -top-5 left-1/2 -translate-x-1/2" />}
-                    <div className={`rounded-full flex items-center justify-center font-display font-bold text-sm border-2 ${
-                      isFirst ? "w-16 h-16 border-primary bg-primary/20 text-primary" : "w-12 h-12 border-border bg-secondary text-foreground"
-                    }`}>
-                      {m.avatar}
-                    </div>
+                    <UserAvatar
+                      name={m.name}
+                      avatarUrl={m.avatarUrl}
+                      size={isFirst ? "lg" : "md"}
+                      className={isFirst ? "border-primary bg-primary/20" : ""}
+                    />
                   </div>
                   <p className="text-xs font-medium mt-2 truncate max-w-[70px]">{m.name.split(" ")[0]}</p>
                   <div className="flex items-center gap-0.5 mt-0.5">
@@ -246,9 +218,7 @@ const LeagueDetail = () => {
               <span className={`text-sm font-display font-bold w-6 text-center ${i < 3 ? medalColors[i] : "text-muted-foreground"}`}>
                 {i + 1}
               </span>
-              <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-xs font-semibold shrink-0">
-                {m.avatar}
-              </div>
+              <UserAvatar name={m.name} avatarUrl={m.avatarUrl} size="md" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">
                   {m.name}
