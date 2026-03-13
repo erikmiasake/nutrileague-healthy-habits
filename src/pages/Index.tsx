@@ -14,7 +14,7 @@ import HomeMealsBlock from "@/components/HomeMealsBlock";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { currentStreak, userName, loggedToday, loading } = useDashboardData();
+  const { currentStreak, userName, loggedToday, todayMeals, loading } = useDashboardData();
   const league = useLeagueRanking();
   const { personal, league: leagueChallenges, event } = useChallenges();
   const { activities, loading: activityLoading } = useLeagueActivity();
@@ -94,7 +94,7 @@ const Index = () => {
                 {league.userPosition}º lugar na {league.leagueName}
               </p>
             )}
-            <div className="flex items-center gap-1.5 mt-1.5">
+            <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
               <span
                 className={cn(
                   "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold",
@@ -103,7 +103,7 @@ const Index = () => {
                     : "bg-destructive/15 text-destructive"
                 )}
               >
-                {loggedToday ? "✓ Hoje registrado" : "⚠ Falta registrar hoje"}
+                {loggedToday ? `✓ ${todayMeals} refeição${todayMeals !== 1 ? "ões" : ""} hoje` : "⚠ Falta registrar hoje"}
               </span>
             </div>
           </div>

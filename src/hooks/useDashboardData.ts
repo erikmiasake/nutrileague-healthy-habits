@@ -5,6 +5,7 @@ interface DashboardData {
   currentStreak: number;
   longestStreak: number;
   totalMeals: number;
+  todayMeals: number;
   weeklyMeals: number;
   weekActivity: boolean[];
   userName: string;
@@ -17,6 +18,7 @@ export function useDashboardData(): DashboardData {
     currentStreak: 0,
     longestStreak: 0,
     totalMeals: 0,
+    todayMeals: 0,
     weeklyMeals: 0,
     weekActivity: [false, false, false, false, false, false, false],
     userName: "",
@@ -91,6 +93,7 @@ export function useDashboardData(): DashboardData {
         currentStreak: streak?.current_streak ?? 0,
         longestStreak: streak?.longest_streak ?? 0,
         totalMeals: totalMeals ?? 0,
+        todayMeals: todayCount ?? 0,
         weeklyMeals: weekMeals?.length ?? 0,
         weekActivity,
         userName: profile?.name || user.email?.split("@")[0] || "Usuário",
