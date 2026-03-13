@@ -245,7 +245,7 @@ const Index = () => {
                     transition={{ delay: 0.2 + i * 0.05 }}
                   >
                     <span className="text-sm">{medals[i]}</span>
-                    <p className="flex-1 text-xs font-medium text-foreground truncate">
+                    <UserAvatar name={member.name} avatarUrl={member.avatarUrl} size="sm" />
                       {member.name}
                       {member.isCurrentUser && (
                         <span className="text-primary text-[9px] ml-1 font-bold">(você)</span>
