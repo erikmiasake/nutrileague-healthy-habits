@@ -11,6 +11,7 @@ import { useChallenges } from "@/hooks/useChallenges";
 import { useLeagueActivity } from "@/hooks/useLeagueActivity";
 import { cn } from "@/lib/utils";
 import HomeMealsBlock from "@/components/HomeMealsBlock";
+import UserAvatar from "@/components/UserAvatar";
 
 const Index = () => {
   const navigate = useNavigate();
