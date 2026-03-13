@@ -14,7 +14,7 @@ import HomeMealsBlock from "@/components/HomeMealsBlock";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { currentStreak, userName, loggedToday, todayMeals, loading } = useDashboardData();
+  const { currentStreak, userName, todayMeals, loading } = useDashboardData();
   const league = useLeagueRanking();
   const { personal, league: leagueChallenges, event } = useChallenges();
   const { activities, loading: activityLoading } = useLeagueActivity();
