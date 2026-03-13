@@ -1,4 +1,4 @@
-import { Flame, ChevronRight, Crown, Utensils, Trophy, Activity } from "lucide-react";
+import { Flame, ChevronRight, Crown, Utensils, Trophy, Activity, Info } from "lucide-react";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -48,6 +48,13 @@ const Index = () => {
       >
         <AppSidebar />
         <TextHoverEffect text="NutriLeague" icon={nutrileagueIcon} />
+        <button
+          onClick={() => navigate("/sobre")}
+          className="gradient-button flex items-center justify-center w-9 h-9 rounded-xl min-w-0 p-0"
+          aria-label="Sobre o NutriLeague"
+        >
+          <Info size={18} strokeWidth={2.5} />
+        </button>
       </motion.header>
 
       {/* ── BLOCK 1: Streak + Position ── */}

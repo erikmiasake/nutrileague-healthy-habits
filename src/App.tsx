@@ -17,6 +17,7 @@ import NoLeagueOnboarding from "./pages/NoLeagueOnboarding";
 import LeagueDetail from "./pages/LeagueDetail";
 import Profile from "./pages/Profile";
 import Meals from "./pages/Meals";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -65,6 +66,7 @@ const App = () => {
             <Route path="/ligas" element={<ProtectedRoute session={session}><Leagues /></ProtectedRoute>} />
             <Route path="/ligas/:id" element={<ProtectedRoute session={session}><LeagueDetail /></ProtectedRoute>} />
             <Route path="/perfil" element={<ProtectedRoute session={session}><Profile /></ProtectedRoute>} />
+            <Route path="/sobre" element={<ProtectedRoute session={session}><About /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <BottomNav />
