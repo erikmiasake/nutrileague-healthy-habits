@@ -98,12 +98,12 @@ const Index = () => {
               <span
                 className={cn(
                   "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold",
-                  loggedToday
+                  todayMeals > 0
                     ? "bg-success/15 text-success"
                     : "bg-destructive/15 text-destructive"
                 )}
               >
-                {loggedToday ? `✓ ${todayMeals} ${todayMeals === 1 ? "refeição" : "refeições"} hoje` : "⚠ Falta registrar hoje"}
+                {todayMeals > 0 ? "✓" : "⚠"} {todayMeals} {todayMeals === 1 ? "refeição" : "refeições"} hoje
               </span>
             </div>
           </div>
