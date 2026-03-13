@@ -103,7 +103,7 @@ const Index = () => {
                     : "bg-destructive/15 text-destructive"
                 )}
               >
-                {loggedToday ? `✓ ${todayMeals} refeição${todayMeals !== 1 ? "ões" : ""} hoje` : "⚠ Falta registrar hoje"}
+                {loggedToday ? `✓ ${todayMeals} ${todayMeals === 1 ? "refeição" : "refeições"} hoje` : "⚠ Falta registrar hoje"}
               </span>
             </div>
           </div>
