@@ -11,6 +11,7 @@ import { useChallenges } from "@/hooks/useChallenges";
 import { useLeagueActivity } from "@/hooks/useLeagueActivity";
 import { cn } from "@/lib/utils";
 import HomeMealsBlock from "@/components/HomeMealsBlock";
+import UserAvatar from "@/components/UserAvatar";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -244,6 +245,7 @@ const Index = () => {
                     transition={{ delay: 0.2 + i * 0.05 }}
                   >
                     <span className="text-sm">{medals[i]}</span>
+                    <UserAvatar name={member.name} avatarUrl={member.avatarUrl} size="sm" />
                     <p className="flex-1 text-xs font-medium text-foreground truncate">
                       {member.name}
                       {member.isCurrentUser && (
@@ -300,9 +302,7 @@ const Index = () => {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.25 + i * 0.04 }}
                 >
-                  <span className="text-sm flex-shrink-0">
-                    {item.type === "meal" ? "🍽️" : "🔥"}
-                  </span>
+                  <UserAvatar name={item.userName} avatarUrl={item.avatarUrl} size="sm" />
                   <p className="flex-1 text-xs text-foreground/80 font-medium truncate">
                     {item.detail}
                   </p>

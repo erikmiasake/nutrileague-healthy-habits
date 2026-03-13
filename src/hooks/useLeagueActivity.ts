@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 export interface ActivityItem {
   id: string;
   userName: string;
+  avatarUrl: string | null;
   type: "meal" | "streak";
   detail: string;
   timeAgo: string;
@@ -31,76 +32,57 @@ export function useLeagueActivity() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { setLoading(false); return; }
 
-      // Get user's league
       const { data: membership } = await supabase
-        .from("league_members")
-        .select("league_id")
-        .eq("user_id", user.id)
-        .limit(1)
-        .maybeSingle();
+        .from("league_members").select("league_id").eq("user_id", user.id).limit(1).maybeSingle();
 
       if (!membership) { setLoading(false); return; }
 
-      // Get league members
       const { data: members } = await supabase
-        .from("league_members")
-        .select("user_id")
-        .eq("league_id", membership.league_id);
+        .from("league_members").select("user_id").eq("league_id", membership.league_id);
 
       if (!members || members.length === 0) { setLoading(false); return; }
 
       const memberIds = members.map(m => m.user_id);
 
-      // Get profiles
       const { data: profiles } = await supabase
-        .from("profiles")
-        .select("user_id, name")
-        .in("user_id", memberIds);
+        .from("profiles").select("user_id, name, avatar_url").in("user_id", memberIds);
 
-      const profileMap = new Map((profiles || []).map(p => [p.user_id, p.name]));
+      const profileMap = new Map((profiles || []).map(p => [p.user_id, p]));
 
-      // Get recent meal logs from league members (last 3 days)
       const threeDaysAgo = new Date();
       threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-      const threeDaysAgoStr = threeDaysAgo.toISOString();
 
       const { data: recentMeals } = await supabase
-        .from("meal_logs")
-        .select("id, user_id, created_at")
-        .in("user_id", memberIds)
-        .gte("created_at", threeDaysAgoStr)
-        .order("created_at", { ascending: false })
-        .limit(10);
+        .from("meal_logs").select("id, user_id, created_at")
+        .in("user_id", memberIds).gte("created_at", threeDaysAgo.toISOString())
+        .order("created_at", { ascending: false }).limit(10);
 
-      // Get streaks for milestone detection
       const { data: streaks } = await supabase
-        .from("streaks")
-        .select("user_id, current_streak")
-        .in("user_id", memberIds);
+        .from("streaks").select("user_id, current_streak").in("user_id", memberIds);
 
       const items: ActivityItem[] = [];
 
-      // Add meal activities
       (recentMeals || []).forEach(meal => {
-        const name = profileMap.get(meal.user_id) || "Jogador";
-        const firstName = name.split(" ")[0];
+        const p = profileMap.get(meal.user_id);
+        const firstName = (p?.name || "Jogador").split(" ")[0];
         items.push({
           id: meal.id,
           userName: firstName,
+          avatarUrl: p?.avatar_url || null,
           type: "meal",
           detail: `${firstName} registrou refeição`,
           timeAgo: formatTimeAgo(meal.created_at),
         });
       });
 
-      // Add streak milestones
       (streaks || []).forEach(s => {
         if (s.current_streak >= 3) {
-          const name = profileMap.get(s.user_id) || "Jogador";
-          const firstName = name.split(" ")[0];
+          const p = profileMap.get(s.user_id);
+          const firstName = (p?.name || "Jogador").split(" ")[0];
           items.push({
             id: `streak-${s.user_id}`,
             userName: firstName,
+            avatarUrl: p?.avatar_url || null,
             type: "streak",
             detail: `${firstName} mantém streak de ${s.current_streak} dias`,
             timeAgo: "",
