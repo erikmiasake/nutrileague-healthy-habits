@@ -5,6 +5,7 @@ interface DashboardData {
   currentStreak: number;
   longestStreak: number;
   totalMeals: number;
+  todayMeals: number;
   weeklyMeals: number;
   weekActivity: boolean[];
   userName: string;
