@@ -1,14 +1,16 @@
-import { Flame, Trophy, LogOut, ChevronRight, Edit2, Calendar, Utensils } from "lucide-react";
+import { Flame, Trophy, LogOut, ChevronRight, Edit2, Calendar, Utensils, Camera } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import UserAvatar from "@/components/UserAvatar";
 
 interface ProfileData {
   name: string;
   email: string;
+  avatarUrl: string | null;
   currentStreak: number;
   longestStreak: number;
   totalMeals: number;
@@ -22,17 +24,16 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [newName, setNewName] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate("/login");
-        return;
-      }
+      if (!user) { navigate("/login"); return; }
 
       const [profileRes, streakRes, mealsRes, leagueRes] = await Promise.all([
-        supabase.from("profiles").select("name").eq("user_id", user.id).maybeSingle(),
+        supabase.from("profiles").select("name, avatar_url").eq("user_id", user.id).maybeSingle(),
         supabase.from("streaks").select("current_streak, longest_streak").eq("user_id", user.id).maybeSingle(),
         supabase.from("meal_logs").select("*", { count: "exact", head: true }).eq("user_id", user.id),
         supabase.from("league_members").select("league_id").eq("user_id", user.id).limit(1).maybeSingle(),
@@ -40,11 +41,7 @@ const Profile = () => {
 
       let leagueName: string | null = null;
       if (leagueRes.data) {
-        const { data: league } = await supabase
-          .from("leagues")
-          .select("name")
-          .eq("id", leagueRes.data.league_id)
-          .maybeSingle();
+        const { data: league } = await supabase.from("leagues").select("name").eq("id", leagueRes.data.league_id).maybeSingle();
         leagueName = league?.name || null;
       }
 
@@ -53,6 +50,7 @@ const Profile = () => {
       setProfile({
         name,
         email: user.email || "",
+        avatarUrl: profileRes.data?.avatar_url || null,
         currentStreak: streakRes.data?.current_streak ?? 0,
         longestStreak: streakRes.data?.longest_streak ?? 0,
         totalMeals: mealsRes.count ?? 0,
@@ -62,7 +60,6 @@ const Profile = () => {
       setNewName(name);
       setLoading(false);
     };
-
     fetchProfile();
   }, [navigate]);
 
@@ -70,12 +67,7 @@ const Profile = () => {
     if (!newName.trim()) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-
-    const { error } = await supabase
-      .from("profiles")
-      .update({ name: newName.trim() })
-      .eq("user_id", user.id);
-
+    const { error } = await supabase.from("profiles").update({ name: newName.trim() }).eq("user_id", user.id);
     if (error) {
       toast({ title: "Erro ao atualizar nome", variant: "destructive" });
     } else {
@@ -83,6 +75,44 @@ const Profile = () => {
       setEditing(false);
       toast({ title: "Nome atualizado!" });
     }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const filePath = `${user.id}/avatar.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) {
+      toast({ title: "Erro ao enviar foto", variant: "destructive" });
+      setUploading(false);
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(filePath);
+    const avatarUrl = `${publicUrl}?t=${Date.now()}`;
+
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ avatar_url: avatarUrl })
+      .eq("user_id", user.id);
+
+    if (updateError) {
+      toast({ title: "Erro ao salvar foto", variant: "destructive" });
+    } else {
+      setProfile(prev => prev ? { ...prev, avatarUrl } : prev);
+      toast({ title: "Foto de perfil atualizada!" });
+    }
+    setUploading(false);
   };
 
   const handleLogout = async () => {
@@ -93,21 +123,10 @@ const Profile = () => {
   if (loading || !profile) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <motion.div
-          className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-        />
+        <motion.div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full" animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} />
       </div>
     );
   }
-
-  const initials = profile.name
-    .split(" ")
-    .map(w => w[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
 
   const stats = [
     { icon: Flame, label: "Streak atual", value: `${profile.currentStreak} ${profile.currentStreak === 1 ? "dia" : "dias"}`, color: "text-primary" },
@@ -119,14 +138,28 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background pb-24 px-4 pt-6 max-w-[430px] mx-auto">
       {/* Profile Header */}
-      <motion.div
-        className="flex flex-col items-center mb-6"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <div className="w-20 h-20 rounded-full bg-primary/15 border-2 border-primary/40 flex items-center justify-center mb-3">
-          <span className="text-2xl font-display font-bold text-primary">{initials}</span>
+      <motion.div className="flex flex-col items-center mb-6" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+        <div className="relative mb-3">
+          <UserAvatar name={profile.name} avatarUrl={profile.avatarUrl} size="xl" />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg border-2 border-background"
+          >
+            {uploading ? (
+              <motion.div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full" animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} />
+            ) : (
+              <Camera size={14} />
+            )}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={handleAvatarUpload}
+          />
         </div>
 
         {editing ? (
@@ -139,18 +172,8 @@ const Profile = () => {
               autoFocus
               onKeyDown={e => e.key === "Enter" && handleSaveName()}
             />
-            <button
-              onClick={handleSaveName}
-              className="text-xs font-semibold text-primary hover:underline"
-            >
-              Salvar
-            </button>
-            <button
-              onClick={() => { setEditing(false); setNewName(profile.name); }}
-              className="text-xs text-muted-foreground hover:underline"
-            >
-              Cancelar
-            </button>
+            <button onClick={handleSaveName} className="text-xs font-semibold text-primary hover:underline">Salvar</button>
+            <button onClick={() => { setEditing(false); setNewName(profile.name); }} className="text-xs text-muted-foreground hover:underline">Cancelar</button>
           </div>
         ) : (
           <div className="flex items-center gap-2">
@@ -170,12 +193,7 @@ const Profile = () => {
       </motion.div>
 
       {/* Stats Grid */}
-      <motion.div
-        className="grid grid-cols-2 gap-2.5 mb-6"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.08 }}
-      >
+      <motion.div className="grid grid-cols-2 gap-2.5 mb-6" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.08 }}>
         {stats.map((stat) => (
           <div key={stat.label} className="bg-card rounded-xl p-3.5 border border-border">
             <stat.icon size={16} className={stat.color} />
@@ -186,15 +204,10 @@ const Profile = () => {
       </motion.div>
 
       {/* Menu */}
-      <motion.div
-        className="bg-card rounded-xl border border-border overflow-hidden mb-6"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.12 }}
-      >
+      <motion.div className="bg-card rounded-xl border border-border overflow-hidden mb-6" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.12 }}>
         {[
           { label: "Minhas ligas", action: () => navigate("/ligas") },
-          { label: "Sobre o NutriLeague", action: () => {} },
+          { label: "Sobre o NutriLeague", action: () => navigate("/sobre") },
         ].map((item, i, arr) => (
           <button
             key={item.label}
@@ -211,13 +224,7 @@ const Profile = () => {
       </motion.div>
 
       {/* Logout */}
-      <motion.button
-        onClick={handleLogout}
-        className="w-full flex items-center justify-center gap-2 py-3 text-sm text-destructive font-medium"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.18 }}
-      >
+      <motion.button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 py-3 text-sm text-destructive font-medium" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.18 }}>
         <LogOut size={16} />
         Sair da conta
       </motion.button>
