@@ -301,9 +301,7 @@ const Index = () => {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.25 + i * 0.04 }}
                 >
-                  <span className="text-sm flex-shrink-0">
-                    {item.type === "meal" ? "🍽️" : "🔥"}
-                  </span>
+                  <UserAvatar name={item.userName} avatarUrl={item.avatarUrl} size="sm" />
                   <p className="flex-1 text-xs text-foreground/80 font-medium truncate">
                     {item.detail}
                   </p>
