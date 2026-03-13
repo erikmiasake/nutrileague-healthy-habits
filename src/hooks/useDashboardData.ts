@@ -18,6 +18,7 @@ export function useDashboardData(): DashboardData {
     currentStreak: 0,
     longestStreak: 0,
     totalMeals: 0,
+    todayMeals: 0,
     weeklyMeals: 0,
     weekActivity: [false, false, false, false, false, false, false],
     userName: "",
