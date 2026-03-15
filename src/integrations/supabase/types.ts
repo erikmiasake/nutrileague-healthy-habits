@@ -198,23 +198,50 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          goal: string | null
+          height: number | null
           id: string
           name: string
+          notify_challenges: boolean
+          notify_meals: boolean
+          notify_streak: boolean
+          privacy_meals: boolean
+          privacy_progress: boolean
+          privacy_visible: boolean
           user_id: string
+          weight: number | null
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          goal?: string | null
+          height?: number | null
           id?: string
           name?: string
+          notify_challenges?: boolean
+          notify_meals?: boolean
+          notify_streak?: boolean
+          privacy_meals?: boolean
+          privacy_progress?: boolean
+          privacy_visible?: boolean
           user_id: string
+          weight?: number | null
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
+          goal?: string | null
+          height?: number | null
           id?: string
           name?: string
+          notify_challenges?: boolean
+          notify_meals?: boolean
+          notify_streak?: boolean
+          privacy_meals?: boolean
+          privacy_progress?: boolean
+          privacy_visible?: boolean
           user_id?: string
+          weight?: number | null
         }
         Relationships: []
       }
