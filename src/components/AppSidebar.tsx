@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, Plus, Users, Trophy, Settings, ChevronRight } from "lucide-react";
+import { Menu, X, Plus, Users, Trophy, Settings, ChevronRight } from "lucide-react";
 
 const menuItems = [
   { label: "Criar Liga", icon: Plus, path: "/ligas", state: { action: "create" } },
