@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, User, Plus, Users, Trophy, Settings, ChevronRight } from "lucide-react";
 
 const menuItems = [
-  { label: "Perfil", icon: User, path: "/perfil" },
   { label: "Criar Liga", icon: Plus, path: "/ligas", state: { action: "create" } },
   { label: "Minhas Ligas", icon: Users, path: "/ligas" },
   { label: "Desafios", icon: Trophy, path: "/desafios" },
