@@ -15,7 +15,7 @@ interface MealScoreProps {
 const classColors: Record<string, string> = {
   Excelente: "text-success",
   Boa: "text-primary",
-  Regular: "text-streak-glow",
+  Regular: "text-streak",
   Ruim: "text-destructive",
 };
 
