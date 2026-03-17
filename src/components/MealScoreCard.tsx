@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Trophy, Zap, ShieldCheck, Leaf, Factory, Cookie } from "lucide-react";
+import { Trophy, Zap, ShieldCheck, Leaf, Factory, Cookie, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MealScoreProps {
@@ -10,6 +10,7 @@ interface MealScoreProps {
   hasVegetables: boolean;
   processingLevel: string;
   junkLevel: string;
+  report?: string | null;
 }
 
 const classColors: Record<string, string> = {

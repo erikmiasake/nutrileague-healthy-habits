@@ -343,6 +343,7 @@ const RegisterMeal = () => {
               hasVegetables={nutrition.has_vegetables}
               processingLevel={nutrition.processing_level}
               junkLevel={nutrition.junk_level}
+              report={nutrition.report}
             />
 
             {/* Calories hero */}
