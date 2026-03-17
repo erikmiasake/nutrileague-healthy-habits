@@ -22,6 +22,7 @@ type NutritionData = {
   has_vegetables: boolean;
   processing_level: string;
   junk_level: string;
+  report?: string;
 };
 
 const mealTypes = [

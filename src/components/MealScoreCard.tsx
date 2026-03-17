@@ -54,6 +54,7 @@ export default function MealScoreCard({
   hasVegetables,
   processingLevel,
   junkLevel,
+  report,
 }: MealScoreProps) {
   const circumference = 2 * Math.PI * 42;
   const strokeDash = (score / 100) * circumference;
