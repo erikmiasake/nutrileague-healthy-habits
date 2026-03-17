@@ -22,7 +22,7 @@ const classColors: Record<string, string> = {
 const classBgColors: Record<string, string> = {
   Excelente: "bg-success/15 border-success/30",
   Boa: "bg-primary/15 border-primary/30",
-  Regular: "bg-streak-glow/15 border-streak-glow/30",
+  Regular: "bg-streak/15 border-streak/30",
   Ruim: "bg-destructive/15 border-destructive/30",
 };
 
