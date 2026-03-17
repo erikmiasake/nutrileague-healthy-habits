@@ -74,9 +74,18 @@ const MealCard = ({ meal }: { meal: MealLog }) => {
           )}
         </div>
         {hasNutrition && (
-          <div className="flex-shrink-0 text-right">
+          <div className="flex-shrink-0 text-right space-y-0.5">
             <p className="text-sm font-display font-bold text-primary">{meal.calories}</p>
             <p className="text-[10px] text-muted-foreground">kcal</p>
+            {meal.meal_score != null && (
+              <p className={cn("text-[10px] font-bold", 
+                meal.meal_score >= 80 ? "text-success" : 
+                meal.meal_score >= 60 ? "text-primary" : 
+                meal.meal_score >= 40 ? "text-streak-glow" : "text-destructive"
+              )}>
+                {meal.meal_score}pts
+              </p>
+            )}
           </div>
         )}
       </div>
