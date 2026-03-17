@@ -8,7 +8,7 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 import TextHoverEffect from "@/components/ui/shimmer-bg-text";
 import { useLeagueRanking } from "@/hooks/useLeagueRanking";
 import { useChallenges } from "@/hooks/useChallenges";
-import { useLeagueActivity } from "@/hooks/useLeagueActivity";
+
 import { cn } from "@/lib/utils";
 import HomeMealsBlock from "@/components/HomeMealsBlock";
 import UserAvatar from "@/components/UserAvatar";
