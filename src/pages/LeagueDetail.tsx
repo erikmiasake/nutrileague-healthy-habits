@@ -10,6 +10,7 @@ interface MemberRanking {
   user_id: string;
   name: string;
   avatarUrl: string | null;
+  avgScore: number;
   current_streak: number;
   isCurrentUser: boolean;
 }
@@ -82,13 +83,32 @@ const LeagueDetail = () => {
 
       const userIds = memberData.map(m => m.user_id);
 
-      const [{ data: profiles }, { data: streaks }] = await Promise.all([
+      // Fetch profiles, streaks, and meal scores in parallel
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 6);
+      const weekAgoStr = weekAgo.toISOString().split("T")[0];
+
+      const [{ data: profiles }, { data: streaks }, { data: mealScores }] = await Promise.all([
         supabase.from("profiles").select("user_id, name, avatar_url").in("user_id", userIds),
         supabase.from("streaks").select("user_id, current_streak").in("user_id", userIds),
+        supabase.from("meal_logs").select("user_id, meal_score").in("user_id", userIds).gte("date", weekAgoStr).not("meal_score", "is", null),
       ]);
 
       const profileMap = new Map((profiles || []).map(p => [p.user_id, p]));
       const streakMap = new Map((streaks || []).map(s => [s.user_id, s]));
+
+      // Calculate avg score per user
+      const scoreMap = new Map<string, number>();
+      if (mealScores && mealScores.length > 0) {
+        const userScores = new Map<string, number[]>();
+        for (const m of mealScores) {
+          if (!userScores.has(m.user_id)) userScores.set(m.user_id, []);
+          userScores.get(m.user_id)!.push(m.meal_score!);
+        }
+        for (const [uid, scores] of userScores) {
+          scoreMap.set(uid, Math.round(scores.reduce((a, b) => a + b, 0) / scores.length));
+        }
+      }
 
       const ranked: MemberRanking[] = userIds.map(uid => {
         const profile = profileMap.get(uid);
@@ -96,12 +116,13 @@ const LeagueDetail = () => {
           user_id: uid,
           name: profile?.name || "Usuário",
           avatarUrl: profile?.avatar_url || null,
+          avgScore: scoreMap.get(uid) ?? 0,
           current_streak: streakMap.get(uid)?.current_streak ?? 0,
           isCurrentUser: uid === user.id,
         };
       });
 
-      ranked.sort((a, b) => b.current_streak - a.current_streak);
+      ranked.sort((a, b) => b.avgScore - a.avgScore);
       setMembers(ranked);
       setLoading(false);
     };
@@ -194,8 +215,8 @@ const LeagueDetail = () => {
                   </div>
                   <p className="text-xs font-medium mt-2 truncate max-w-[70px]">{m.name.split(" ")[0]}</p>
                   <div className="flex items-center gap-0.5 mt-0.5">
-                    <Flame size={10} className="text-primary" />
-                    <span className="text-[10px] text-muted-foreground">{m.current_streak}d</span>
+                    <span className="text-[10px] font-bold text-foreground">{m.avgScore}</span>
+                    <span className="text-[9px] text-muted-foreground">pts</span>
                   </div>
                 </div>
               );
@@ -226,8 +247,8 @@ const LeagueDetail = () => {
                 </p>
               </div>
               <div className="flex items-center gap-1">
-                <Flame size={12} className="text-primary" />
-                <span className="text-xs font-semibold">{m.current_streak}</span>
+                <span className="text-xs font-bold text-foreground">{m.avgScore}</span>
+                <span className="text-[10px] text-muted-foreground">pts</span>
               </div>
             </motion.div>
           ))}

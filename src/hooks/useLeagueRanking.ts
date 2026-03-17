@@ -5,6 +5,7 @@ interface RankingMember {
   userId: string;
   name: string;
   avatarUrl: string | null;
+  avgScore: number;
   currentStreak: number;
   isCurrentUser: boolean;
 }
@@ -46,11 +47,37 @@ export function useLeagueRanking(): LeagueRankingData {
 
       const memberIds = members.map(m => m.user_id);
 
+      // Fetch profiles and streaks
       const { data: profiles } = await supabase
         .from("profiles").select("user_id, name, avatar_url").in("user_id", memberIds);
 
       const { data: streaks } = await supabase
         .from("streaks").select("user_id, current_streak").in("user_id", memberIds);
+
+      // Fetch meal scores from last 7 days for all members
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 6);
+      const weekAgoStr = weekAgo.toISOString().split("T")[0];
+
+      const { data: mealScores } = await supabase
+        .from("meal_logs")
+        .select("user_id, meal_score")
+        .in("user_id", memberIds)
+        .gte("date", weekAgoStr)
+        .not("meal_score", "is", null);
+
+      // Calculate average score per user
+      const scoreMap = new Map<string, number>();
+      if (mealScores && mealScores.length > 0) {
+        const userScores = new Map<string, number[]>();
+        for (const m of mealScores) {
+          if (!userScores.has(m.user_id)) userScores.set(m.user_id, []);
+          userScores.get(m.user_id)!.push(m.meal_score!);
+        }
+        for (const [uid, scores] of userScores) {
+          scoreMap.set(uid, Math.round(scores.reduce((a, b) => a + b, 0) / scores.length));
+        }
+      }
 
       const profileMap = new Map((profiles || []).map(p => [p.user_id, p]));
       const streakMap = new Map((streaks || []).map(s => [s.user_id, s.current_streak]));
@@ -61,12 +88,13 @@ export function useLeagueRanking(): LeagueRankingData {
           userId: id,
           name: profile?.name || "Jogador",
           avatarUrl: profile?.avatar_url || null,
+          avgScore: scoreMap.get(id) ?? 0,
           currentStreak: streakMap.get(id) ?? 0,
           isCurrentUser: id === user.id,
         };
       });
 
-      ranking.sort((a, b) => b.currentStreak - a.currentStreak);
+      ranking.sort((a, b) => b.avgScore - a.avgScore);
       const userPos = ranking.findIndex(m => m.isCurrentUser) + 1;
 
       setData({

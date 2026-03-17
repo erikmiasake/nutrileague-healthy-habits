@@ -323,8 +323,8 @@ const Index = () => {
                       )}
                     </p>
                     <div className="flex items-center gap-1">
-                      <Flame size={10} className="text-primary" />
-                      <span className="text-xs font-bold text-foreground">{member.currentStreak}</span>
+                      <span className="text-[10px] font-bold text-foreground">{member.avgScore}</span>
+                      <span className="text-[9px] text-muted-foreground">pts</span>
                     </div>
                   </motion.div>
                 );
