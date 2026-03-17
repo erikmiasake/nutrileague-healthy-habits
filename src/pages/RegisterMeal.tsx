@@ -15,6 +15,13 @@ type NutritionData = {
   carbs: number;
   fat: number;
   detected_foods: string[];
+  meal_score: number;
+  meal_classification: string;
+  meal_xp: number;
+  has_protein: boolean;
+  has_vegetables: boolean;
+  processing_level: string;
+  junk_level: string;
 };
 
 const mealTypes = [
