@@ -83,13 +83,32 @@ const LeagueDetail = () => {
 
       const userIds = memberData.map(m => m.user_id);
 
-      const [{ data: profiles }, { data: streaks }] = await Promise.all([
+      // Fetch profiles, streaks, and meal scores in parallel
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 6);
+      const weekAgoStr = weekAgo.toISOString().split("T")[0];
+
+      const [{ data: profiles }, { data: streaks }, { data: mealScores }] = await Promise.all([
         supabase.from("profiles").select("user_id, name, avatar_url").in("user_id", userIds),
         supabase.from("streaks").select("user_id, current_streak").in("user_id", userIds),
+        supabase.from("meal_logs").select("user_id, meal_score").in("user_id", userIds).gte("date", weekAgoStr).not("meal_score", "is", null),
       ]);
 
       const profileMap = new Map((profiles || []).map(p => [p.user_id, p]));
       const streakMap = new Map((streaks || []).map(s => [s.user_id, s]));
+
+      // Calculate avg score per user
+      const scoreMap = new Map<string, number>();
+      if (mealScores && mealScores.length > 0) {
+        const userScores = new Map<string, number[]>();
+        for (const m of mealScores) {
+          if (!userScores.has(m.user_id)) userScores.set(m.user_id, []);
+          userScores.get(m.user_id)!.push(m.meal_score!);
+        }
+        for (const [uid, scores] of userScores) {
+          scoreMap.set(uid, Math.round(scores.reduce((a, b) => a + b, 0) / scores.length));
+        }
+      }
 
       const ranked: MemberRanking[] = userIds.map(uid => {
         const profile = profileMap.get(uid);
@@ -97,12 +116,13 @@ const LeagueDetail = () => {
           user_id: uid,
           name: profile?.name || "Usuário",
           avatarUrl: profile?.avatar_url || null,
+          avgScore: scoreMap.get(uid) ?? 0,
           current_streak: streakMap.get(uid)?.current_streak ?? 0,
           isCurrentUser: uid === user.id,
         };
       });
 
-      ranked.sort((a, b) => b.current_streak - a.current_streak);
+      ranked.sort((a, b) => b.avgScore - a.avgScore);
       setMembers(ranked);
       setLoading(false);
     };
