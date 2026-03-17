@@ -18,7 +18,7 @@ const Index = () => {
   const { currentStreak, userName, todayMeals, loading, dailyHealthScore, dailyHealthClassification } = useDashboardData();
   const league = useLeagueRanking();
   const { personal, league: leagueChallenges, event } = useChallenges();
-  const { activities, loading: activityLoading } = useLeagueActivity();
+  
 
   // Find the first active (joined but not completed) challenge
   const allChallenges = [...personal, ...leagueChallenges, ...event];
