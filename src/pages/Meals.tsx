@@ -34,6 +34,9 @@ type MealLog = {
   carbs: number | null;
   fat: number | null;
   detected_foods: string[] | null;
+  meal_score: number | null;
+  meal_classification: string | null;
+  meal_xp: number | null;
 };
 
 const MealCard = ({ meal }: { meal: MealLog }) => {
@@ -71,9 +74,18 @@ const MealCard = ({ meal }: { meal: MealLog }) => {
           )}
         </div>
         {hasNutrition && (
-          <div className="flex-shrink-0 text-right">
+          <div className="flex-shrink-0 text-right space-y-0.5">
             <p className="text-sm font-display font-bold text-primary">{meal.calories}</p>
             <p className="text-[10px] text-muted-foreground">kcal</p>
+            {meal.meal_score != null && (
+              <p className={cn("text-[10px] font-bold", 
+                meal.meal_score >= 80 ? "text-success" : 
+                meal.meal_score >= 60 ? "text-primary" : 
+                meal.meal_score >= 40 ? "text-streak" : "text-destructive"
+              )}>
+                {meal.meal_score}pts
+              </p>
+            )}
           </div>
         )}
       </div>
@@ -115,7 +127,7 @@ const Meals = () => {
 
       const { data } = await supabase
         .from("meal_logs")
-        .select("id, meal_type, image_url, caption, created_at, date, calories, protein, carbs, fat, detected_foods")
+        .select("id, meal_type, image_url, caption, created_at, date, calories, protein, carbs, fat, detected_foods, meal_score, meal_classification, meal_xp")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(100);

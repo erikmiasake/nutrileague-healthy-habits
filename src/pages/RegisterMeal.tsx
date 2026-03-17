@@ -5,6 +5,7 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
+import MealScoreCard from "@/components/MealScoreCard";
 
 type Step = "type" | "photo" | "preview" | "analyzing" | "result";
 
@@ -14,6 +15,13 @@ type NutritionData = {
   carbs: number;
   fat: number;
   detected_foods: string[];
+  meal_score: number;
+  meal_classification: string;
+  meal_xp: number;
+  has_protein: boolean;
+  has_vegetables: boolean;
+  processing_level: string;
+  junk_level: string;
 };
 
 const mealTypes = [
@@ -289,9 +297,20 @@ const RegisterMeal = () => {
               </div>
             )}
 
+            {/* Meal Score */}
+            <MealScoreCard
+              score={nutrition.meal_score}
+              classification={nutrition.meal_classification}
+              xp={nutrition.meal_xp}
+              hasProtein={nutrition.has_protein}
+              hasVegetables={nutrition.has_vegetables}
+              processingLevel={nutrition.processing_level}
+              junkLevel={nutrition.junk_level}
+            />
+
             {/* Calories hero */}
             <motion.div
-              className="rounded-2xl border border-border bg-card p-5 mb-4 text-center card-elevated"
+              className="rounded-2xl border border-border bg-card p-5 mt-4 mb-4 text-center card-elevated"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}

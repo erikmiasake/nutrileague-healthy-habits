@@ -7,6 +7,40 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+function calculateMealScore(criteria: {
+  has_protein: boolean;
+  has_vegetables: boolean;
+  processing_level: string;
+  junk_level: string;
+}) {
+  let score = 0;
+  score += criteria.has_protein ? 25 : 10;
+  score += criteria.has_vegetables ? 25 : 5;
+
+  if (criteria.processing_level === "baixo") score += 25;
+  else if (criteria.processing_level === "medio") score += 15;
+  else score += 5;
+
+  if (criteria.junk_level === "moderado") score -= 10;
+  else if (criteria.junk_level === "alto") score -= 25;
+
+  return Math.max(0, Math.min(100, score));
+}
+
+function classifyScore(score: number) {
+  if (score >= 80) return "Excelente";
+  if (score >= 60) return "Boa";
+  if (score >= 40) return "Regular";
+  return "Ruim";
+}
+
+function scoreToXp(score: number) {
+  if (score >= 80) return 30;
+  if (score >= 60) return 20;
+  if (score >= 40) return 10;
+  return 5;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -45,7 +79,6 @@ serve(async (req) => {
       });
     }
 
-    // Call Gemini via Lovable AI Gateway with the image
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -57,17 +90,19 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a nutrition analysis AI. Analyze food images and estimate macronutrients.
+            content: `You are a nutrition analysis AI. Analyze food images and estimate macronutrients and meal quality.
 Always respond by calling the report_nutrition function with your analysis.
 Be realistic with estimates. If you can't identify the food clearly, make your best estimate.
-All values should be reasonable for a single meal portion.`,
+All values should be reasonable for a single meal portion.
+For processing_level: use "baixo" for whole/natural foods, "medio" for lightly processed, "alto" for highly processed/ultra-processed.
+For junk_level: use "nenhum" if no junk food, "moderado" if some unhealthy items, "alto" if mostly junk food.`,
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: "Analyze this meal photo. Identify the foods and estimate the macronutrients (calories, protein, carbs, fat).",
+                text: "Analyze this meal photo. Identify the foods and estimate the macronutrients (calories, protein, carbs, fat). Also evaluate: does it contain a good protein source? Does it contain vegetables/greens? What is the processing level? Is there junk food?",
               },
               {
                 type: "image_url",
@@ -81,7 +116,7 @@ All values should be reasonable for a single meal portion.`,
             type: "function",
             function: {
               name: "report_nutrition",
-              description: "Report the detected foods and estimated macronutrients for the meal.",
+              description: "Report the detected foods, estimated macronutrients, and meal quality criteria.",
               parameters: {
                 type: "object",
                 properties: {
@@ -106,8 +141,26 @@ All values should be reasonable for a single meal portion.`,
                     type: "number",
                     description: "Estimated fat in grams.",
                   },
+                  has_protein: {
+                    type: "boolean",
+                    description: "Whether the meal contains a meaningful protein source (meat, fish, eggs, legumes, dairy).",
+                  },
+                  has_vegetables: {
+                    type: "boolean",
+                    description: "Whether the meal contains vegetables, greens, or salad.",
+                  },
+                  processing_level: {
+                    type: "string",
+                    enum: ["baixo", "medio", "alto"],
+                    description: "Level of food processing: baixo (whole/natural), medio (lightly processed), alto (ultra-processed).",
+                  },
+                  junk_level: {
+                    type: "string",
+                    enum: ["nenhum", "moderado", "alto"],
+                    description: "Presence of junk food: nenhum (none), moderado (some), alto (mostly junk).",
+                  },
                 },
-                required: ["detected_foods", "calories", "protein", "carbs", "fat"],
+                required: ["detected_foods", "calories", "protein", "carbs", "fat", "has_protein", "has_vegetables", "processing_level", "junk_level"],
                 additionalProperties: false,
               },
             },
@@ -142,7 +195,17 @@ All values should be reasonable for a single meal portion.`,
 
     const nutrition = JSON.parse(toolCall.function.arguments);
 
-    // Update the meal_log with nutrition data
+    // Calculate meal score
+    const mealScore = calculateMealScore({
+      has_protein: nutrition.has_protein,
+      has_vegetables: nutrition.has_vegetables,
+      processing_level: nutrition.processing_level,
+      junk_level: nutrition.junk_level,
+    });
+    const classification = classifyScore(mealScore);
+    const xp = scoreToXp(mealScore);
+
+    // Update the meal_log with nutrition data + score
     const { error: updateError } = await supabase
       .from("meal_logs")
       .update({
@@ -151,6 +214,13 @@ All values should be reasonable for a single meal portion.`,
         carbs: nutrition.carbs,
         fat: nutrition.fat,
         detected_foods: nutrition.detected_foods,
+        has_protein: nutrition.has_protein,
+        has_vegetables: nutrition.has_vegetables,
+        processing_level: nutrition.processing_level,
+        junk_level: nutrition.junk_level,
+        meal_score: mealScore,
+        meal_classification: classification,
+        meal_xp: xp,
       })
       .eq("id", meal_id);
 
@@ -159,7 +229,15 @@ All values should be reasonable for a single meal portion.`,
       throw new Error("Failed to save nutrition data");
     }
 
-    return new Response(JSON.stringify({ success: true, nutrition }), {
+    return new Response(JSON.stringify({
+      success: true,
+      nutrition: {
+        ...nutrition,
+        meal_score: mealScore,
+        meal_classification: classification,
+        meal_xp: xp,
+      },
+    }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

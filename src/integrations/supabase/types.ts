@@ -158,9 +158,16 @@ export type Database = {
           date: string
           detected_foods: string[] | null
           fat: number | null
+          has_protein: boolean | null
+          has_vegetables: boolean | null
           id: string
           image_url: string | null
+          junk_level: string | null
+          meal_classification: string | null
+          meal_score: number | null
           meal_type: string
+          meal_xp: number | null
+          processing_level: string | null
           protein: number | null
           user_id: string
         }
@@ -172,9 +179,16 @@ export type Database = {
           date?: string
           detected_foods?: string[] | null
           fat?: number | null
+          has_protein?: boolean | null
+          has_vegetables?: boolean | null
           id?: string
           image_url?: string | null
+          junk_level?: string | null
+          meal_classification?: string | null
+          meal_score?: number | null
           meal_type?: string
+          meal_xp?: number | null
+          processing_level?: string | null
           protein?: number | null
           user_id: string
         }
@@ -186,9 +200,16 @@ export type Database = {
           date?: string
           detected_foods?: string[] | null
           fat?: number | null
+          has_protein?: boolean | null
+          has_vegetables?: boolean | null
           id?: string
           image_url?: string | null
+          junk_level?: string | null
+          meal_classification?: string | null
+          meal_score?: number | null
           meal_type?: string
+          meal_xp?: number | null
+          processing_level?: string | null
           protein?: number | null
           user_id?: string
         }
