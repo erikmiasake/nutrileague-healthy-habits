@@ -337,56 +337,6 @@ const Index = () => {
       {/* ── BLOCK: Today's Meals ── */}
       <HomeMealsBlock />
 
-      {/* ── BLOCK 4: League Activity Feed ── */}
-      <motion.section
-        className="rounded-2xl border border-border bg-card overflow-hidden card-elevated"
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
-      >
-        <div className="p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Activity size={14} className="text-primary" />
-            <h2 className="text-sm font-display font-bold text-foreground">Atividade da liga</h2>
-          </div>
-
-          {activityLoading ? (
-            <div className="py-4 flex justify-center">
-              <motion.div
-                className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              />
-            </div>
-          ) : activities.length === 0 ? (
-            <p className="text-xs text-muted-foreground text-center py-4">
-              Nenhuma atividade recente
-            </p>
-          ) : (
-            <div className="space-y-2">
-              {activities.map((item, i) => (
-                <motion.div
-                  key={item.id}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-secondary/20"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.25 + i * 0.04 }}
-                >
-                  <UserAvatar name={item.userName} avatarUrl={item.avatarUrl} size="sm" />
-                  <p className="flex-1 text-xs text-foreground/80 font-medium truncate">
-                    {item.detail}
-                  </p>
-                  {item.timeAgo && (
-                    <span className="text-[10px] text-muted-foreground flex-shrink-0">
-                      {item.timeAgo}
-                    </span>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
-      </motion.section>
     </div>
   );
 };
