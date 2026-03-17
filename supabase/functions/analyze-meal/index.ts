@@ -225,6 +225,7 @@ For junk_level: use "nenhum" if no junk food, "moderado" if some unhealthy items
         meal_score: mealScore,
         meal_classification: classification,
         meal_xp: xp,
+        ai_report: nutrition.report || null,
       })
       .eq("id", meal_id);
 
