@@ -154,13 +154,17 @@ For junk_level: use "nenhum" if no junk food, "moderado" if some unhealthy items
                     enum: ["baixo", "medio", "alto"],
                     description: "Level of food processing: baixo (whole/natural), medio (lightly processed), alto (ultra-processed).",
                   },
-                  junk_level: {
-                    type: "string",
-                    enum: ["nenhum", "moderado", "alto"],
-                    description: "Presence of junk food: nenhum (none), moderado (some), alto (mostly junk).",
-                  },
-                },
-                required: ["detected_foods", "calories", "protein", "carbs", "fat", "has_protein", "has_vegetables", "processing_level", "junk_level"],
+                   junk_level: {
+                     type: "string",
+                     enum: ["nenhum", "moderado", "alto"],
+                     description: "Presence of junk food: nenhum (none), moderado (some), alto (mostly junk).",
+                   },
+                   report: {
+                     type: "string",
+                     description: "A short report in Portuguese (2-4 sentences) explaining why the meal received this score. Mention what was good and what could be improved. Be encouraging but honest.",
+                   },
+                 },
+                 required: ["detected_foods", "calories", "protein", "carbs", "fat", "has_protein", "has_vegetables", "processing_level", "junk_level", "report"],
                 additionalProperties: false,
               },
             },
@@ -221,6 +225,7 @@ For junk_level: use "nenhum" if no junk food, "moderado" if some unhealthy items
         meal_score: mealScore,
         meal_classification: classification,
         meal_xp: xp,
+        ai_report: nutrition.report || null,
       })
       .eq("id", meal_id);
 

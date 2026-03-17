@@ -151,6 +151,7 @@ export type Database = {
       }
       meal_logs: {
         Row: {
+          ai_report: string | null
           calories: number | null
           caption: string | null
           carbs: number | null
@@ -172,6 +173,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          ai_report?: string | null
           calories?: number | null
           caption?: string | null
           carbs?: number | null
@@ -193,6 +195,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          ai_report?: string | null
           calories?: number | null
           caption?: string | null
           carbs?: number | null

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Trophy, Zap, ShieldCheck, Leaf, Factory, Cookie } from "lucide-react";
+import { Trophy, Zap, ShieldCheck, Leaf, Factory, Cookie, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MealScoreProps {
@@ -10,6 +10,7 @@ interface MealScoreProps {
   hasVegetables: boolean;
   processingLevel: string;
   junkLevel: string;
+  report?: string | null;
 }
 
 const classColors: Record<string, string> = {
@@ -53,6 +54,7 @@ export default function MealScoreCard({
   hasVegetables,
   processingLevel,
   junkLevel,
+  report,
 }: MealScoreProps) {
   const circumference = 2 * Math.PI * 42;
   const strokeDash = (score / 100) * circumference;
@@ -133,6 +135,22 @@ export default function MealScoreCard({
           positive={junkLevel === "nenhum"}
         />
       </div>
+
+      {/* AI Report */}
+      {report && (
+        <motion.div
+          className="mt-4 p-3 rounded-xl bg-background/50 border border-border"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="flex items-center gap-1.5 mb-2">
+            <FileText size={12} className="text-muted-foreground" />
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Análise</span>
+          </div>
+          <p className="text-xs text-foreground/80 leading-relaxed">{report}</p>
+        </motion.div>
+      )}
     </motion.div>
   );
 }
