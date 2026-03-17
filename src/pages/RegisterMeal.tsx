@@ -297,9 +297,20 @@ const RegisterMeal = () => {
               </div>
             )}
 
+            {/* Meal Score */}
+            <MealScoreCard
+              score={nutrition.meal_score}
+              classification={nutrition.meal_classification}
+              xp={nutrition.meal_xp}
+              hasProtein={nutrition.has_protein}
+              hasVegetables={nutrition.has_vegetables}
+              processingLevel={nutrition.processing_level}
+              junkLevel={nutrition.junk_level}
+            />
+
             {/* Calories hero */}
             <motion.div
-              className="rounded-2xl border border-border bg-card p-5 mb-4 text-center card-elevated"
+              className="rounded-2xl border border-border bg-card p-5 mt-4 mb-4 text-center card-elevated"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
