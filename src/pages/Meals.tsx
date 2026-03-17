@@ -81,7 +81,7 @@ const MealCard = ({ meal }: { meal: MealLog }) => {
               <p className={cn("text-[10px] font-bold", 
                 meal.meal_score >= 80 ? "text-success" : 
                 meal.meal_score >= 60 ? "text-primary" : 
-                meal.meal_score >= 40 ? "text-streak-glow" : "text-destructive"
+                meal.meal_score >= 40 ? "text-streak" : "text-destructive"
               )}>
                 {meal.meal_score}pts
               </p>

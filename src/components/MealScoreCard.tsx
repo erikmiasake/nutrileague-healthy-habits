@@ -29,7 +29,7 @@ const classBgColors: Record<string, string> = {
 const classRingColors: Record<string, string> = {
   Excelente: "stroke-success",
   Boa: "stroke-primary",
-  Regular: "stroke-streak-glow",
+  Regular: "stroke-streak",
   Ruim: "stroke-destructive",
 };
 
