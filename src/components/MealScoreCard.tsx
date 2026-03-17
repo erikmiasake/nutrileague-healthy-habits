@@ -135,9 +135,23 @@ export default function MealScoreCard({
           positive={junkLevel === "nenhum"}
         />
       </div>
+
+      {/* AI Report */}
+      {report && (
+        <motion.div
+          className="mt-4 p-3 rounded-xl bg-background/50 border border-border"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="flex items-center gap-1.5 mb-2">
+            <FileText size={12} className="text-muted-foreground" />
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Análise</span>
+          </div>
+          <p className="text-xs text-foreground/80 leading-relaxed">{report}</p>
+        </motion.div>
+      )}
     </motion.div>
-  );
-}
 
 function CriteriaChip({
   icon,
