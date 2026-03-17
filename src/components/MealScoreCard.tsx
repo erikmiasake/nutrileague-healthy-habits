@@ -152,6 +152,8 @@ export default function MealScoreCard({
         </motion.div>
       )}
     </motion.div>
+  );
+}
 
 function CriteriaChip({
   icon,
