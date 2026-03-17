@@ -11,6 +11,8 @@ interface DashboardData {
   userName: string;
   loggedToday: boolean;
   loading: boolean;
+  dailyHealthScore: number | null;
+  dailyHealthClassification: string | null;
 }
 
 export function useDashboardData(): DashboardData {
