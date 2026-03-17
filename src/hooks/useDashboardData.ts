@@ -11,6 +11,8 @@ interface DashboardData {
   userName: string;
   loggedToday: boolean;
   loading: boolean;
+  dailyHealthScore: number | null;
+  dailyHealthClassification: string | null;
 }
 
 export function useDashboardData(): DashboardData {
@@ -24,6 +26,8 @@ export function useDashboardData(): DashboardData {
     userName: "",
     loggedToday: false,
     loading: true,
+    dailyHealthScore: null,
+    dailyHealthClassification: null,
   });
 
   useEffect(() => {
@@ -57,11 +61,29 @@ export function useDashboardData(): DashboardData {
         .eq("user_id", user.id);
 
       // Check if logged today
-      const { count: todayCount } = await supabase
+      const { data: todayMealsData } = await supabase
         .from("meal_logs")
-        .select("*", { count: "exact", head: true })
+        .select("meal_score")
         .eq("user_id", user.id)
         .eq("date", today);
+
+      const todayCount = todayMealsData?.length ?? 0;
+
+      // Calculate daily health score (average of today's meal scores)
+      let dailyHealthScore: number | null = null;
+      let dailyHealthClassification: string | null = null;
+      if (todayMealsData && todayMealsData.length > 0) {
+        const scored = todayMealsData.filter(m => m.meal_score != null);
+        if (scored.length > 0) {
+          dailyHealthScore = Math.round(
+            scored.reduce((sum, m) => sum + (m.meal_score ?? 0), 0) / scored.length
+          );
+          if (dailyHealthScore >= 80) dailyHealthClassification = "Excelente";
+          else if (dailyHealthScore >= 60) dailyHealthClassification = "Boa";
+          else if (dailyHealthScore >= 40) dailyHealthClassification = "Regular";
+          else dailyHealthClassification = "Ruim";
+        }
+      }
 
       // Fetch weekly meals (last 7 days)
       const weekAgo = new Date();
@@ -93,12 +115,14 @@ export function useDashboardData(): DashboardData {
         currentStreak: streak?.current_streak ?? 0,
         longestStreak: streak?.longest_streak ?? 0,
         totalMeals: totalMeals ?? 0,
-        todayMeals: todayCount ?? 0,
+        todayMeals: todayCount,
         weeklyMeals: weekMeals?.length ?? 0,
         weekActivity,
         userName: profile?.name || user.email?.split("@")[0] || "Usuário",
-        loggedToday: (todayCount ?? 0) > 0,
+        loggedToday: todayCount > 0,
         loading: false,
+        dailyHealthScore,
+        dailyHealthClassification,
       });
     };
 

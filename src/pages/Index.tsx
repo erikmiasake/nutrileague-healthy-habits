@@ -1,4 +1,4 @@
-import { Flame, ChevronRight, Crown, Utensils, Trophy, Activity, Info } from "lucide-react";
+import { Flame, ChevronRight, Crown, Utensils, Trophy, Activity, Info, Heart } from "lucide-react";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,7 @@ import UserAvatar from "@/components/UserAvatar";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { currentStreak, userName, todayMeals, loading } = useDashboardData();
+  const { currentStreak, userName, todayMeals, loading, dailyHealthScore, dailyHealthClassification } = useDashboardData();
   const league = useLeagueRanking();
   const { personal, league: leagueChallenges, event } = useChallenges();
   const { activities, loading: activityLoading } = useLeagueActivity();
@@ -111,7 +111,77 @@ const Index = () => {
         </div>
       </motion.section>
 
-      {/* ── BLOCK 2: Active Challenge + CTA ── */}
+      {/* ── BLOCK: Saúde do Dia ── */}
+      <motion.section
+        className="rounded-2xl border border-border bg-card overflow-hidden card-elevated mb-4"
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.08 }}
+      >
+        <div className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Heart size={14} className="text-primary" />
+            <h2 className="text-sm font-display font-bold text-foreground">Saúde do Dia</h2>
+          </div>
+
+          {dailyHealthScore !== null ? (
+            <div className="flex items-center gap-4">
+              {/* Score ring */}
+              <div className="relative flex-shrink-0">
+                <svg width="64" height="64" viewBox="0 0 64 64">
+                  <circle
+                    cx="32" cy="32" r="28"
+                    fill="none"
+                    stroke="hsl(var(--secondary))"
+                    strokeWidth="5"
+                  />
+                  <circle
+                    cx="32" cy="32" r="28"
+                    fill="none"
+                    stroke={
+                      dailyHealthScore >= 80 ? "hsl(var(--success))" :
+                      dailyHealthScore >= 60 ? "hsl(var(--primary))" :
+                      dailyHealthScore >= 40 ? "hsl(var(--xp))" :
+                      "hsl(var(--destructive))"
+                    }
+                    strokeWidth="5"
+                    strokeLinecap="round"
+                    strokeDasharray={`${(dailyHealthScore / 100) * 175.9} 175.9`}
+                    transform="rotate(-90 32 32)"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-base font-display font-extrabold text-foreground">
+                    {dailyHealthScore}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex-1">
+                <p className={cn(
+                  "text-sm font-display font-bold",
+                  dailyHealthScore >= 80 ? "text-success" :
+                  dailyHealthScore >= 60 ? "text-primary" :
+                  dailyHealthScore >= 40 ? "text-xp" :
+                  "text-destructive"
+                )}>
+                  {dailyHealthClassification}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Média de {todayMeals} {todayMeals === 1 ? "refeição" : "refeições"} hoje
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-3">
+              <p className="text-xs text-muted-foreground">
+                Registre uma refeição para ver sua saúde do dia
+              </p>
+            </div>
+          )}
+        </div>
+      </motion.section>
+
       <motion.section
         className="rounded-2xl border border-border bg-card overflow-hidden card-elevated mb-4"
         initial={{ opacity: 0, y: 14 }}
