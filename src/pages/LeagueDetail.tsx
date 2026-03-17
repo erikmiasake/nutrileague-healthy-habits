@@ -247,8 +247,8 @@ const LeagueDetail = () => {
                 </p>
               </div>
               <div className="flex items-center gap-1">
-                <Flame size={12} className="text-primary" />
-                <span className="text-xs font-semibold">{m.current_streak}</span>
+                <span className="text-xs font-bold text-foreground">{m.avgScore}</span>
+                <span className="text-[10px] text-muted-foreground">pts</span>
               </div>
             </motion.div>
           ))}
