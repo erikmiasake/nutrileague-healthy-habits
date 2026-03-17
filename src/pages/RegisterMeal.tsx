@@ -78,6 +78,28 @@ const RegisterMeal = () => {
     }
   };
 
+  // Convert any image to JPEG blob for AI compatibility (AI only supports PNG, JPEG, WebP, GIF)
+  const convertToJpeg = (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject(new Error("Canvas not supported"));
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob(
+          (blob) => (blob ? resolve(blob) : reject(new Error("Conversion failed"))),
+          "image/jpeg",
+          0.85
+        );
+      };
+      img.onerror = () => reject(new Error("Failed to load image"));
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   const handleSubmit = async () => {
     if (!imageFile || !mealType || loading) return;
     setLoading(true);
@@ -89,12 +111,27 @@ const RegisterMeal = () => {
       return;
     }
 
-    const ext = imageFile.name.split(".").pop() || "jpg";
-    const filePath = `${user.id}/${Date.now()}.${ext}`;
+    let uploadBlob: Blob | File = imageFile;
+    const unsupportedFormats = ["avif", "bmp", "tiff", "tif", "heic", "heif"];
+    const ext = imageFile.name.split(".").pop()?.toLowerCase() || "jpg";
+    const needsConversion = unsupportedFormats.includes(ext) || !["jpg", "jpeg", "png", "webp", "gif"].includes(ext);
+
+    if (needsConversion) {
+      try {
+        uploadBlob = await convertToJpeg(imageFile);
+      } catch {
+        toast.error("Erro ao processar imagem.");
+        setLoading(false);
+        return;
+      }
+    }
+
+    const finalExt = needsConversion ? "jpg" : ext;
+    const filePath = `${user.id}/${Date.now()}.${finalExt}`;
 
     const { error: uploadError } = await supabase.storage
       .from("meal-images")
-      .upload(filePath, imageFile, { cacheControl: "3600", upsert: false });
+      .upload(filePath, uploadBlob, { cacheControl: "3600", upsert: false, contentType: needsConversion ? "image/jpeg" : imageFile.type });
 
     if (uploadError) {
       toast.error("Erro ao enviar imagem.");
