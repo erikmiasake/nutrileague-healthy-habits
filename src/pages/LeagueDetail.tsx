@@ -10,6 +10,7 @@ interface MemberRanking {
   user_id: string;
   name: string;
   avatarUrl: string | null;
+  avgScore: number;
   current_streak: number;
   isCurrentUser: boolean;
 }
