@@ -26,6 +26,8 @@ export function useDashboardData(): DashboardData {
     userName: "",
     loggedToday: false,
     loading: true,
+    dailyHealthScore: null,
+    dailyHealthClassification: null,
   });
 
   useEffect(() => {
