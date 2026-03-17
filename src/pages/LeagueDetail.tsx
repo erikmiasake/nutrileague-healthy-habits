@@ -215,8 +215,8 @@ const LeagueDetail = () => {
                   </div>
                   <p className="text-xs font-medium mt-2 truncate max-w-[70px]">{m.name.split(" ")[0]}</p>
                   <div className="flex items-center gap-0.5 mt-0.5">
-                    <Flame size={10} className="text-primary" />
-                    <span className="text-[10px] text-muted-foreground">{m.current_streak}d</span>
+                    <span className="text-[10px] font-bold text-foreground">{m.avgScore}</span>
+                    <span className="text-[9px] text-muted-foreground">pts</span>
                   </div>
                 </div>
               );
