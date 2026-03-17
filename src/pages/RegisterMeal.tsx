@@ -5,6 +5,7 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
+import MealScoreCard from "@/components/MealScoreCard";
 
 type Step = "type" | "photo" | "preview" | "analyzing" | "result";
 
