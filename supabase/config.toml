@@ -2,3 +2,6 @@ project_id = "xiphdrbatfbgcjmizcdu"
 
 [functions.analyze-meal]
 verify_jwt = false
+
+[functions.process-email-queue]
+verify_jwt = true
