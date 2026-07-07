@@ -61,21 +61,8 @@ export default function LoginCardSection({
         }
       `}</style>
 
-      {/* Subtle brand ambient glow — segue a logo */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 40% at 20% 18%, hsl(24 90% 45% / 0.28) 0%, transparent 60%)",
-        }}
-      />
-
       <div className="relative mx-auto flex min-h-screen w-full max-w-[440px] flex-col px-6 pt-24 pb-10">
-        {/* Brand */}
-        <div className="mb-12">
-          <NutriLeagueLogo size="md" />
-        </div>
+
 
         {/* Title */}
         <div className="mb-8">
