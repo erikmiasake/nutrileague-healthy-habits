@@ -43,7 +43,7 @@ const SplashScreen = ({ onFinish }: SplashScreenProps) => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <NutriLeagueLogo iconSize="h-14" textSize="text-5xl" />
+            <NutriLeagueLogo size="lg" />
           </motion.div>
 
 
