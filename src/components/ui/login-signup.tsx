@@ -20,10 +20,21 @@ import {
   Lock,
   Mail,
   ArrowRight,
-  Chrome,
   User,
   Loader2,
 } from "lucide-react";
+import { NutriLeagueLogo } from "@/components/NutriLeagueLogo";
+
+const GoogleIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
+    <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/>
+    <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+    <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-1.9 1.4-4.4 2.4-7.2 2.4-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.6 39.6 16.2 44 24 44z"/>
+    <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C41.6 35.7 44 30.3 44 24c0-1.3-.1-2.4-.4-3.5z"/>
+  </svg>
+);
+
+
 
 interface LoginCardSectionProps {
   isSignUp?: boolean;
@@ -140,14 +151,20 @@ export default function LoginCardSection({
         .btn-glow:hover {
           box-shadow: 0 0 28px hsl(var(--primary) / 0.4), 0 6px 16px hsl(var(--primary) / 0.3);
         }
+        .input-glow:focus,
+        .input-glow:focus-visible {
+          border-color: hsl(var(--primary) / 0.55) !important;
+          box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15), 0 0 18px -4px hsl(var(--primary) / 0.35);
+          outline: none;
+        }
       `}</style>
 
-      {/* Subtle vignette */}
+      {/* Warm radial glow (marca) + vignette */}
       <div
         className="pointer-events-none fixed inset-0 z-[1]"
         style={{
           background:
-            "radial-gradient(ellipse at center, transparent 30%, hsl(var(--background)) 100%)",
+            "radial-gradient(ellipse 70% 55% at 50% 42%, hsl(24 90% 45% / 0.22) 0%, hsl(20 80% 20% / 0.10) 35%, transparent 70%), radial-gradient(ellipse at center, transparent 40%, hsl(var(--background)) 100%)",
         }}
       />
 
@@ -190,15 +207,18 @@ export default function LoginCardSection({
       {/* Centered Login Card */}
       <div className="relative z-10 w-full max-w-[380px] px-5">
         <div className="card-animate">
-          <Card className="border-border/40 bg-card/70 backdrop-blur-2xl shadow-[0_8px_40px_-12px_hsl(var(--primary)/0.15)] rounded-2xl overflow-hidden">
-            <CardHeader className="text-center pt-10 pb-2 px-8">
-              <CardTitle className="text-[1.75rem] font-bold leading-tight tracking-tight">
-                {isSignUp ? "Criar conta" : "Seja Bem-Vindo"}
+          <Card className="border-border/50 bg-card/80 backdrop-blur-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.6),0_8px_30px_-10px_hsl(var(--primary)/0.25)] rounded-2xl overflow-hidden">
+            <CardHeader className="text-center pt-9 pb-2 px-8">
+              <div className="flex justify-center mb-4">
+                <NutriLeagueLogo size="md" />
+              </div>
+              <CardTitle className="text-[1.6rem] font-bold leading-tight tracking-tight">
+                {isSignUp ? "Crie sua conta" : "Bem-vindo de volta"}
               </CardTitle>
-              <CardDescription className="text-muted-foreground text-sm mt-1.5">
+              <CardDescription className="text-muted-foreground text-[13px] mt-2 leading-relaxed">
                 {isSignUp
-                  ? "Crie sua conta e comece a jogar"
-                  : "Entre para continuar"}
+                  ? "Comece hoje a construir hábitos que duram"
+                  : "Sua jornada de hábitos saudáveis começa aqui"}
               </CardDescription>
             </CardHeader>
 
@@ -220,7 +240,7 @@ export default function LoginCardSection({
                         placeholder="Seu nome"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="h-11 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 transition-all"
+                        className="input-glow h-11 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 transition-all"
                         required
                       />
                     </div>
@@ -242,7 +262,8 @@ export default function LoginCardSection({
                       placeholder="seu@email.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="h-11 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 transition-all"
+                      className="input-glow h-11 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 transition-all"
+
                       required
                     />
                   </div>
@@ -263,7 +284,7 @@ export default function LoginCardSection({
                       placeholder="Digite sua senha"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-11 pl-10 pr-11 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 transition-all"
+                      className="input-glow h-11 pl-10 pr-11 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 transition-all"
                       required
                       minLength={6}
                     />
@@ -314,7 +335,7 @@ export default function LoginCardSection({
                   onClick={onGoogleLogin}
                   className="w-full h-11 rounded-xl border-border/50 bg-secondary/30 hover:bg-secondary/60 text-foreground font-medium gap-2.5 transition-all"
                 >
-                  <Chrome className="h-4 w-4" />
+                  <GoogleIcon className="h-[18px] w-[18px]" />
                   Entrar com Google
                 </Button>
               </form>
