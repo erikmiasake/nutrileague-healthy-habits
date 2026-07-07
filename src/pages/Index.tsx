@@ -2,7 +2,7 @@ import { Flame, ChevronRight, Crown, Utensils, Trophy, Info, Heart } from "lucid
 import { GradientButton } from "@/components/ui/gradient-button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import nutrileagueLogo from "@/assets/nutrileague-logo.png.asset.json";
+import { NutriLeagueLogo } from "@/components/NutriLeagueLogo";
 import AppSidebar from "@/components/AppSidebar";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import TextHoverEffect from "@/components/ui/shimmer-bg-text";
