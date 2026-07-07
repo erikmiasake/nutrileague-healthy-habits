@@ -52,7 +52,7 @@ export default function LoginPage() {
       const { data: signUpData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
-        options: { data: { name: data.name }, emailRedirectTo: window.location.origin },
+        options: { data: { name: data.name }, emailRedirectTo: `${window.location.origin}/auth/confirm` },
       });
       if (error) { toast.error(error.message); setLoading(false); return; }
 
@@ -94,7 +94,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.resend({
       type: "signup",
       email: pendingEmail,
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: `${window.location.origin}/auth/confirm` },
     });
     if (error) {
       toast.error("Erro ao reenviar email.");
