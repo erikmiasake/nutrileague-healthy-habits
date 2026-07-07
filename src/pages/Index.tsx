@@ -2,7 +2,7 @@ import { Flame, ChevronRight, Crown, Utensils, Trophy, Info, Heart } from "lucid
 import { GradientButton } from "@/components/ui/gradient-button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import nutrileagueIcon from "@/assets/nutrileague-icon.png";
+import nutrileagueLogo from "@/assets/nutrileague-logo.png.asset.json";
 import AppSidebar from "@/components/AppSidebar";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import TextHoverEffect from "@/components/ui/shimmer-bg-text";
@@ -48,7 +48,7 @@ const Index = () => {
         transition={{ duration: 0.3 }}
       >
         <AppSidebar />
-        <TextHoverEffect text="NutriLeague" icon={nutrileagueIcon} />
+        <img src={nutrileagueLogo.url} alt="NutriLeague" className="h-10 w-auto" />
         <button
           onClick={() => navigate("/sobre")}
           className="gradient-button flex items-center justify-center w-9 h-9 rounded-xl min-w-0 p-0"
