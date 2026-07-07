@@ -61,11 +61,11 @@ export default function LoginCardSection({
         }
       `}</style>
 
-      <div className="relative mx-auto flex min-h-screen w-full max-w-[440px] flex-col px-6 pt-24 pb-10">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-[440px] flex-col justify-center px-6 py-10">
 
 
         {/* Title */}
-        <div className="mb-8">
+        <div className="mb-10">
           <h1 className="text-[26px] font-bold tracking-tight leading-tight">
             {isSignUp ? "Crie sua conta" : "Entre na sua conta"}
           </h1>
