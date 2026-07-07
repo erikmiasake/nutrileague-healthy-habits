@@ -18,6 +18,8 @@ import LeagueDetail from "./pages/LeagueDetail";
 import Profile from "./pages/Profile";
 import Meals from "./pages/Meals";
 import About from "./pages/About";
+import Privacidade from "./pages/Privacidade";
+import Termos from "./pages/Termos";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -67,6 +69,8 @@ const App = () => {
             <Route path="/ligas/:id" element={<ProtectedRoute session={session}><LeagueDetail /></ProtectedRoute>} />
             <Route path="/perfil" element={<ProtectedRoute session={session}><Profile /></ProtectedRoute>} />
             <Route path="/sobre" element={<ProtectedRoute session={session}><About /></ProtectedRoute>} />
+            <Route path="/privacidade" element={<Privacidade />} />
+            <Route path="/termos" element={<Termos />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <BottomNav />
