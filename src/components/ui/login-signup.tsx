@@ -208,98 +208,65 @@ export default function LoginCardSection({
       <div className="relative z-10 w-full max-w-[380px] px-5">
         <div className="card-animate">
           <Card className="border-border/50 bg-card/80 backdrop-blur-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.6),0_8px_30px_-10px_hsl(var(--primary)/0.25)] rounded-2xl overflow-hidden">
-            <CardHeader className="text-center pt-9 pb-2 px-8">
-              <div className="flex justify-center mb-4">
-                <NutriLeagueLogo size="md" />
+            <CardHeader className="text-center pt-10 pb-2 px-8">
+              <div className="flex justify-center">
+                <NutriLeagueLogo size="lg" />
               </div>
-              <CardTitle className="text-[1.6rem] font-bold leading-tight tracking-tight">
-                {isSignUp ? "Crie sua conta" : "Bem-vindo de volta"}
-              </CardTitle>
-              <CardDescription className="text-muted-foreground text-[13px] mt-2 leading-relaxed">
-                {isSignUp
-                  ? "Comece hoje a construir hábitos que duram"
-                  : "Sua jornada de hábitos saudáveis começa aqui"}
-              </CardDescription>
             </CardHeader>
 
             <CardContent className="px-8 pt-6 pb-2">
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 {isSignUp && (
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="name"
-                      className="text-xs font-medium text-muted-foreground"
-                    >
-                      Nome
-                    </Label>
-                    <div className="relative">
-                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
-                      <Input
-                        id="name"
-                        type="text"
-                        placeholder="Seu nome"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="input-glow h-11 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 transition-all"
-                        required
-                      />
-                    </div>
+                  <div className="relative">
+                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="Nome"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="input-glow h-12 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/60 transition-all"
+                      required
+                    />
                   </div>
                 )}
 
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="email"
-                    className="text-xs font-medium text-muted-foreground"
-                  >
-                    Email
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="seu@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="input-glow h-11 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 transition-all"
-
-                      required
-                    />
-                  </div>
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="input-glow h-12 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/60 transition-all"
+                    required
+                  />
                 </div>
 
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="password"
-                    className="text-xs font-medium text-muted-foreground"
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Senha"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="input-glow h-12 pl-10 pr-11 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/60 transition-all"
+                    required
+                    minLength={6}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground transition-colors"
                   >
-                    Senha
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Digite sua senha"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="input-glow h-11 pl-10 pr-11 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 transition-all"
-                      required
-                      minLength={6}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((v) => !v)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground transition-colors"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
                 </div>
 
                 <div className="pt-1">
