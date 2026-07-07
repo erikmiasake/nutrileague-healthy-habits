@@ -48,7 +48,7 @@ const Index = () => {
         transition={{ duration: 0.3 }}
       >
         <AppSidebar />
-        <img src={nutrileagueLogo.url} alt="NutriLeague" className="h-10 w-auto" />
+        <img src={nutrileagueLogo.url} alt="NutriLeague" className="h-9 w-auto" />
         <button
           onClick={() => navigate("/sobre")}
           className="gradient-button flex items-center justify-center w-9 h-9 rounded-xl min-w-0 p-0"
