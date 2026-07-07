@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "@/assets/logo.png";
+import logoAsset from "@/assets/nutrileague-logo.png.asset.json";
+const logo = logoAsset.url;
 
 interface SplashScreenProps {
   onFinish: () => void;
