@@ -94,7 +94,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.resend({
       type: "signup",
       email: pendingEmail,
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: `${window.location.origin}/auth/confirm` },
     });
     if (error) {
       toast.error("Erro ao reenviar email.");
