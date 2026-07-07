@@ -151,14 +151,20 @@ export default function LoginCardSection({
         .btn-glow:hover {
           box-shadow: 0 0 28px hsl(var(--primary) / 0.4), 0 6px 16px hsl(var(--primary) / 0.3);
         }
+        .input-glow:focus,
+        .input-glow:focus-visible {
+          border-color: hsl(var(--primary) / 0.55) !important;
+          box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15), 0 0 18px -4px hsl(var(--primary) / 0.35);
+          outline: none;
+        }
       `}</style>
 
-      {/* Subtle vignette */}
+      {/* Warm radial glow (marca) + vignette */}
       <div
         className="pointer-events-none fixed inset-0 z-[1]"
         style={{
           background:
-            "radial-gradient(ellipse at center, transparent 30%, hsl(var(--background)) 100%)",
+            "radial-gradient(ellipse 70% 55% at 50% 42%, hsl(24 90% 45% / 0.22) 0%, hsl(20 80% 20% / 0.10) 35%, transparent 70%), radial-gradient(ellipse at center, transparent 40%, hsl(var(--background)) 100%)",
         }}
       />
 
@@ -201,15 +207,18 @@ export default function LoginCardSection({
       {/* Centered Login Card */}
       <div className="relative z-10 w-full max-w-[380px] px-5">
         <div className="card-animate">
-          <Card className="border-border/40 bg-card/70 backdrop-blur-2xl shadow-[0_8px_40px_-12px_hsl(var(--primary)/0.15)] rounded-2xl overflow-hidden">
-            <CardHeader className="text-center pt-10 pb-2 px-8">
-              <CardTitle className="text-[1.75rem] font-bold leading-tight tracking-tight">
-                {isSignUp ? "Criar conta" : "Seja Bem-Vindo"}
+          <Card className="border-border/50 bg-card/80 backdrop-blur-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.6),0_8px_30px_-10px_hsl(var(--primary)/0.25)] rounded-2xl overflow-hidden">
+            <CardHeader className="text-center pt-9 pb-2 px-8">
+              <div className="flex justify-center mb-4">
+                <NutriLeagueLogo size="md" />
+              </div>
+              <CardTitle className="text-[1.6rem] font-bold leading-tight tracking-tight">
+                {isSignUp ? "Crie sua conta" : "Bem-vindo de volta"}
               </CardTitle>
-              <CardDescription className="text-muted-foreground text-sm mt-1.5">
+              <CardDescription className="text-muted-foreground text-[13px] mt-2 leading-relaxed">
                 {isSignUp
-                  ? "Crie sua conta e comece a jogar"
-                  : "Entre para continuar"}
+                  ? "Comece hoje a construir hábitos que duram"
+                  : "Sua jornada de hábitos saudáveis começa aqui"}
               </CardDescription>
             </CardHeader>
 
@@ -231,7 +240,7 @@ export default function LoginCardSection({
                         placeholder="Seu nome"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="h-11 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 transition-all"
+                        className="input-glow h-11 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 transition-all"
                         required
                       />
                     </div>
@@ -253,7 +262,8 @@ export default function LoginCardSection({
                       placeholder="seu@email.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="h-11 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 transition-all"
+                      className="input-glow h-11 pl-10 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 transition-all"
+
                       required
                     />
                   </div>
@@ -274,7 +284,7 @@ export default function LoginCardSection({
                       placeholder="Digite sua senha"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-11 pl-10 pr-11 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 transition-all"
+                      className="input-glow h-11 pl-10 pr-11 rounded-xl bg-secondary/60 border-border/60 text-foreground placeholder:text-muted-foreground/50 transition-all"
                       required
                       minLength={6}
                     />
@@ -325,7 +335,7 @@ export default function LoginCardSection({
                   onClick={onGoogleLogin}
                   className="w-full h-11 rounded-xl border-border/50 bg-secondary/30 hover:bg-secondary/60 text-foreground font-medium gap-2.5 transition-all"
                 >
-                  <Chrome className="h-4 w-4" />
+                  <GoogleIcon className="h-[18px] w-[18px]" />
                   Entrar com Google
                 </Button>
               </form>
