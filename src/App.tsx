@@ -72,6 +72,7 @@ const App = () => {
             <Route path="/sobre" element={<ProtectedRoute session={session}><About /></ProtectedRoute>} />
             <Route path="/privacidade" element={<Privacidade />} />
             <Route path="/termos" element={<Termos />} />
+            <Route path="/auth/confirm" element={<AuthConfirm />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <BottomNav />
