@@ -48,7 +48,15 @@ const Index = () => {
         transition={{ duration: 0.3 }}
       >
         <AppSidebar />
-        <img src={nutrileagueLogo.url} alt="NutriLeague" className="h-9 w-auto" />
+        <div className="flex items-center gap-1.5">
+          <img src={nutrileagueLogo.url} alt="" className="h-7 w-auto" />
+          <span
+            className="text-[17px] font-semibold text-foreground tracking-tight"
+            style={{ fontFamily: "'Poppins', sans-serif" }}
+          >
+            NutriLeague
+          </span>
+        </div>
         <button
           onClick={() => navigate("/sobre")}
           className="gradient-button flex items-center justify-center w-9 h-9 rounded-xl min-w-0 p-0"
