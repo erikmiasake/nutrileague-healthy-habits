@@ -49,7 +49,7 @@ const Index = () => {
       >
         <AppSidebar />
         <div className="flex items-end gap-0.5">
-          <img src={nutrileagueLogo.url} alt="" className="h-9 w-auto" />
+          <img src={nutrileagueLogo.url} alt="" className="h-7 w-auto" />
           <span
             className="text-[22px] font-bold text-foreground tracking-tight leading-none pb-[2px]"
             style={{ fontFamily: "'Poppins', sans-serif" }}
