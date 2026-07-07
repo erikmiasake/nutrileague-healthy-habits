@@ -20,6 +20,7 @@ import Meals from "./pages/Meals";
 import About from "./pages/About";
 import Privacidade from "./pages/Privacidade";
 import Termos from "./pages/Termos";
+import AuthConfirm from "./pages/AuthConfirm";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
