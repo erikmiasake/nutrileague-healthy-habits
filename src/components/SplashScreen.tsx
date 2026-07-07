@@ -37,14 +37,15 @@ const SplashScreen = ({ onFinish }: SplashScreenProps) => {
           />
 
           {/* Logo */}
-          <motion.img
-            src={logo}
-            alt="NutriLeague"
-            className="relative z-10 w-56 h-56"
+          <motion.div
+            className="relative z-10"
             initial={{ opacity: 0, scale: 0.9, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-          />
+          >
+            <NutriLeagueLogo iconSize="h-20" textSize="text-5xl" />
+          </motion.div>
+
 
           {/* Minimal loading indicator */}
           <motion.div
