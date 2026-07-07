@@ -51,7 +51,7 @@ const Index = () => {
         <div className="flex items-end gap-0.5">
           <img src={nutrileagueLogo.url} alt="" className="h-7 w-auto" />
           <span
-            className="text-[22px] font-bold text-foreground tracking-tight leading-none pb-[2px]"
+            className="text-[22px] font-bold text-foreground tracking-tight leading-none"
             style={{ fontFamily: "'Poppins', sans-serif" }}
           >
             NutriLeague
