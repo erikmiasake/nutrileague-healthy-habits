@@ -425,6 +425,14 @@ export type Database = {
         Args: { _league_id: string; _user_id: string }
         Returns: boolean
       }
+      join_league_by_code: {
+        Args: { _code: string }
+        Returns: {
+          already_member: boolean
+          league_id: string
+          league_name: string
+        }[]
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
