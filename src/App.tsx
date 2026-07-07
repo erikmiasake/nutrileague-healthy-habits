@@ -21,6 +21,8 @@ import About from "./pages/About";
 import Privacidade from "./pages/Privacidade";
 import Termos from "./pages/Termos";
 import AuthConfirm from "./pages/AuthConfirm";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -73,6 +75,8 @@ const App = () => {
             <Route path="/privacidade" element={<Privacidade />} />
             <Route path="/termos" element={<Termos />} />
             <Route path="/auth/confirm" element={<AuthConfirm />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <BottomNav />
