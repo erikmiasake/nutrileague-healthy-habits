@@ -1,11 +1,21 @@
 import nutrileagueLogo from "@/assets/nutrileague-logo.png.asset.json";
 import { cn } from "@/lib/utils";
 
+/**
+ * Tamanhos padronizados da logo (mobile-first).
+ * Use estes presets em vez de valores arbitrários para manter consistência.
+ */
+const SIZE_PRESETS = {
+  sm: { icon: "h-7", text: "text-[22px]" },   // header / navbar
+  md: { icon: "h-10", text: "text-[32px]" },  // cards, seções internas
+  lg: { icon: "h-14", text: "text-5xl" },     // splash / hero
+} as const;
+
+type LogoSize = keyof typeof SIZE_PRESETS;
+
 interface NutriLeagueLogoProps {
-  /** Altura do ícone (Tailwind class), ex: "h-7", "h-9", "h-12" */
-  iconSize?: string;
-  /** Tamanho do texto (Tailwind class ou arbitrary), ex: "text-[22px]", "text-3xl" */
-  textSize?: string;
+  /** Tamanho padronizado: "sm" (header, padrão), "md" (interno), "lg" (splash) */
+  size?: LogoSize;
   /** Esconder o texto (apenas ícone) */
   iconOnly?: boolean;
   /** Esconder o ícone (apenas texto) */
@@ -15,28 +25,29 @@ interface NutriLeagueLogoProps {
 
 /**
  * Logo oficial do NutriLeague — ícone da chama + wordmark em Poppins bold.
- * Alinhamento e proporções calibrados para casar com o logo de referência.
+ * Sempre use os tamanhos padrão via prop `size` para manter consistência.
  */
 export function NutriLeagueLogo({
-  iconSize = "h-7",
-  textSize = "text-[22px]",
+  size = "sm",
   iconOnly = false,
   textOnly = false,
   className,
 }: NutriLeagueLogoProps) {
+  const { icon, text } = SIZE_PRESETS[size];
+
   return (
     <div className={cn("flex items-end gap-0.5", className)}>
       {!textOnly && (
         <img
           src={nutrileagueLogo.url}
           alt="NutriLeague"
-          className={cn(iconSize, "w-auto")}
+          className={cn(icon, "w-auto")}
         />
       )}
       {!iconOnly && (
         <span
           className={cn(
-            textSize,
+            text,
             "font-bold text-foreground tracking-tight leading-none",
           )}
           style={{ fontFamily: "'Poppins', sans-serif" }}
@@ -47,3 +58,4 @@ export function NutriLeagueLogo({
     </div>
   );
 }
+
