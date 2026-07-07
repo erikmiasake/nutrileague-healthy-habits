@@ -134,7 +134,17 @@ export default function LoginCardSection({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-[15px] font-semibold">Senha</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password" className="text-[15px] font-semibold">Senha</Label>
+              {!isSignUp && (
+                <Link
+                  to="/forgot-password"
+                  className="text-[13px] font-medium text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Esqueceu?
+                </Link>
+              )}
+            </div>
             <div className="relative">
               <Input
                 id="password"
