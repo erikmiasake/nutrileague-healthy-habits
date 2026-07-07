@@ -115,28 +115,17 @@ const Leagues = () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { toast.error("Faça login primeiro."); setSubmitting(false); return; }
 
-    const { data: league } = await supabase
-      .from("leagues")
-      .select("id")
-      .eq("invite_code", joinCode.trim().toLowerCase())
-      .maybeSingle();
+    const { data, error } = await supabase.rpc("join_league_by_code", {
+      _code: joinCode.trim(),
+    });
 
-    if (!league) {
-      toast.error("Código inválido.");
-      setSubmitting(false);
-      return;
-    }
-
-    const { error } = await supabase
-      .from("league_members")
-      .insert({ league_id: league.id, user_id: user.id });
-
-    if (error?.code === "23505") {
-      toast.info("Você já está nessa liga!");
-    } else if (error) {
-      toast.error("Erro ao entrar na liga.");
+    if (error) {
+      if (error.code === "P0002") toast.error("Código inválido.");
+      else toast.error("Erro ao entrar na liga.");
     } else {
-      toast.success("Você entrou na liga! 🎉");
+      const row = Array.isArray(data) ? data[0] : data;
+      if (row?.already_member) toast.info("Você já está nessa liga!");
+      else toast.success("Você entrou na liga! 🎉");
     }
 
     setJoinCode("");
@@ -144,6 +133,7 @@ const Leagues = () => {
     setSubmitting(false);
     fetchLeagues();
   };
+
 
   const copyCode = (code: string, id: string) => {
     navigator.clipboard.writeText(code);
