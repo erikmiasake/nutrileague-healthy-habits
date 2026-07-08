@@ -199,25 +199,26 @@ const LeagueDetail = () => {
 
         {/* Top 3 Podium */}
         {members.length >= 3 && (
-          <div className="flex items-end justify-center gap-4 mb-6">
+          <div className="flex items-end justify-center gap-6 mb-6 bg-gradient-to-b from-primary/5 to-transparent rounded-2xl py-5 px-3 border border-primary/10">
             {[1, 0, 2].map(idx => {
               const m = members[idx];
               if (!m) return null;
               const isFirst = idx === 0;
+              const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : "🥉";
               return (
                 <div key={m.user_id} className="flex flex-col items-center">
-                  <div className={`relative ${isFirst ? "mb-2" : ""}`}>
-                    {isFirst && <Crown size={18} className="text-xp absolute -top-5 left-1/2 -translate-x-1/2" />}
+                  <span className={`${isFirst ? "text-3xl" : "text-2xl"} mb-1 leading-none`}>{medal}</span>
+                  <div className="relative">
                     <UserAvatar
                       name={m.name}
                       avatarUrl={m.avatarUrl}
                       size={isFirst ? "lg" : "md"}
-                      className={isFirst ? "border-primary bg-primary/20" : ""}
+                      className={isFirst ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}
                     />
                   </div>
-                  <p className="text-xs font-medium mt-2 truncate max-w-[70px]">{m.name.split(" ")[0]}</p>
+                  <p className="text-xs font-semibold mt-2 truncate max-w-[70px]">{m.name.split(" ")[0]}</p>
                   <div className="flex items-center gap-0.5 mt-0.5">
-                    <span className="text-[10px] font-bold text-foreground">{m.avgScore}</span>
+                    <span className={`text-[11px] font-bold ${isFirst ? "text-primary" : "text-foreground"}`}>{m.avgScore}</span>
                     <span className="text-[9px] text-muted-foreground">pts</span>
                   </div>
                 </div>
@@ -225,6 +226,7 @@ const LeagueDetail = () => {
             })}
           </div>
         )}
+
 
         {/* Full list */}
         <div className="space-y-2">
