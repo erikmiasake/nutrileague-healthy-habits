@@ -40,7 +40,7 @@ const SparkAvatar = ({ pulse = false }: { pulse?: boolean }) => (
       />
     )}
     <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center shadow-lg shadow-primary/30 ring-1 ring-primary/40 p-1.5">
-      <img src={sparkIcon} alt="Spark" className="w-full h-full object-contain" />
+      <img src={sparkIcon} alt="Sparky" className="w-full h-full object-contain" />
     </div>
   </div>
 );
@@ -108,11 +108,11 @@ export default function Coach() {
           <AppSidebar />
           <div className="flex items-center gap-2 flex-1">
             <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/40 flex items-center justify-center shadow-lg shadow-primary/30 p-1.5">
-              <img src={sparkIcon} alt="Spark" className="w-full h-full object-contain" />
+              <img src={sparkIcon} alt="Sparky" className="w-full h-full object-contain" />
               <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 ring-2 ring-background" />
             </div>
             <div>
-              <h1 className="text-base font-display font-bold text-foreground leading-none">Spark</h1>
+              <h1 className="text-base font-display font-bold text-foreground leading-none">Sparky</h1>
               <p className="text-[10px] text-muted-foreground mt-0.5">Online · seu coach de progresso</p>
             </div>
           </div>
