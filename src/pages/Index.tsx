@@ -362,9 +362,7 @@ const Index = () => {
       </motion.section>
 
       {/* ── MEALS ── */}
-      <div style={{ borderLeftWidth: 3, borderLeftColor: "hsl(var(--success))" }} className="rounded-2xl">
-        <HomeMealsBlock />
-      </div>
+      <HomeMealsBlock />
     </div>
   );
 };
