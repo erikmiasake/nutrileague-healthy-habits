@@ -68,6 +68,13 @@ const Leagues = () => {
       leaguesWithCounts.push({ ...l, memberCount: count ?? 0 });
     }
 
+    // Resolve signed URLs for covers
+    const paths = leaguesWithCounts.map(l => l.cover_photo_path).filter((p): p is string => !!p);
+    const urlMap = await getCoverSignedUrls(paths);
+    leaguesWithCounts.forEach(l => {
+      l.cover_url = l.cover_photo_path ? urlMap[l.cover_photo_path] ?? null : null;
+    });
+
     setLeagues(leaguesWithCounts);
     setLoading(false);
   };
