@@ -1,4 +1,4 @@
-import { Flame, ChevronRight, Crown, Utensils, Trophy, Info, Heart, Sparkles, UserPlus, Share2 } from "lucide-react";
+import { Flame, ChevronRight, Crown, Utensils, Trophy, Info, Sparkles, UserPlus, Share2 } from "lucide-react";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,7 @@ import UserAvatar from "@/components/UserAvatar";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { currentStreak, userName, todayMeals, loading, dailyHealthScore, dailyHealthClassification } = useDashboardData();
+  const { currentStreak, userName, todayMeals, loading, dailyHealthScore } = useDashboardData();
   const league = useLeagueRanking();
   const { personal, league: leagueChallenges, event } = useChallenges();
 
@@ -181,66 +181,12 @@ const Index = () => {
         </GradientButton>
       </motion.div>
 
-      {/* ── SECONDARY GRID ── */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        {/* Saúde do Dia — only when data OR mini CTA */}
-        {dailyHealthScore !== null ? (
-          <motion.button
-            onClick={() => navigate("/refeicoes")}
-            className="relative rounded-2xl bg-card border border-border overflow-hidden p-3.5 text-left card-elevated"
-            style={{ borderLeftWidth: 3, borderLeftColor: "hsl(var(--success))" }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.16 }}
-          >
-            <div className="flex items-center gap-1.5 mb-2">
-              <Heart size={12} className="text-success" fill="currentColor" fillOpacity={0.2} />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                Saúde do dia
-              </span>
-            </div>
-            <div className="flex items-end gap-1">
-              <span className={cn(
-                "text-3xl font-display font-black leading-none",
-                dailyHealthScore >= 80 ? "text-success" :
-                dailyHealthScore >= 60 ? "text-primary" :
-                dailyHealthScore >= 40 ? "text-xp" : "text-destructive"
-              )}>
-                {dailyHealthScore}
-              </span>
-              <span className="text-[10px] text-muted-foreground mb-1">/100</span>
-            </div>
-            <p className="text-[11px] font-medium text-foreground/80 mt-0.5">
-              {dailyHealthClassification}
-            </p>
-          </motion.button>
-        ) : (
-          <motion.button
-            onClick={() => navigate("/registrar")}
-            className="relative rounded-2xl bg-card border border-dashed border-border/70 hover:border-success/50 hover:bg-success/5 transition overflow-hidden p-3.5 text-left"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.16 }}
-          >
-            <div className="flex items-center gap-1.5 mb-2">
-              <Heart size={12} className="text-success/60" />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                Saúde do dia
-              </span>
-            </div>
-            <div className="w-10 h-10 rounded-full border-2 border-dashed border-success/40 flex items-center justify-center mb-1">
-              <Heart size={16} className="text-success/60" />
-            </div>
-            <p className="text-[11px] font-medium text-foreground/70">
-              Toque para começar
-            </p>
-          </motion.button>
-        )}
-
+      {/* ── DESAFIO ── */}
+      <div className="mb-4">
         {/* Desafio ativo */}
         <motion.button
           onClick={() => navigate("/desafios")}
-          className="relative rounded-2xl bg-card border border-border overflow-hidden p-3.5 text-left card-elevated"
+          className="relative w-full rounded-2xl bg-card border border-border overflow-hidden p-3.5 text-left card-elevated"
           style={{ borderLeftWidth: 3, borderLeftColor: "hsl(var(--xp))" }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -272,17 +218,18 @@ const Index = () => {
               </p>
             </>
           ) : (
-            <>
-              <div className="w-10 h-10 rounded-full border-2 border-dashed border-xp/40 flex items-center justify-center mb-1">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full border-2 border-dashed border-xp/40 flex items-center justify-center shrink-0">
                 <Trophy size={16} className="text-xp/60" />
               </div>
               <p className="text-[11px] font-medium text-foreground/70">
                 Escolher desafio
               </p>
-            </>
+            </div>
           )}
         </motion.button>
       </div>
+
 
       {/* ── COACH SPARK ── */}
       <motion.button
