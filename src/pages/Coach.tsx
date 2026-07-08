@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, ArrowRight, Send } from "lucide-react";
+import { ArrowRight, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import AppSidebar from "@/components/AppSidebar";
 import { toast } from "sonner";
+import sparkIcon from "@/assets/spark-icon.png";
 
 type QuestionKey =
   | "improve_next"
@@ -29,7 +30,7 @@ type Message = {
   action?: { label: string; route: string };
 };
 
-const CoachAvatar = ({ pulse = false }: { pulse?: boolean }) => (
+const SparkAvatar = ({ pulse = false }: { pulse?: boolean }) => (
   <div className="relative shrink-0">
     {pulse && (
       <motion.span
@@ -38,8 +39,8 @@ const CoachAvatar = ({ pulse = false }: { pulse?: boolean }) => (
         transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
       />
     )}
-    <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/30 ring-1 ring-primary/50">
-      <Sparkles size={16} className="text-primary-foreground" />
+    <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center shadow-lg shadow-primary/30 ring-1 ring-primary/40 p-1.5">
+      <img src={sparkIcon} alt="Spark" className="w-full h-full object-contain" />
     </div>
   </div>
 );
