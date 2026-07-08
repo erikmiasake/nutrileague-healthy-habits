@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import RegisterMeal from "./pages/RegisterMeal";
 import Challenges from "./pages/Challenges";
+import Coach from "./pages/Coach";
 import Leagues from "./pages/Leagues";
 import NoLeagueOnboarding from "./pages/NoLeagueOnboarding";
 import LeagueDetail from "./pages/LeagueDetail";
@@ -67,6 +68,7 @@ const App = () => {
             <Route path="/registrar" element={<ProtectedRoute session={session}><RegisterMeal /></ProtectedRoute>} />
             <Route path="/refeicoes" element={<ProtectedRoute session={session}><Meals /></ProtectedRoute>} />
             <Route path="/desafios" element={<ProtectedRoute session={session}><Challenges /></ProtectedRoute>} />
+            <Route path="/coach" element={<ProtectedRoute session={session}><Coach /></ProtectedRoute>} />
             <Route path="/onboarding" element={<ProtectedRoute session={session}><NoLeagueOnboarding /></ProtectedRoute>} />
             <Route path="/ligas" element={<ProtectedRoute session={session}><Leagues /></ProtectedRoute>} />
             <Route path="/ligas/:id" element={<ProtectedRoute session={session}><LeagueDetail /></ProtectedRoute>} />
