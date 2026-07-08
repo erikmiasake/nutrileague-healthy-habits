@@ -254,7 +254,7 @@ const Index = () => {
           </div>
           {activeChallenge ? (
             <>
-              <p className="text-sm font-display font-bold text-foreground line-clamp-1 mb-1.5">
+              <p className="text-sm font-display font-bold text-foreground leading-snug mb-1.5 break-words">
                 {activeChallenge.title}
               </p>
               <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden mb-1">
