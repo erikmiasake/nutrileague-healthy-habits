@@ -214,6 +214,7 @@ export type Database = {
       }
       leagues: {
         Row: {
+          cover_photo_path: string | null
           created_at: string
           created_by: string
           icon: string
@@ -222,6 +223,7 @@ export type Database = {
           name: string
         }
         Insert: {
+          cover_photo_path?: string | null
           created_at?: string
           created_by: string
           icon?: string
@@ -230,6 +232,7 @@ export type Database = {
           name: string
         }
         Update: {
+          cover_photo_path?: string | null
           created_at?: string
           created_by?: string
           icon?: string
