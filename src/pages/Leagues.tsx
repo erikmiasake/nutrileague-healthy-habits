@@ -280,9 +280,10 @@ const Leagues = () => {
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Crown size={18} className="text-primary" />
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/25 to-primary/5 border border-primary/20 flex items-center justify-center text-xl">
+                    {league.icon || "🏆"}
                   </div>
+
                   <div>
                     <p className="text-sm font-display font-bold">{league.name}</p>
                     <p className="text-[11px] text-muted-foreground">{league.memberCount} membro{league.memberCount !== 1 ? "s" : ""}</p>
