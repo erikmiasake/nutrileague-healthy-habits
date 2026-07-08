@@ -1,0 +1,1 @@
+CREATE POLICY "Creators can view their leagues" ON public.leagues FOR SELECT TO authenticated USING (auth.uid() = created_by);
