@@ -151,6 +151,27 @@ const LeagueDetail = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleCoverChange = async (file: File | null) => {
+    if (!file || !id) return;
+    const err = validateCoverFile(file);
+    if (err) { toast.error(err); return; }
+    setUploadingCover(true);
+    try {
+      const path = await uploadLeagueCover(id, file);
+      const { error } = await supabase.from("leagues").update({ cover_photo_path: path }).eq("id", id);
+      if (error) throw error;
+      setLeague((l) => (l ? { ...l, cover_photo_path: path } : l));
+      await loadCover(path);
+      toast.success("Foto atualizada!");
+    } catch {
+      toast.error("Erro ao enviar foto.");
+    } finally {
+      setUploadingCover(false);
+      if (coverInputRef.current) coverInputRef.current.value = "";
+    }
+  };
+
+
   const medalColors = ["text-xp", "text-muted-foreground", "text-primary"];
 
   if (loading) {
