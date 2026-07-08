@@ -18,8 +18,10 @@ export type Database = {
         Row: {
           challenge_id: string
           completed: boolean
+          completed_at: string | null
           id: string
           joined_at: string
+          points_awarded: number
           progress_days: number
           updated_at: string
           user_id: string
@@ -27,8 +29,10 @@ export type Database = {
         Insert: {
           challenge_id: string
           completed?: boolean
+          completed_at?: string | null
           id?: string
           joined_at?: string
+          points_awarded?: number
           progress_days?: number
           updated_at?: string
           user_id: string
@@ -36,8 +40,10 @@ export type Database = {
         Update: {
           challenge_id?: string
           completed?: boolean
+          completed_at?: string | null
           id?: string
           joined_at?: string
+          points_awarded?: number
           progress_days?: number
           updated_at?: string
           user_id?: string
@@ -56,10 +62,14 @@ export type Database = {
         Row: {
           active: boolean
           created_at: string
+          created_by: string | null
           description: string
+          difficulty: Database["public"]["Enums"]["challenge_difficulty"] | null
           duration_days: number
+          ends_at: string | null
           id: string
           league_id: string | null
+          points_reward: number
           title: string
           type: Database["public"]["Enums"]["challenge_type"]
           xp_reward: number
@@ -67,10 +77,16 @@ export type Database = {
         Insert: {
           active?: boolean
           created_at?: string
+          created_by?: string | null
           description: string
+          difficulty?:
+            | Database["public"]["Enums"]["challenge_difficulty"]
+            | null
           duration_days: number
+          ends_at?: string | null
           id?: string
           league_id?: string | null
+          points_reward?: number
           title: string
           type: Database["public"]["Enums"]["challenge_type"]
           xp_reward?: number
@@ -78,10 +94,16 @@ export type Database = {
         Update: {
           active?: boolean
           created_at?: string
+          created_by?: string | null
           description?: string
+          difficulty?:
+            | Database["public"]["Enums"]["challenge_difficulty"]
+            | null
           duration_days?: number
+          ends_at?: string | null
           id?: string
           league_id?: string | null
+          points_reward?: number
           title?: string
           type?: Database["public"]["Enums"]["challenge_type"]
           xp_reward?: number
@@ -418,6 +440,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      complete_league_challenge: {
+        Args: { _challenge_id: string }
+        Returns: undefined
+      }
+      create_league_challenge: {
+        Args: {
+          _description: string
+          _difficulty: Database["public"]["Enums"]["challenge_difficulty"]
+          _duration_days: number
+          _league_id: string
+          _title: string
+        }
+        Returns: string
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -439,6 +475,18 @@ export type Database = {
           league_name: string
         }[]
       }
+      join_league_challenge: {
+        Args: { _challenge_id: string }
+        Returns: undefined
+      }
+      league_challenge_scoreboard: {
+        Args: { _league_id: string }
+        Returns: {
+          completed_count: number
+          total_points: number
+          user_id: string
+        }[]
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -458,6 +506,7 @@ export type Database = {
       }
     }
     Enums: {
+      challenge_difficulty: "easy" | "medium" | "hard"
       challenge_type: "personal" | "league" | "event"
     }
     CompositeTypes: {
@@ -586,6 +635,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      challenge_difficulty: ["easy", "medium", "hard"],
       challenge_type: ["personal", "league", "event"],
     },
   },
