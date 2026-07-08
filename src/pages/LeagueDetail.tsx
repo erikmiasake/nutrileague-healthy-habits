@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Crown, Flame, Users, Copy, Check, Share2, Zap, Trophy } from "lucide-react";
+import { ArrowLeft, Flame, Users, Copy, Check, Share2, Zap, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import UserAvatar from "@/components/UserAvatar";
@@ -64,7 +64,7 @@ const LeagueChallengesSection = ({ leagueId }: { leagueId: string }) => {
 const LeagueDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [league, setLeague] = useState<{ name: string; invite_code: string } | null>(null);
+  const [league, setLeague] = useState<{ name: string; invite_code: string; icon: string } | null>(null);
   const [members, setMembers] = useState<MemberRanking[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -75,8 +75,9 @@ const LeagueDetail = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: leagueData } = await supabase.from("leagues").select("name, invite_code").eq("id", id).single();
+      const { data: leagueData } = await supabase.from("leagues").select("name, invite_code, icon").eq("id", id).single();
       setLeague(leagueData);
+
 
       const { data: memberData } = await supabase.from("league_members").select("user_id").eq("league_id", id);
       if (!memberData?.length) { setLoading(false); return; }
@@ -157,16 +158,17 @@ const LeagueDetail = () => {
       {/* League header */}
       <motion.div className="bg-card rounded-2xl border border-border p-5 mb-6 card-elevated" initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Crown size={22} className="text-primary" />
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 border border-primary/25 flex items-center justify-center text-3xl shrink-0">
+            {league?.icon || "🏆"}
           </div>
-          <div>
-            <h1 className="text-xl font-display font-bold">{league?.name}</h1>
+          <div className="min-w-0">
+            <h1 className="text-xl font-display font-bold truncate">{league?.name}</h1>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <Users size={12} /> {members.length} membro{members.length !== 1 ? "s" : ""}
             </p>
           </div>
         </div>
+
         <div className="flex items-center gap-2 bg-secondary rounded-xl px-3 py-2">
           <span className="text-[10px] text-muted-foreground font-medium">Convite:</span>
           <code className="text-xs font-mono text-foreground tracking-widest flex-1">{league?.invite_code}</code>
@@ -197,25 +199,26 @@ const LeagueDetail = () => {
 
         {/* Top 3 Podium */}
         {members.length >= 3 && (
-          <div className="flex items-end justify-center gap-4 mb-6">
+          <div className="flex items-end justify-center gap-6 mb-6 bg-gradient-to-b from-primary/5 to-transparent rounded-2xl py-5 px-3 border border-primary/10">
             {[1, 0, 2].map(idx => {
               const m = members[idx];
               if (!m) return null;
               const isFirst = idx === 0;
+              const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : "🥉";
               return (
                 <div key={m.user_id} className="flex flex-col items-center">
-                  <div className={`relative ${isFirst ? "mb-2" : ""}`}>
-                    {isFirst && <Crown size={18} className="text-xp absolute -top-5 left-1/2 -translate-x-1/2" />}
+                  <span className={`${isFirst ? "text-3xl" : "text-2xl"} mb-1 leading-none`}>{medal}</span>
+                  <div className="relative">
                     <UserAvatar
                       name={m.name}
                       avatarUrl={m.avatarUrl}
                       size={isFirst ? "lg" : "md"}
-                      className={isFirst ? "border-primary bg-primary/20" : ""}
+                      className={isFirst ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}
                     />
                   </div>
-                  <p className="text-xs font-medium mt-2 truncate max-w-[70px]">{m.name.split(" ")[0]}</p>
+                  <p className="text-xs font-semibold mt-2 truncate max-w-[70px]">{m.name.split(" ")[0]}</p>
                   <div className="flex items-center gap-0.5 mt-0.5">
-                    <span className="text-[10px] font-bold text-foreground">{m.avgScore}</span>
+                    <span className={`text-[11px] font-bold ${isFirst ? "text-primary" : "text-foreground"}`}>{m.avgScore}</span>
                     <span className="text-[9px] text-muted-foreground">pts</span>
                   </div>
                 </div>
@@ -224,35 +227,43 @@ const LeagueDetail = () => {
           </div>
         )}
 
-        {/* Full list */}
+
+        {/* Full list (below top 3 when podium is shown) */}
         <div className="space-y-2">
-          {members.map((m, i) => (
-            <motion.div
-              key={m.user_id}
-              className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
-                m.isCurrentUser ? "border-primary bg-primary/5" : "border-border bg-card"
-              }`}
-              initial={{ opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.15 + i * 0.05 }}
-            >
-              <span className={`text-sm font-display font-bold w-6 text-center ${i < 3 ? medalColors[i] : "text-muted-foreground"}`}>
-                {i + 1}
-              </span>
-              <UserAvatar name={m.name} avatarUrl={m.avatarUrl} size="md" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">
-                  {m.name}
-                  {m.isCurrentUser && <span className="text-primary text-[10px] ml-1">(você)</span>}
-                </p>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="text-xs font-bold text-foreground">{m.avgScore}</span>
-                <span className="text-[10px] text-muted-foreground">pts</span>
-              </div>
-            </motion.div>
-          ))}
+          {(members.length >= 3 ? members.slice(3) : members).map((m, i) => {
+            const absoluteRank = (members.length >= 3 ? 3 : 0) + i + 1;
+            return (
+              <motion.div
+                key={m.user_id}
+                className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
+                  m.isCurrentUser ? "border-primary bg-primary/5" : "border-border bg-card"
+                }`}
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.15 + i * 0.05 }}
+              >
+                <span className={`text-sm font-display font-bold w-6 text-center ${absoluteRank <= 3 ? medalColors[absoluteRank - 1] : "text-muted-foreground"}`}>
+                  {absoluteRank}
+                </span>
+                <UserAvatar name={m.name} avatarUrl={m.avatarUrl} size="md" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">
+                    {m.name}
+                    {m.isCurrentUser && <span className="text-primary text-[10px] ml-1">(você)</span>}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs font-bold text-foreground">{m.avgScore}</span>
+                  <span className="text-[10px] text-muted-foreground">pts</span>
+                </div>
+              </motion.div>
+            );
+          })}
+          {members.length >= 3 && members.length === 3 && (
+            <p className="text-center text-[11px] text-muted-foreground py-2">Convide mais amigos para expandir o ranking</p>
+          )}
         </div>
+
       </motion.div>
     </div>
   );

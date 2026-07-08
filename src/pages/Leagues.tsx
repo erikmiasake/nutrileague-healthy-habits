@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, LogIn, Users, Crown, Copy, Check, ArrowRight, X, Share2 } from "lucide-react";
+import { Plus, LogIn, Users, Copy, Check, ArrowRight, X, Share2 } from "lucide-react";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -11,8 +11,11 @@ interface League {
   name: string;
   invite_code: string;
   created_by: string;
+  icon: string;
   memberCount: number;
 }
+
+const EMOJI_OPTIONS = ["🏆", "🔥", "⚡", "🥇", "🚀", "💪", "🌟", "🍎", "🥗", "🏅", "🎯", "🐉", "🦁", "🐺", "🦄", "🌈"];
 
 const Leagues = () => {
   const navigate = useNavigate();
@@ -22,9 +25,11 @@ const Leagues = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [showJoin, setShowJoin] = useState(false);
   const [newName, setNewName] = useState("");
+  const [newIcon, setNewIcon] = useState("🏆");
   const [joinCode, setJoinCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
 
   const fetchLeagues = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -88,9 +93,10 @@ const Leagues = () => {
 
     const { data: league, error } = await supabase
       .from("leagues")
-      .insert({ name: newName.trim(), created_by: user.id })
+      .insert({ name: newName.trim(), created_by: user.id, icon: newIcon })
       .select()
       .single();
+
 
     if (error || !league) {
       toast.error("Erro ao criar liga.");
@@ -103,10 +109,12 @@ const Leagues = () => {
 
     toast.success("Liga criada! 🏆");
     setNewName("");
+    setNewIcon("🏆");
     setShowCreate(false);
     setSubmitting(false);
     fetchLeagues();
   };
+
 
   const handleJoin = async () => {
     if (!joinCode.trim() || submitting) return;
@@ -190,6 +198,23 @@ const Leagues = () => {
               placeholder="Nome da liga"
               className="w-full h-11 rounded-xl bg-secondary px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary transition mb-3"
             />
+            <p className="text-[11px] text-muted-foreground font-medium mb-2">Escolha um ícone</p>
+            <div className="grid grid-cols-8 gap-1.5 mb-4">
+              {EMOJI_OPTIONS.map(emoji => (
+                <button
+                  key={emoji}
+                  type="button"
+                  onClick={() => setNewIcon(emoji)}
+                  className={`aspect-square rounded-lg flex items-center justify-center text-lg transition-all ${
+                    newIcon === emoji
+                      ? "bg-primary/20 border-2 border-primary scale-105"
+                      : "bg-secondary border-2 border-transparent hover:border-border"
+                  }`}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
             <GradientButton
               onClick={handleCreate}
               disabled={!newName.trim() || submitting}
@@ -197,6 +222,7 @@ const Leagues = () => {
             >
               {submitting ? "Criando..." : "Criar liga"}
             </GradientButton>
+
           </motion.div>
         )}
       </AnimatePresence>
@@ -254,9 +280,10 @@ const Leagues = () => {
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Crown size={18} className="text-primary" />
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/25 to-primary/5 border border-primary/20 flex items-center justify-center text-xl">
+                    {league.icon || "🏆"}
                   </div>
+
                   <div>
                     <p className="text-sm font-display font-bold">{league.name}</p>
                     <p className="text-[11px] text-muted-foreground">{league.memberCount} membro{league.memberCount !== 1 ? "s" : ""}</p>

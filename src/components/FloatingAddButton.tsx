@@ -2,12 +2,15 @@ import { Plus } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const HIDDEN_PATHS = ["/login", "/onboarding", "/", "/desafios", "/perfil", "/sobre", "/ligas", "/coach"];
+const HIDDEN_PREFIXES = ["/ligas/"];
 
 const FloatingAddButton = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   if (HIDDEN_PATHS.includes(location.pathname)) return null;
+  if (HIDDEN_PREFIXES.some(p => location.pathname.startsWith(p))) return null;
+
 
   return (
     <button
