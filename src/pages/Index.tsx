@@ -13,7 +13,7 @@ import UserAvatar from "@/components/UserAvatar";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { currentStreak, userName, todayMeals, loading, dailyHealthScore, dailyHealthClassification } = useDashboardData();
+  const { currentStreak, userName, todayMeals, loading, dailyHealthScore } = useDashboardData();
   const league = useLeagueRanking();
   const { personal, league: leagueChallenges, event } = useChallenges();
 
