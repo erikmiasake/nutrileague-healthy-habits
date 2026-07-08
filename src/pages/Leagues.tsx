@@ -109,10 +109,12 @@ const Leagues = () => {
 
     toast.success("Liga criada! 🏆");
     setNewName("");
+    setNewIcon("🏆");
     setShowCreate(false);
     setSubmitting(false);
     fetchLeagues();
   };
+
 
   const handleJoin = async () => {
     if (!joinCode.trim() || submitting) return;
