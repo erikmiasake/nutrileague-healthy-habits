@@ -65,19 +65,31 @@ const LeagueChallengesSection = ({ leagueId }: { leagueId: string }) => {
 const LeagueDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [league, setLeague] = useState<{ name: string; invite_code: string; icon: string } | null>(null);
+  const [league, setLeague] = useState<{ name: string; invite_code: string; icon: string; cover_photo_path: string | null; created_by: string } | null>(null);
+  const [coverUrl, setCoverUrl] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const coverInputRef = useRef<HTMLInputElement>(null);
   const [members, setMembers] = useState<MemberRanking[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+
+  const loadCover = async (path: string | null) => {
+    if (!path) { setCoverUrl(null); return; }
+    const url = await getCoverSignedUrl(path);
+    setCoverUrl(url);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       if (!id) return;
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+      setCurrentUserId(user.id);
 
-      const { data: leagueData } = await supabase.from("leagues").select("name, invite_code, icon").eq("id", id).single();
+      const { data: leagueData } = await supabase.from("leagues").select("name, invite_code, icon, cover_photo_path, created_by").eq("id", id).single();
       setLeague(leagueData);
+      if (leagueData?.cover_photo_path) loadCover(leagueData.cover_photo_path);
 
 
       const { data: memberData } = await supabase.from("league_members").select("user_id").eq("league_id", id);
