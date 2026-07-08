@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, ArrowRight, Send } from "lucide-react";
+import { ArrowRight, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import AppSidebar from "@/components/AppSidebar";
 import { toast } from "sonner";
+import sparkIcon from "@/assets/spark-icon.png";
 
 type QuestionKey =
   | "improve_next"
@@ -29,7 +30,7 @@ type Message = {
   action?: { label: string; route: string };
 };
 
-const CoachAvatar = ({ pulse = false }: { pulse?: boolean }) => (
+const SparkAvatar = ({ pulse = false }: { pulse?: boolean }) => (
   <div className="relative shrink-0">
     {pulse && (
       <motion.span
@@ -38,8 +39,8 @@ const CoachAvatar = ({ pulse = false }: { pulse?: boolean }) => (
         transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
       />
     )}
-    <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/30 ring-1 ring-primary/50">
-      <Sparkles size={16} className="text-primary-foreground" />
+    <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center shadow-lg shadow-primary/30 ring-1 ring-primary/40 p-1.5">
+      <img src={sparkIcon} alt="Spark" className="w-full h-full object-contain" />
     </div>
   </div>
 );
@@ -106,13 +107,13 @@ export default function Coach() {
         <div className="max-w-[430px] mx-auto px-4 py-3 flex items-center gap-3">
           <AppSidebar />
           <div className="flex items-center gap-2 flex-1">
-            <div className="relative w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/30">
-              <Sparkles size={16} className="text-primary-foreground" />
+            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/40 flex items-center justify-center shadow-lg shadow-primary/30 p-1.5">
+              <img src={sparkIcon} alt="Spark" className="w-full h-full object-contain" />
               <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 ring-2 ring-background" />
             </div>
             <div>
-              <h1 className="text-base font-display font-bold text-foreground leading-none">Coach</h1>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Online · treinador nutricional</p>
+              <h1 className="text-base font-display font-bold text-foreground leading-none">Spark</h1>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Online · seu coach de progresso</p>
             </div>
           </div>
         </div>
@@ -129,7 +130,7 @@ export default function Coach() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-end gap-2"
               >
-                <CoachAvatar pulse />
+                <SparkAvatar pulse />
                 <div className="max-w-[85%] bg-primary/10 border border-primary/25 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
                   <p className="text-sm text-foreground leading-relaxed">Como posso te ajudar hoje?</p>
                   <p className="text-[11px] text-muted-foreground mt-1.5">
@@ -171,7 +172,7 @@ export default function Coach() {
                 animate={{ opacity: 1, y: 0 }}
                 className={m.role === "user" ? "flex justify-end" : "flex items-end gap-2 justify-start"}
               >
-                {m.role === "coach" && <CoachAvatar />}
+                {m.role === "coach" && <SparkAvatar />}
                 <div
                   className={
                     m.role === "user"
@@ -208,7 +209,7 @@ export default function Coach() {
               animate={{ opacity: 1 }}
               className="flex items-end gap-2 justify-start"
             >
-              <CoachAvatar pulse />
+              <SparkAvatar pulse />
               <div className="bg-primary/10 border border-primary/25 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
                 <TypingDots />
               </div>
