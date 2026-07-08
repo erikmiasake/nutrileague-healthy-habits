@@ -64,9 +64,11 @@ const Index = () => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.05 }}
       >
-        <p className="text-xs text-muted-foreground">{greeting},</p>
-        <h1 className="text-lg font-display font-extrabold text-foreground leading-tight">
-          {firstName} 👋
+        <h1
+          className="text-xl text-foreground leading-tight tracking-tight"
+          style={{ fontFamily: '"Space Grotesk", sans-serif', fontWeight: 600, letterSpacing: "-0.02em" }}
+        >
+          {greeting}, {firstName}
         </h1>
       </motion.div>
 
