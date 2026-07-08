@@ -198,6 +198,23 @@ const Leagues = () => {
               placeholder="Nome da liga"
               className="w-full h-11 rounded-xl bg-secondary px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary transition mb-3"
             />
+            <p className="text-[11px] text-muted-foreground font-medium mb-2">Escolha um ícone</p>
+            <div className="grid grid-cols-8 gap-1.5 mb-4">
+              {EMOJI_OPTIONS.map(emoji => (
+                <button
+                  key={emoji}
+                  type="button"
+                  onClick={() => setNewIcon(emoji)}
+                  className={`aspect-square rounded-lg flex items-center justify-center text-lg transition-all ${
+                    newIcon === emoji
+                      ? "bg-primary/20 border-2 border-primary scale-105"
+                      : "bg-secondary border-2 border-transparent hover:border-border"
+                  }`}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
             <GradientButton
               onClick={handleCreate}
               disabled={!newName.trim() || submitting}
@@ -205,6 +222,7 @@ const Leagues = () => {
             >
               {submitting ? "Criando..." : "Criar liga"}
             </GradientButton>
+
           </motion.div>
         )}
       </AnimatePresence>
