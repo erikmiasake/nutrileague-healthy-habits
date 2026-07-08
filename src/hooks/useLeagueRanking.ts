@@ -42,7 +42,7 @@ export function useLeagueRanking(): LeagueRankingData {
       if (!membership) { setData(prev => ({ ...prev, loading: false })); return; }
 
       const { data: league } = await supabase
-        .from("leagues").select("name").eq("id", membership.league_id).maybeSingle();
+        .from("leagues").select("name, invite_code").eq("id", membership.league_id).maybeSingle();
 
       const { data: members } = await supabase
         .from("league_members").select("user_id").eq("league_id", membership.league_id);
