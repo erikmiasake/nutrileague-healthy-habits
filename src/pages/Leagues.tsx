@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, LogIn, Users, Crown, Copy, Check, ArrowRight, X, Share2 } from "lucide-react";
+import { Plus, LogIn, Users, Copy, Check, ArrowRight, X, Share2 } from "lucide-react";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -11,8 +11,11 @@ interface League {
   name: string;
   invite_code: string;
   created_by: string;
+  icon: string;
   memberCount: number;
 }
+
+const EMOJI_OPTIONS = ["🏆", "🔥", "⚡", "🥇", "🚀", "💪", "🌟", "🍎", "🥗", "🏅", "🎯", "🐉", "🦁", "🐺", "🦄", "🌈"];
 
 const Leagues = () => {
   const navigate = useNavigate();
@@ -22,9 +25,11 @@ const Leagues = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [showJoin, setShowJoin] = useState(false);
   const [newName, setNewName] = useState("");
+  const [newIcon, setNewIcon] = useState("🏆");
   const [joinCode, setJoinCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
 
   const fetchLeagues = async () => {
     const { data: { user } } = await supabase.auth.getUser();
