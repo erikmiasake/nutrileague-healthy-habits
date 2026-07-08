@@ -356,8 +356,12 @@ const Leagues = () => {
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/25 to-primary/5 border border-primary/20 flex items-center justify-center text-xl">
-                    {league.icon || "🏆"}
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/25 to-primary/5 border border-primary/20 flex items-center justify-center text-xl overflow-hidden">
+                    {league.cover_url ? (
+                      <img src={league.cover_url} alt={league.name} className="w-full h-full object-cover" />
+                    ) : (
+                      league.icon || "🏆"
+                    )}
                   </div>
 
                   <div>
