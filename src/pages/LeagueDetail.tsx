@@ -75,8 +75,9 @@ const LeagueDetail = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: leagueData } = await supabase.from("leagues").select("name, invite_code").eq("id", id).single();
+      const { data: leagueData } = await supabase.from("leagues").select("name, invite_code, icon").eq("id", id).single();
       setLeague(leagueData);
+
 
       const { data: memberData } = await supabase.from("league_members").select("user_id").eq("league_id", id);
       if (!memberData?.length) { setLoading(false); return; }
