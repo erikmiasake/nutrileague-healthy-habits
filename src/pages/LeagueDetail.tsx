@@ -64,7 +64,7 @@ const LeagueChallengesSection = ({ leagueId }: { leagueId: string }) => {
 const LeagueDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [league, setLeague] = useState<{ name: string; invite_code: string } | null>(null);
+  const [league, setLeague] = useState<{ name: string; invite_code: string; icon: string } | null>(null);
   const [members, setMembers] = useState<MemberRanking[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
