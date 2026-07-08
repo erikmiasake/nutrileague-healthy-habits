@@ -229,9 +229,52 @@ const Leagues = () => {
               value={newName}
               onChange={e => setNewName(e.target.value)}
               placeholder="Nome da liga"
-              className="w-full h-11 rounded-xl bg-secondary px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary transition mb-3"
+              className="w-full h-11 rounded-xl bg-secondary px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary transition mb-4"
             />
-            <p className="text-[11px] text-muted-foreground font-medium mb-2">Escolha um ícone</p>
+
+            {/* Cover photo upload */}
+            <p className="text-[11px] text-muted-foreground font-medium mb-2">Foto de capa (opcional)</p>
+            <input
+              ref={coverInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={(e) => handleCoverPick(e.target.files?.[0] ?? null)}
+            />
+            <div className="flex items-center gap-3 mb-4">
+              <button
+                type="button"
+                onClick={() => coverInputRef.current?.click()}
+                className="w-16 h-16 rounded-xl bg-secondary border-2 border-dashed border-border flex items-center justify-center overflow-hidden shrink-0 hover:border-primary transition-colors"
+              >
+                {newCoverPreview ? (
+                  <img src={newCoverPreview} alt="Prévia" className="w-full h-full object-cover" />
+                ) : (
+                  <Camera size={20} className="text-muted-foreground" />
+                )}
+              </button>
+              <div className="flex-1 flex flex-col gap-1">
+                <button
+                  type="button"
+                  onClick={() => coverInputRef.current?.click()}
+                  className="text-xs text-primary font-semibold flex items-center gap-1"
+                >
+                  <ImageIcon size={12} /> {newCoverPreview ? "Trocar foto" : "Escolher foto"}
+                </button>
+                {newCoverPreview && (
+                  <button
+                    type="button"
+                    onClick={() => { setNewCoverFile(null); setNewCoverPreview(null); if (coverInputRef.current) coverInputRef.current.value = ""; }}
+                    className="text-[10px] text-muted-foreground text-left"
+                  >
+                    Remover
+                  </button>
+                )}
+                <p className="text-[10px] text-muted-foreground">JPG, PNG ou WEBP · até 5MB</p>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-muted-foreground font-medium mb-2">Ou escolha um ícone</p>
             <div className="grid grid-cols-8 gap-1.5 mb-4">
               {EMOJI_OPTIONS.map(emoji => (
                 <button
