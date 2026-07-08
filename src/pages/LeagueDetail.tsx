@@ -228,35 +228,42 @@ const LeagueDetail = () => {
         )}
 
 
-        {/* Full list */}
+        {/* Full list (below top 3 when podium is shown) */}
         <div className="space-y-2">
-          {members.map((m, i) => (
-            <motion.div
-              key={m.user_id}
-              className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
-                m.isCurrentUser ? "border-primary bg-primary/5" : "border-border bg-card"
-              }`}
-              initial={{ opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.15 + i * 0.05 }}
-            >
-              <span className={`text-sm font-display font-bold w-6 text-center ${i < 3 ? medalColors[i] : "text-muted-foreground"}`}>
-                {i + 1}
-              </span>
-              <UserAvatar name={m.name} avatarUrl={m.avatarUrl} size="md" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">
-                  {m.name}
-                  {m.isCurrentUser && <span className="text-primary text-[10px] ml-1">(você)</span>}
-                </p>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="text-xs font-bold text-foreground">{m.avgScore}</span>
-                <span className="text-[10px] text-muted-foreground">pts</span>
-              </div>
-            </motion.div>
-          ))}
+          {(members.length >= 3 ? members.slice(3) : members).map((m, i) => {
+            const absoluteRank = (members.length >= 3 ? 3 : 0) + i + 1;
+            return (
+              <motion.div
+                key={m.user_id}
+                className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
+                  m.isCurrentUser ? "border-primary bg-primary/5" : "border-border bg-card"
+                }`}
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.15 + i * 0.05 }}
+              >
+                <span className={`text-sm font-display font-bold w-6 text-center ${absoluteRank <= 3 ? medalColors[absoluteRank - 1] : "text-muted-foreground"}`}>
+                  {absoluteRank}
+                </span>
+                <UserAvatar name={m.name} avatarUrl={m.avatarUrl} size="md" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">
+                    {m.name}
+                    {m.isCurrentUser && <span className="text-primary text-[10px] ml-1">(você)</span>}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs font-bold text-foreground">{m.avgScore}</span>
+                  <span className="text-[10px] text-muted-foreground">pts</span>
+                </div>
+              </motion.div>
+            );
+          })}
+          {members.length >= 3 && members.length === 3 && (
+            <p className="text-center text-[11px] text-muted-foreground py-2">Convide mais amigos para expandir o ranking</p>
+          )}
         </div>
+
       </motion.div>
     </div>
   );
