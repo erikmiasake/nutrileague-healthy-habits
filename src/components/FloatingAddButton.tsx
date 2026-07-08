@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const HIDDEN_PATHS = ["/login", "/onboarding", "/", "/desafios", "/perfil", "/sobre", "/ligas"];
+const HIDDEN_PATHS = ["/login", "/onboarding", "/", "/desafios", "/perfil", "/sobre", "/ligas", "/coach"];
 
 const FloatingAddButton = () => {
   const navigate = useNavigate();
