@@ -1,4 +1,4 @@
-import { Flame, ChevronRight, Crown, Utensils, Trophy, Info, Heart, Sparkles } from "lucide-react";
+import { Flame, ChevronRight, Crown, Utensils, Trophy, Info, Heart, Sparkles, MessageCircle, UserPlus, Share2 } from "lucide-react";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
