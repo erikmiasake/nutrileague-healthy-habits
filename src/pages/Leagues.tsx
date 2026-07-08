@@ -93,9 +93,10 @@ const Leagues = () => {
 
     const { data: league, error } = await supabase
       .from("leagues")
-      .insert({ name: newName.trim(), created_by: user.id })
+      .insert({ name: newName.trim(), created_by: user.id, icon: newIcon })
       .select()
       .single();
+
 
     if (error || !league) {
       toast.error("Erro ao criar liga.");
