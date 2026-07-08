@@ -29,7 +29,9 @@ const Leagues = () => {
   const [showJoin, setShowJoin] = useState(false);
   const [newName, setNewName] = useState("");
   const [newIcon, setNewIcon] = useState("🏆");
-  const [joinCode, setJoinCode] = useState("");
+  const [newCoverFile, setNewCoverFile] = useState<File | null>(null);
+  const [newCoverPreview, setNewCoverPreview] = useState<string | null>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
   const [submitting, setSubmitting] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
