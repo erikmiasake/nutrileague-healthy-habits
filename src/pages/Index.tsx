@@ -1,4 +1,4 @@
-import { Flame, ChevronRight, Crown, Utensils, Trophy, Info, Heart, Sparkles } from "lucide-react";
+import { Flame, ChevronRight, Crown, Utensils, Trophy, Info, Heart, Sparkles, UserPlus, Share2 } from "lucide-react";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -254,7 +254,7 @@ const Index = () => {
           </div>
           {activeChallenge ? (
             <>
-              <p className="text-sm font-display font-bold text-foreground line-clamp-1 mb-1.5">
+              <p className="text-sm font-display font-bold text-foreground leading-snug mb-1.5 break-words">
                 {activeChallenge.title}
               </p>
               <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden mb-1">
@@ -284,6 +284,46 @@ const Index = () => {
         </motion.button>
       </div>
 
+      {/* ── COACH SPARK ── */}
+      <motion.button
+        onClick={() => navigate("/coach")}
+        className="relative w-full rounded-2xl overflow-hidden mb-4 p-4 text-left group"
+        style={{
+          background:
+            "linear-gradient(135deg, hsl(24 100% 56% / 0.15) 0%, hsl(280 60% 50% / 0.10) 100%)",
+          boxShadow: "0 0 0 1px hsl(24 100% 56% / 0.35), 0 8px 24px -12px hsl(24 100% 50% / 0.45)",
+        }}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <div className="pointer-events-none absolute -top-8 -right-8 w-32 h-32 rounded-full bg-primary/25 blur-3xl" />
+        <div className="relative flex items-start gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-[hsl(14_90%_45%)] flex items-center justify-center shrink-0 shadow-[0_4px_12px_-2px_hsl(24_100%_50%/0.6)]">
+            <Sparkles size={18} className="text-white" fill="currentColor" fillOpacity={0.3} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
+                Spark · seu coach
+              </span>
+              <ChevronRight size={14} className="text-primary shrink-0 group-hover:translate-x-0.5 transition-transform" />
+            </div>
+            <p className="text-sm font-medium text-foreground leading-snug">
+              {(() => {
+                if (todayMeals === 0) return "Ainda sem refeição hoje. Que tal começar com algo leve?";
+                if (dailyHealthScore !== null && dailyHealthScore >= 80)
+                  return `Score ${dailyHealthScore} hoje — você tá voando. Peça uma dica pra manter o ritmo.`;
+                if (dailyHealthScore !== null && dailyHealthScore < 60)
+                  return `Seu score hoje tá em ${dailyHealthScore}. Vamos ajustar? Toque pra conversar.`;
+                if (currentStreak >= 3) return `${currentStreak} dias seguidos! Quer um plano pra fechar a semana?`;
+                return "Toque pra conversar sobre suas refeições e metas.";
+              })()}
+            </p>
+          </div>
+        </div>
+      </motion.button>
+
       {/* ── LIGA (compact) ── */}
       <motion.section
         className="rounded-2xl border border-border bg-card overflow-hidden card-elevated mb-4"
@@ -297,10 +337,10 @@ const Index = () => {
             <div className="flex items-center gap-1.5">
               <Crown size={12} className="text-[hsl(var(--level))]" fill="currentColor" fillOpacity={0.2} />
               <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                Top da liga
+                {league.activeMembersCount >= 2 ? "Top da liga" : league.leagueName ? "Sua liga" : "Ligas"}
               </span>
             </div>
-            {league.members.length > 3 && (
+            {league.activeMembersCount >= 2 && league.members.length > 3 && (
               <button
                 onClick={() => navigate(league.leagueId ? `/ligas/${league.leagueId}` : "/ligas")}
                 className="text-[10px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-0.5 transition-colors"
@@ -325,6 +365,37 @@ const Index = () => {
             >
               Entrar em uma liga →
             </button>
+          ) : league.activeMembersCount < 2 ? (
+            // Invite state — only 1 active member (usually just the user)
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[hsl(var(--level))]/15 border border-[hsl(var(--level))]/30 flex items-center justify-center shrink-0">
+                <UserPlus size={18} className="text-[hsl(var(--level))]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-display font-bold text-foreground leading-tight mb-0.5">
+                  Convide amigos pra {league.leagueName}
+                </p>
+                <p className="text-[11px] text-muted-foreground leading-snug">
+                  Precisa de mais gente ativa pra começar a competir.
+                </p>
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const code = league.inviteCode;
+                  if (!code) { navigate(league.leagueId ? `/ligas/${league.leagueId}` : "/ligas"); return; }
+                  const text = `Entre na minha liga no NutriLeague! Código: ${code}`;
+                  if (navigator.share) {
+                    navigator.share({ title: `Liga ${league.leagueName}`, text }).catch(() => {});
+                  } else {
+                    navigator.clipboard.writeText(code);
+                  }
+                }}
+                className="shrink-0 h-9 px-3 rounded-xl bg-[hsl(var(--level))] text-white text-xs font-bold flex items-center gap-1.5 hover:opacity-90 transition"
+              >
+                <Share2 size={12} /> Convidar
+              </button>
+            </div>
           ) : (
             <div className="flex gap-2 overflow-x-auto scrollbar-none -mx-1 px-1">
               {league.members.slice(0, 5).map((member, i) => {

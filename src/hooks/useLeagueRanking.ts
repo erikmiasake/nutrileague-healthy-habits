@@ -13,7 +13,9 @@ interface RankingMember {
 interface LeagueRankingData {
   leagueName: string | null;
   leagueId: string | null;
+  inviteCode: string | null;
   members: RankingMember[];
+  activeMembersCount: number;
   userPosition: number | null;
   loading: boolean;
 }
@@ -22,7 +24,9 @@ export function useLeagueRanking(): LeagueRankingData {
   const [data, setData] = useState<LeagueRankingData>({
     leagueName: null,
     leagueId: null,
+    inviteCode: null,
     members: [],
+    activeMembersCount: 0,
     userPosition: null,
     loading: true,
   });
@@ -38,7 +42,7 @@ export function useLeagueRanking(): LeagueRankingData {
       if (!membership) { setData(prev => ({ ...prev, loading: false })); return; }
 
       const { data: league } = await supabase
-        .from("leagues").select("name").eq("id", membership.league_id).maybeSingle();
+        .from("leagues").select("name, invite_code").eq("id", membership.league_id).maybeSingle();
 
       const { data: members } = await supabase
         .from("league_members").select("user_id").eq("league_id", membership.league_id);
@@ -96,11 +100,14 @@ export function useLeagueRanking(): LeagueRankingData {
 
       ranking.sort((a, b) => b.avgScore - a.avgScore);
       const userPos = ranking.findIndex(m => m.isCurrentUser) + 1;
+      const activeMembersCount = ranking.filter(m => m.avgScore > 0).length;
 
       setData({
         leagueName: league?.name || "Liga",
         leagueId: membership.league_id,
+        inviteCode: league?.invite_code ?? null,
         members: ranking,
+        activeMembersCount,
         userPosition: userPos > 0 ? userPos : null,
         loading: false,
       });
