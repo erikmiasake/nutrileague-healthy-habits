@@ -32,6 +32,7 @@ const Leagues = () => {
   const [newCoverFile, setNewCoverFile] = useState<File | null>(null);
   const [newCoverPreview, setNewCoverPreview] = useState<string | null>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
+  const [joinCode, setJoinCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
