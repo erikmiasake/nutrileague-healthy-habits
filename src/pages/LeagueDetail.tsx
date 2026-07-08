@@ -158,16 +158,17 @@ const LeagueDetail = () => {
       {/* League header */}
       <motion.div className="bg-card rounded-2xl border border-border p-5 mb-6 card-elevated" initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Crown size={22} className="text-primary" />
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 border border-primary/25 flex items-center justify-center text-3xl shrink-0">
+            {league?.icon || "🏆"}
           </div>
-          <div>
-            <h1 className="text-xl font-display font-bold">{league?.name}</h1>
+          <div className="min-w-0">
+            <h1 className="text-xl font-display font-bold truncate">{league?.name}</h1>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <Users size={12} /> {members.length} membro{members.length !== 1 ? "s" : ""}
             </p>
           </div>
         </div>
+
         <div className="flex items-center gap-2 bg-secondary rounded-xl px-3 py-2">
           <span className="text-[10px] text-muted-foreground font-medium">Convite:</span>
           <code className="text-xs font-mono text-foreground tracking-widest flex-1">{league?.invite_code}</code>
