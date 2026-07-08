@@ -110,7 +110,6 @@ const Leagues = () => {
       .select()
       .single();
 
-
     if (error || !league) {
       toast.error("Erro ao criar liga.");
       setSubmitting(false);
@@ -120,13 +119,34 @@ const Leagues = () => {
     // Add creator as member
     await supabase.from("league_members").insert({ league_id: league.id, user_id: user.id });
 
+    // Upload cover if selected
+    if (newCoverFile) {
+      try {
+        const path = await uploadLeagueCover(league.id, newCoverFile);
+        await supabase.from("leagues").update({ cover_photo_path: path }).eq("id", league.id);
+      } catch {
+        toast.error("Liga criada, mas falha ao enviar foto.");
+      }
+    }
+
     toast.success("Liga criada! 🏆");
     setNewName("");
     setNewIcon("🏆");
+    setNewCoverFile(null);
+    setNewCoverPreview(null);
     setShowCreate(false);
     setSubmitting(false);
     fetchLeagues();
   };
+
+  const handleCoverPick = (file: File | null) => {
+    if (!file) return;
+    const err = validateCoverFile(file);
+    if (err) { toast.error(err); return; }
+    setNewCoverFile(file);
+    setNewCoverPreview(URL.createObjectURL(file));
+  };
+
 
 
   const handleJoin = async () => {
