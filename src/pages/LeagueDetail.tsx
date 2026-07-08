@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Flame, Users, Copy, Check, Share2, Zap, Trophy } from "lucide-react";
+import { ArrowLeft, Flame, Users, Copy, Check, Share2, Zap, Trophy, Camera } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import UserAvatar from "@/components/UserAvatar";
+import { validateCoverFile, uploadLeagueCover, getCoverSignedUrl } from "@/lib/leagueCover";
 
 interface MemberRanking {
   user_id: string;
