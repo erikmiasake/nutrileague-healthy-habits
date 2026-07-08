@@ -100,11 +100,14 @@ export function useLeagueRanking(): LeagueRankingData {
 
       ranking.sort((a, b) => b.avgScore - a.avgScore);
       const userPos = ranking.findIndex(m => m.isCurrentUser) + 1;
+      const activeMembersCount = ranking.filter(m => m.avgScore > 0).length;
 
       setData({
         leagueName: league?.name || "Liga",
         leagueId: membership.league_id,
+        inviteCode: league?.invite_code ?? null,
         members: ranking,
+        activeMembersCount,
         userPosition: userPos > 0 ? userPos : null,
         loading: false,
       });
