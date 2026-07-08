@@ -130,7 +130,7 @@ export default function Coach() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-end gap-2"
               >
-                <CoachAvatar pulse />
+                <SparkAvatar pulse />
                 <div className="max-w-[85%] bg-primary/10 border border-primary/25 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
                   <p className="text-sm text-foreground leading-relaxed">Como posso te ajudar hoje?</p>
                   <p className="text-[11px] text-muted-foreground mt-1.5">
@@ -172,7 +172,7 @@ export default function Coach() {
                 animate={{ opacity: 1, y: 0 }}
                 className={m.role === "user" ? "flex justify-end" : "flex items-end gap-2 justify-start"}
               >
-                {m.role === "coach" && <CoachAvatar />}
+                {m.role === "coach" && <SparkAvatar />}
                 <div
                   className={
                     m.role === "user"
@@ -209,7 +209,7 @@ export default function Coach() {
               animate={{ opacity: 1 }}
               className="flex items-end gap-2 justify-start"
             >
-              <CoachAvatar pulse />
+              <SparkAvatar pulse />
               <div className="bg-primary/10 border border-primary/25 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
                 <TypingDots />
               </div>
