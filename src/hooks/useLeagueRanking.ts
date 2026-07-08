@@ -13,7 +13,9 @@ interface RankingMember {
 interface LeagueRankingData {
   leagueName: string | null;
   leagueId: string | null;
+  inviteCode: string | null;
   members: RankingMember[];
+  activeMembersCount: number;
   userPosition: number | null;
   loading: boolean;
 }
@@ -22,7 +24,9 @@ export function useLeagueRanking(): LeagueRankingData {
   const [data, setData] = useState<LeagueRankingData>({
     leagueName: null,
     leagueId: null,
+    inviteCode: null,
     members: [],
+    activeMembersCount: 0,
     userPosition: null,
     loading: true,
   });
