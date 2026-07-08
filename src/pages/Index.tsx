@@ -1,14 +1,12 @@
-import { Flame, ChevronRight, Crown, Utensils, Trophy, Info, Heart } from "lucide-react";
+import { Flame, ChevronRight, Crown, Utensils, Trophy, Info, Heart, Sparkles } from "lucide-react";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { NutriLeagueLogo } from "@/components/NutriLeagueLogo";
 import AppSidebar from "@/components/AppSidebar";
 import { useDashboardData } from "@/hooks/useDashboardData";
-import TextHoverEffect from "@/components/ui/shimmer-bg-text";
 import { useLeagueRanking } from "@/hooks/useLeagueRanking";
 import { useChallenges } from "@/hooks/useChallenges";
-
 import { cn } from "@/lib/utils";
 import HomeMealsBlock from "@/components/HomeMealsBlock";
 import UserAvatar from "@/components/UserAvatar";
@@ -18,9 +16,7 @@ const Index = () => {
   const { currentStreak, userName, todayMeals, loading, dailyHealthScore, dailyHealthClassification } = useDashboardData();
   const league = useLeagueRanking();
   const { personal, league: leagueChallenges, event } = useChallenges();
-  
 
-  // Find the first active (joined but not completed) challenge
   const allChallenges = [...personal, ...leagueChallenges, ...event];
   const activeChallenge = allChallenges.find(c => c.progress && !c.progress.completed);
 
@@ -37,19 +33,21 @@ const Index = () => {
   }
 
   const streakLabel = currentStreak === 1 ? "dia" : "dias";
+  const firstName = userName?.split(" ")[0] || "";
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
 
   return (
     <div className="min-h-screen bg-background pb-24 px-4 pt-5 max-w-[430px] mx-auto">
       {/* ── HEADER ── */}
       <motion.header
-        className="mb-5 flex items-center justify-between"
+        className="mb-4 flex items-center justify-between"
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
         <AppSidebar />
         <NutriLeagueLogo />
-
         <button
           onClick={() => navigate("/sobre")}
           className="gradient-button flex items-center justify-center w-9 h-9 rounded-xl min-w-0 p-0"
@@ -59,193 +57,120 @@ const Index = () => {
         </button>
       </motion.header>
 
-      {/* ── BLOCK 1: Streak + Position ── */}
+      {/* Greeting */}
+      <motion.div
+        className="mb-3 px-1"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.05 }}
+      >
+        <p className="text-xs text-muted-foreground">{greeting},</p>
+        <h1 className="text-lg font-display font-extrabold text-foreground leading-tight">
+          {firstName} 👋
+        </h1>
+      </motion.div>
+
+      {/* ── HERO: STREAK ── */}
       <motion.section
-        className="rounded-2xl border border-border bg-card overflow-hidden card-elevated mb-4"
+        className="relative rounded-3xl overflow-hidden mb-4 border border-primary/25"
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.05 }}
+        transition={{ duration: 0.5, delay: 0.08 }}
+        style={{
+          background:
+            "radial-gradient(120% 90% at 100% 0%, hsl(24 100% 56% / 0.28) 0%, hsl(24 100% 45% / 0.08) 40%, hsl(228 12% 10%) 75%)",
+          boxShadow: "0 10px 40px -12px hsl(24 100% 50% / 0.35)",
+        }}
       >
-        <div className="p-4 flex items-center gap-4">
-          {/* Streak ring */}
-          <div className="relative flex-shrink-0">
-            <div
-              className="w-16 h-16 rounded-full flex items-center justify-center"
-              style={{
-                background: `conic-gradient(hsl(var(--primary)) ${Math.min(currentStreak / 30, 1) * 360}deg, hsl(var(--secondary)) 0deg)`,
-              }}
-            >
-              <div className="w-[52px] h-[52px] rounded-full bg-card flex items-center justify-center">
-                <div className="text-center">
-                  <Flame size={14} className="text-primary mx-auto" />
-                  <span className="text-lg font-display font-extrabold text-foreground leading-none">
-                    {currentStreak}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Ambient glow blobs */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-primary/25 blur-3xl" />
+          <div className="absolute -bottom-20 -left-10 w-48 h-48 rounded-full bg-primary/10 blur-3xl" />
+        </div>
 
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-display font-bold text-foreground">
-              {currentStreak} {streakLabel} de sequência
-            </p>
-            {league.leagueName && league.userPosition && (
-              <p className="text-xs text-muted-foreground mt-0.5">
-                <Crown size={10} className="inline text-xp mr-1" />
-                {league.userPosition}º lugar na {league.leagueName}
-              </p>
-            )}
-            <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-              <span
-                className={cn(
-                  "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold",
-                  todayMeals > 0
-                    ? "bg-success/15 text-success"
-                    : "bg-destructive/15 text-destructive"
-                )}
-              >
-                {todayMeals > 0 ? "✓" : "⚠"} {todayMeals} {todayMeals === 1 ? "refeição" : "refeições"} hoje
+        <div className="relative p-5">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-1.5">
+              <Sparkles size={12} className="text-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-primary/90">
+                Sua sequência
               </span>
             </div>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* ── BLOCK: Saúde do Dia ── */}
-      <motion.section
-        className="rounded-2xl border border-border bg-card overflow-hidden card-elevated mb-4"
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.08 }}
-      >
-        <div className="p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Heart size={14} className="text-primary" />
-            <h2 className="text-sm font-display font-bold text-foreground">Saúde do Dia</h2>
-          </div>
-
-          {dailyHealthScore !== null ? (
-            <div className="flex items-center gap-4">
-              {/* Score ring */}
-              <div className="relative flex-shrink-0">
-                <svg width="64" height="64" viewBox="0 0 64 64">
-                  <circle
-                    cx="32" cy="32" r="28"
-                    fill="none"
-                    stroke="hsl(var(--secondary))"
-                    strokeWidth="5"
-                  />
-                  <circle
-                    cx="32" cy="32" r="28"
-                    fill="none"
-                    stroke={
-                      dailyHealthScore >= 80 ? "hsl(var(--success))" :
-                      dailyHealthScore >= 60 ? "hsl(var(--primary))" :
-                      dailyHealthScore >= 40 ? "hsl(var(--xp))" :
-                      "hsl(var(--destructive))"
-                    }
-                    strokeWidth="5"
-                    strokeLinecap="round"
-                    strokeDasharray={`${(dailyHealthScore / 100) * 175.9} 175.9`}
-                    transform="rotate(-90 32 32)"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-base font-display font-extrabold text-foreground">
-                    {dailyHealthScore}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex-1">
-                <p className={cn(
-                  "text-sm font-display font-bold",
-                  dailyHealthScore >= 80 ? "text-success" :
-                  dailyHealthScore >= 60 ? "text-primary" :
-                  dailyHealthScore >= 40 ? "text-xp" :
-                  "text-destructive"
-                )}>
-                  {dailyHealthClassification}
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Média de {todayMeals} {todayMeals === 1 ? "refeição" : "refeições"} hoje
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center py-3">
-              <p className="text-xs text-muted-foreground">
-                Registre uma refeição para ver sua saúde do dia
-              </p>
-            </div>
-          )}
-        </div>
-      </motion.section>
-
-      <motion.section
-        className="rounded-2xl border border-border bg-card overflow-hidden card-elevated mb-4"
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.1 }}
-      >
-        <div className="p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Trophy size={14} className="text-xp" />
-            <h2 className="text-sm font-display font-bold text-foreground">Desafio ativo</h2>
-          </div>
-
-          {activeChallenge ? (
-            <>
-              <p className="text-sm font-medium text-foreground mb-1">
-                {activeChallenge.title}
-              </p>
-              <p className="text-xs text-muted-foreground mb-3">
-                {activeChallenge.description}
-              </p>
-
-              {/* Progress bar */}
-              <div className="mb-3">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[11px] text-muted-foreground font-medium">Progresso</span>
-                  <span className="text-[11px] font-bold text-primary">
-                    {activeChallenge.progress?.progress_days ?? 0} / {activeChallenge.duration_days} dias
-                  </span>
-                </div>
-                <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full rounded-full"
-                    style={{
-                      background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--streak-glow)))",
-                    }}
-                    initial={{ width: 0 }}
-                    animate={{
-                      width: `${Math.min(((activeChallenge.progress?.progress_days ?? 0) / activeChallenge.duration_days) * 100, 100)}%`,
-                    }}
-                    transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-                  />
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="text-center py-3">
-              <p className="text-xs text-muted-foreground mb-2">Nenhum desafio ativo</p>
+            {league.leagueName && league.userPosition && (
               <button
-                onClick={() => navigate("/desafios")}
-                className="text-xs font-semibold text-primary hover:underline"
+                onClick={() => navigate(league.leagueId ? `/ligas/${league.leagueId}` : "/ligas")}
+                className="flex items-center gap-1 rounded-full bg-white/5 backdrop-blur px-2.5 py-1 border border-white/10 hover:bg-white/10 transition"
               >
-                Ver desafios disponíveis →
+                <Crown size={10} className="text-xp" />
+                <span className="text-[10px] font-bold text-foreground">
+                  {league.userPosition}º · {league.leagueName}
+                </span>
               </button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-4">
+            {/* Big flame with glow */}
+            <motion.div
+              className="relative flex-shrink-0"
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <div
+                className="absolute inset-0 rounded-full blur-2xl bg-primary/60"
+                style={{ transform: "scale(1.4)" }}
+              />
+              <div className="relative w-20 h-20 rounded-2xl flex items-center justify-center bg-gradient-to-br from-primary via-primary to-[hsl(14_90%_45%)] shadow-[0_8px_24px_-4px_hsl(24_100%_50%/0.6)]">
+                <Flame size={42} strokeWidth={2.2} className="text-white drop-shadow-lg" fill="currentColor" fillOpacity={0.25} />
+              </div>
+            </motion.div>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-baseline gap-1.5">
+                <motion.span
+                  className="text-6xl font-display font-black text-foreground leading-none tracking-tighter"
+                  initial={{ scale: 0.7, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 180, delay: 0.15 }}
+                >
+                  {currentStreak}
+                </motion.span>
+                <span className="text-lg font-display font-bold text-foreground/70">
+                  {streakLabel}
+                </span>
+              </div>
+              <p className="text-xs text-foreground/70 mt-1 font-medium">
+                {currentStreak === 0
+                  ? "Comece sua jornada hoje 🚀"
+                  : currentStreak < 3
+                    ? "Continue, você tá esquentando 🔥"
+                    : currentStreak < 7
+                      ? "Tá pegando fogo! 🔥"
+                      : "Máquina de consistência ⚡"}
+              </p>
             </div>
-          )}
+          </div>
+
+          {/* Meals-today pill (positive, brand orange) */}
+          <div className="mt-4 flex items-center gap-2 rounded-2xl bg-black/25 backdrop-blur border border-white/5 px-3.5 py-2.5">
+            <div className={cn(
+              "w-2 h-2 rounded-full flex-shrink-0",
+              todayMeals > 0 ? "bg-success" : "bg-primary animate-pulse"
+            )} />
+            <p className="text-xs font-medium text-foreground/90 flex-1">
+              {todayMeals === 0
+                ? "Registre sua primeira refeição de hoje 🔥"
+                : `${todayMeals} ${todayMeals === 1 ? "refeição registrada" : "refeições registradas"} hoje`}
+            </p>
+          </div>
         </div>
       </motion.section>
 
-      {/* ── MAIN CTA: Registrar Refeição ── */}
+      {/* ── PRIMARY CTA ── */}
       <motion.div
-        className="my-5 flex justify-center"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
+        className="mb-5"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.12 }}
       >
         <GradientButton
@@ -257,23 +182,129 @@ const Index = () => {
         </GradientButton>
       </motion.div>
 
-      {/* ── BLOCK 3: Top 3 Ranking ── */}
+      {/* ── SECONDARY GRID ── */}
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        {/* Saúde do Dia — only when data OR mini CTA */}
+        {dailyHealthScore !== null ? (
+          <motion.button
+            onClick={() => navigate("/refeicoes")}
+            className="relative rounded-2xl bg-card border border-border overflow-hidden p-3.5 text-left card-elevated"
+            style={{ borderLeftWidth: 3, borderLeftColor: "hsl(var(--success))" }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.16 }}
+          >
+            <div className="flex items-center gap-1.5 mb-2">
+              <Heart size={12} className="text-success" fill="currentColor" fillOpacity={0.2} />
+              <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                Saúde do dia
+              </span>
+            </div>
+            <div className="flex items-end gap-1">
+              <span className={cn(
+                "text-3xl font-display font-black leading-none",
+                dailyHealthScore >= 80 ? "text-success" :
+                dailyHealthScore >= 60 ? "text-primary" :
+                dailyHealthScore >= 40 ? "text-xp" : "text-destructive"
+              )}>
+                {dailyHealthScore}
+              </span>
+              <span className="text-[10px] text-muted-foreground mb-1">/100</span>
+            </div>
+            <p className="text-[11px] font-medium text-foreground/80 mt-0.5">
+              {dailyHealthClassification}
+            </p>
+          </motion.button>
+        ) : (
+          <motion.button
+            onClick={() => navigate("/registrar")}
+            className="relative rounded-2xl bg-card border border-dashed border-border/70 hover:border-success/50 hover:bg-success/5 transition overflow-hidden p-3.5 text-left"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.16 }}
+          >
+            <div className="flex items-center gap-1.5 mb-2">
+              <Heart size={12} className="text-success/60" />
+              <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                Saúde do dia
+              </span>
+            </div>
+            <div className="w-10 h-10 rounded-full border-2 border-dashed border-success/40 flex items-center justify-center mb-1">
+              <Heart size={16} className="text-success/60" />
+            </div>
+            <p className="text-[11px] font-medium text-foreground/70">
+              Toque para começar
+            </p>
+          </motion.button>
+        )}
+
+        {/* Desafio ativo */}
+        <motion.button
+          onClick={() => navigate("/desafios")}
+          className="relative rounded-2xl bg-card border border-border overflow-hidden p-3.5 text-left card-elevated"
+          style={{ borderLeftWidth: 3, borderLeftColor: "hsl(var(--xp))" }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18 }}
+        >
+          <div className="flex items-center gap-1.5 mb-2">
+            <Trophy size={12} className="text-xp" fill="currentColor" fillOpacity={0.2} />
+            <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+              Desafio
+            </span>
+          </div>
+          {activeChallenge ? (
+            <>
+              <p className="text-sm font-display font-bold text-foreground line-clamp-1 mb-1.5">
+                {activeChallenge.title}
+              </p>
+              <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden mb-1">
+                <motion.div
+                  className="h-full rounded-full bg-gradient-to-r from-xp to-primary"
+                  initial={{ width: 0 }}
+                  animate={{
+                    width: `${Math.min(((activeChallenge.progress?.progress_days ?? 0) / activeChallenge.duration_days) * 100, 100)}%`,
+                  }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                />
+              </div>
+              <p className="text-[10px] font-bold text-xp">
+                {activeChallenge.progress?.progress_days ?? 0}/{activeChallenge.duration_days} dias
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="w-10 h-10 rounded-full border-2 border-dashed border-xp/40 flex items-center justify-center mb-1">
+                <Trophy size={16} className="text-xp/60" />
+              </div>
+              <p className="text-[11px] font-medium text-foreground/70">
+                Escolher desafio
+              </p>
+            </>
+          )}
+        </motion.button>
+      </div>
+
+      {/* ── LIGA (compact) ── */}
       <motion.section
         className="rounded-2xl border border-border bg-card overflow-hidden card-elevated mb-4"
-        initial={{ opacity: 0, y: 14 }}
+        style={{ borderLeftWidth: 3, borderLeftColor: "hsl(var(--level))" }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.15 }}
+        transition={{ delay: 0.22 }}
       >
         <div className="p-4">
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Crown size={14} className="text-xp" />
-              <h2 className="text-sm font-display font-bold text-foreground">Top 3 da liga</h2>
+            <div className="flex items-center gap-1.5">
+              <Crown size={12} className="text-[hsl(var(--level))]" fill="currentColor" fillOpacity={0.2} />
+              <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                Top da liga
+              </span>
             </div>
             {league.members.length > 3 && (
               <button
                 onClick={() => navigate(league.leagueId ? `/ligas/${league.leagueId}` : "/ligas")}
-                className="text-[11px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-0.5 transition-colors"
+                className="text-[10px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-0.5 transition-colors"
               >
                 Ver todos <ChevronRight size={10} />
               </button>
@@ -281,52 +312,47 @@ const Index = () => {
           </div>
 
           {league.loading ? (
-            <div className="py-4 flex justify-center">
+            <div className="py-3 flex justify-center">
               <motion.div
-                className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full"
+                className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               />
             </div>
           ) : league.members.length === 0 ? (
-            <div className="text-center py-4">
-              <p className="text-xs text-muted-foreground mb-2">Você não está em uma liga</p>
-              <button
-                onClick={() => navigate("/ligas")}
-                className="text-xs font-semibold text-primary hover:underline"
-              >
-                Entrar em uma liga →
-              </button>
-            </div>
+            <button
+              onClick={() => navigate("/ligas")}
+              className="w-full text-left text-xs font-semibold text-[hsl(var(--level))] hover:underline py-1"
+            >
+              Entrar em uma liga →
+            </button>
           ) : (
-            <div className="space-y-1.5">
-              {league.members.slice(0, 3).map((member, i) => {
+            <div className="flex gap-2 overflow-x-auto scrollbar-none -mx-1 px-1">
+              {league.members.slice(0, 5).map((member, i) => {
                 const medals = ["🥇", "🥈", "🥉"];
                 return (
                   <motion.div
                     key={member.userId}
                     className={cn(
-                      "flex items-center gap-2.5 px-3 py-2 rounded-lg",
+                      "flex-shrink-0 w-20 flex flex-col items-center gap-1.5 p-2 rounded-xl",
                       member.isCurrentUser
-                        ? "bg-primary/8 border border-primary/15"
+                        ? "bg-primary/10 border border-primary/25"
                         : "bg-secondary/30"
                     )}
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 + i * 0.05 }}
+                    transition={{ delay: 0.25 + i * 0.04 }}
                   >
-                    <span className="text-sm">{medals[i]}</span>
-                    <UserAvatar name={member.name} avatarUrl={member.avatarUrl} size="sm" />
-                    <p className="flex-1 text-xs font-medium text-foreground truncate">
-                      {member.name}
-                      {member.isCurrentUser && (
-                        <span className="text-primary text-[9px] ml-1 font-bold">(você)</span>
+                    <div className="relative">
+                      <UserAvatar name={member.name} avatarUrl={member.avatarUrl} size="sm" />
+                      {i < 3 && (
+                        <span className="absolute -top-1 -right-1 text-xs">{medals[i]}</span>
                       )}
-                    </p>
-                    <div className="flex items-center gap-1">
-                      <span className="text-[10px] font-bold text-foreground">{member.avgScore}</span>
-                      <span className="text-[9px] text-muted-foreground">pts</span>
                     </div>
+                    <p className="text-[10px] font-bold text-foreground truncate max-w-full">
+                      {member.isCurrentUser ? "Você" : member.name.split(" ")[0]}
+                    </p>
+                    <span className="text-[10px] font-bold text-primary">{member.avgScore}pt</span>
                   </motion.div>
                 );
               })}
@@ -335,9 +361,8 @@ const Index = () => {
         </div>
       </motion.section>
 
-      {/* ── BLOCK: Today's Meals ── */}
+      {/* ── MEALS ── */}
       <HomeMealsBlock />
-
     </div>
   );
 };
