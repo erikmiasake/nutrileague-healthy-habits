@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Loader2, ArrowRight, Send } from "lucide-react";
+import { Sparkles, ArrowRight, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,9 +16,9 @@ type QuestionKey =
 
 const CHIPS: { key: QuestionKey; label: string; short: string }[] = [
   { key: "improve_next", label: "Como posso melhorar minha próxima refeição?", short: "Melhorar próxima refeição" },
-  { key: "top_meal_week", label: "Qual foi meu prato com mais pontos essa semana?", short: "Meu top prato da semana" },
+  { key: "top_meal_week", label: "Qual foi meu prato com mais pontos essa semana?", short: "Top prato da semana" },
   { key: "why_low_score", label: "Por que esse prato pontuou baixo?", short: "Por que pontuei baixo?" },
-  { key: "meal_idea_goal", label: "Me dá uma ideia de refeição que ajuda minha meta", short: "Ideia de refeição pra meta" },
+  { key: "meal_idea_goal", label: "Me dá uma ideia de refeição que ajuda minha meta", short: "Ideia pra minha meta" },
   { key: "goal_progress", label: "Como estou indo em relação ao meu objetivo?", short: "Como vou no objetivo?" },
 ];
 
@@ -45,7 +45,7 @@ const CoachAvatar = ({ pulse = false }: { pulse?: boolean }) => (
 );
 
 const TypingDots = () => (
-  <div className="flex items-center gap-1">
+  <div className="flex items-center gap-1 py-1">
     {[0, 1, 2].map((i) => (
       <motion.span
         key={i}
@@ -64,7 +64,7 @@ export default function Coach() {
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, loading]);
 
   const ask = async (key: QuestionKey, label: string) => {
@@ -80,12 +80,7 @@ export default function Coach() {
       if (data?.error) throw new Error(data.error);
       setMessages((m) => [
         ...m,
-        {
-          id: crypto.randomUUID(),
-          role: "coach",
-          text: data.reply,
-          action: data.action,
-        },
+        { id: crypto.randomUUID(), role: "coach", text: data.reply, action: data.action },
       ]);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Erro ao falar com o Coach";
@@ -98,6 +93,11 @@ export default function Coach() {
       setLoading(false);
     }
   };
+
+  const hasStarted = messages.length > 0;
+
+  // Bottom bar height reservation: chip row (~52px) + composer (~56px) + padding + bottom nav (60px)
+  const bottomPad = hasStarted ? "pb-[200px]" : "pb-[160px]";
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -119,25 +119,47 @@ export default function Coach() {
       </header>
 
       {/* Messages area */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="max-w-[430px] mx-auto px-4 pt-4 pb-4 space-y-4">
-          {/* Opener */}
-          {messages.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-end gap-2"
-            >
-              <CoachAvatar pulse />
-              <div className="relative max-w-[85%] bg-primary/10 border border-primary/25 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
-                <p className="text-sm text-foreground leading-relaxed">
-                  Como posso te ajudar hoje?
+      <main className={`flex-1 ${bottomPad}`}>
+        <div className="max-w-[430px] mx-auto px-4 pt-4 space-y-4">
+          {/* Empty state: opener + chips grid inline */}
+          {!hasStarted && (
+            <>
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-end gap-2"
+              >
+                <CoachAvatar pulse />
+                <div className="max-w-[85%] bg-primary/10 border border-primary/25 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+                  <p className="text-sm text-foreground leading-relaxed">Como posso te ajudar hoje?</p>
+                  <p className="text-[11px] text-muted-foreground mt-1.5">
+                    Toque em uma pergunta rápida abaixo
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="pl-11 space-y-2"
+              >
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold px-0.5">
+                  Perguntas rápidas
                 </p>
-                <p className="text-[11px] text-muted-foreground mt-1.5">
-                  Escolha uma das perguntas rápidas abaixo 👇
-                </p>
-              </div>
-            </motion.div>
+                <div className="grid grid-cols-2 gap-2">
+                  {CHIPS.map((c) => (
+                    <button
+                      key={c.key}
+                      onClick={() => ask(c.key, c.label)}
+                      className="text-left text-xs bg-card hover:bg-secondary border border-border hover:border-primary/40 text-foreground rounded-xl px-3 py-2.5 transition-colors leading-snug min-h-[48px] flex items-center active:scale-[0.98]"
+                    >
+                      {c.short}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            </>
           )}
 
           {/* Messages */}
@@ -196,38 +218,34 @@ export default function Coach() {
         </div>
       </main>
 
-      {/* Bottom composer + chips */}
-      <div className="sticky bottom-[60px] z-30 bg-gradient-to-t from-background via-background to-background/80 backdrop-blur-xl border-t border-border/60">
-        <div className="max-w-[430px] mx-auto px-4 pt-3 pb-3 space-y-3">
-          {/* Chips grid — 2 per row */}
-          <div>
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2 px-0.5">
-              Perguntas rápidas
-            </p>
-            <div className="grid grid-cols-2 gap-2">
+      {/* Fixed bottom: chip strip (only after start) + composer, sitting above bottom nav */}
+      <div className="fixed bottom-[60px] left-0 right-0 z-30 bg-background/95 backdrop-blur-xl border-t border-border/60">
+        <div className="max-w-[430px] mx-auto px-3 py-2.5 space-y-2">
+          {hasStarted && (
+            <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-1 px-1">
               {CHIPS.map((c) => (
                 <button
                   key={c.key}
                   disabled={loading}
                   onClick={() => ask(c.key, c.label)}
-                  className="text-left text-xs bg-card hover:bg-secondary border border-border hover:border-primary/40 text-foreground rounded-xl px-3 py-2.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed leading-snug min-h-[44px] flex items-center"
+                  className="shrink-0 text-xs bg-card hover:bg-secondary border border-border hover:border-primary/40 text-foreground rounded-full px-3 py-1.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
                 >
                   {c.short}
                 </button>
               ))}
             </div>
-          </div>
+          )}
 
           {/* Disabled composer */}
           <div className="flex items-center gap-2 bg-card/60 border border-border rounded-2xl px-4 py-2.5 opacity-70">
             <input
               disabled
               placeholder="Em breve: pergunte qualquer coisa"
-              className="flex-1 bg-transparent text-sm text-muted-foreground placeholder:text-muted-foreground/70 outline-none cursor-not-allowed"
+              className="flex-1 bg-transparent text-sm text-muted-foreground placeholder:text-muted-foreground/70 outline-none cursor-not-allowed min-w-0"
             />
             <button
               disabled
-              className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground cursor-not-allowed"
+              className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground cursor-not-allowed shrink-0"
               aria-label="Enviar (em breve)"
             >
               <Send size={14} />
