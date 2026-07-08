@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Flame, Users, Copy, Check, Share2, Zap, Trophy } from "lucide-react";
+import { ArrowLeft, Flame, Users, Copy, Check, Share2, Zap, Trophy, Camera } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import UserAvatar from "@/components/UserAvatar";
+import { validateCoverFile, uploadLeagueCover, getCoverSignedUrl } from "@/lib/leagueCover";
 
 interface MemberRanking {
   user_id: string;
@@ -64,19 +65,31 @@ const LeagueChallengesSection = ({ leagueId }: { leagueId: string }) => {
 const LeagueDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [league, setLeague] = useState<{ name: string; invite_code: string; icon: string } | null>(null);
+  const [league, setLeague] = useState<{ name: string; invite_code: string; icon: string; cover_photo_path: string | null; created_by: string } | null>(null);
+  const [coverUrl, setCoverUrl] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const coverInputRef = useRef<HTMLInputElement>(null);
   const [members, setMembers] = useState<MemberRanking[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+
+  const loadCover = async (path: string | null) => {
+    if (!path) { setCoverUrl(null); return; }
+    const url = await getCoverSignedUrl(path);
+    setCoverUrl(url);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       if (!id) return;
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+      setCurrentUserId(user.id);
 
-      const { data: leagueData } = await supabase.from("leagues").select("name, invite_code, icon").eq("id", id).single();
+      const { data: leagueData } = await supabase.from("leagues").select("name, invite_code, icon, cover_photo_path, created_by").eq("id", id).single();
       setLeague(leagueData);
+      if (leagueData?.cover_photo_path) loadCover(leagueData.cover_photo_path);
 
 
       const { data: memberData } = await supabase.from("league_members").select("user_id").eq("league_id", id);
@@ -138,6 +151,27 @@ const LeagueDetail = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleCoverChange = async (file: File | null) => {
+    if (!file || !id) return;
+    const err = validateCoverFile(file);
+    if (err) { toast.error(err); return; }
+    setUploadingCover(true);
+    try {
+      const path = await uploadLeagueCover(id, file);
+      const { error } = await supabase.from("leagues").update({ cover_photo_path: path }).eq("id", id);
+      if (error) throw error;
+      setLeague((l) => (l ? { ...l, cover_photo_path: path } : l));
+      await loadCover(path);
+      toast.success("Foto atualizada!");
+    } catch {
+      toast.error("Erro ao enviar foto.");
+    } finally {
+      setUploadingCover(false);
+      if (coverInputRef.current) coverInputRef.current.value = "";
+    }
+  };
+
+
   const medalColors = ["text-xp", "text-muted-foreground", "text-primary"];
 
   if (loading) {
@@ -158,8 +192,34 @@ const LeagueDetail = () => {
       {/* League header */}
       <motion.div className="bg-card rounded-2xl border border-border p-5 mb-6 card-elevated" initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 border border-primary/25 flex items-center justify-center text-3xl shrink-0">
-            {league?.icon || "🏆"}
+          <div className="relative w-14 h-14 shrink-0">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 border border-primary/25 flex items-center justify-center text-3xl overflow-hidden">
+              {coverUrl ? (
+                <img src={coverUrl} alt={league?.name ?? ""} className="w-full h-full object-cover" />
+              ) : (
+                league?.icon || "🏆"
+              )}
+            </div>
+            {league && currentUserId === league.created_by && (
+              <>
+                <input
+                  ref={coverInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => handleCoverChange(e.target.files?.[0] ?? null)}
+                />
+                <button
+                  type="button"
+                  onClick={() => coverInputRef.current?.click()}
+                  disabled={uploadingCover}
+                  aria-label="Trocar foto de capa"
+                  className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center border-2 border-card shadow-md disabled:opacity-50"
+                >
+                  <Camera size={12} />
+                </button>
+              </>
+            )}
           </div>
           <div className="min-w-0">
             <h1 className="text-xl font-display font-bold truncate">{league?.name}</h1>
