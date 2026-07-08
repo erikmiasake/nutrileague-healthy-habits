@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Loader2, ArrowRight } from "lucide-react";
+import { Sparkles, Loader2, ArrowRight, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,12 +14,12 @@ type QuestionKey =
   | "meal_idea_goal"
   | "goal_progress";
 
-const CHIPS: { key: QuestionKey; label: string }[] = [
-  { key: "improve_next", label: "Como posso melhorar minha próxima refeição?" },
-  { key: "top_meal_week", label: "Qual foi meu prato com mais pontos essa semana?" },
-  { key: "why_low_score", label: "Por que esse prato pontuou baixo?" },
-  { key: "meal_idea_goal", label: "Me dá uma ideia de refeição que ajuda minha meta" },
-  { key: "goal_progress", label: "Como estou indo em relação ao meu objetivo?" },
+const CHIPS: { key: QuestionKey; label: string; short: string }[] = [
+  { key: "improve_next", label: "Como posso melhorar minha próxima refeição?", short: "Melhorar próxima refeição" },
+  { key: "top_meal_week", label: "Qual foi meu prato com mais pontos essa semana?", short: "Meu top prato da semana" },
+  { key: "why_low_score", label: "Por que esse prato pontuou baixo?", short: "Por que pontuei baixo?" },
+  { key: "meal_idea_goal", label: "Me dá uma ideia de refeição que ajuda minha meta", short: "Ideia de refeição pra meta" },
+  { key: "goal_progress", label: "Como estou indo em relação ao meu objetivo?", short: "Como vou no objetivo?" },
 ];
 
 type Message = {
@@ -28,6 +28,34 @@ type Message = {
   text: string;
   action?: { label: string; route: string };
 };
+
+const CoachAvatar = ({ pulse = false }: { pulse?: boolean }) => (
+  <div className="relative shrink-0">
+    {pulse && (
+      <motion.span
+        className="absolute inset-0 rounded-xl bg-primary/40 blur-md"
+        animate={{ opacity: [0.3, 0.7, 0.3], scale: [0.9, 1.05, 0.9] }}
+        transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+      />
+    )}
+    <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/30 ring-1 ring-primary/50">
+      <Sparkles size={16} className="text-primary-foreground" />
+    </div>
+  </div>
+);
+
+const TypingDots = () => (
+  <div className="flex items-center gap-1">
+    {[0, 1, 2].map((i) => (
+      <motion.span
+        key={i}
+        className="w-1.5 h-1.5 rounded-full bg-primary"
+        animate={{ opacity: [0.3, 1, 0.3], y: [0, -2, 0] }}
+        transition={{ duration: 1, repeat: Infinity, delay: i * 0.15 }}
+      />
+    ))}
+  </div>
+);
 
 export default function Coach() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -72,50 +100,61 @@ export default function Coach() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/85 backdrop-blur-xl border-b border-border/60">
         <div className="max-w-[430px] mx-auto px-4 py-3 flex items-center gap-3">
           <AppSidebar />
           <div className="flex items-center gap-2 flex-1">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/30">
+            <div className="relative w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/30">
               <Sparkles size={16} className="text-primary-foreground" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 ring-2 ring-background" />
             </div>
             <div>
               <h1 className="text-base font-display font-bold text-foreground leading-none">Coach</h1>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Seu treinador nutricional</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Online · treinador nutricional</p>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-[430px] mx-auto px-4 pt-4">
-        {/* Opener */}
-        {messages.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-card border border-border rounded-2xl p-4 mb-4"
-          >
-            <p className="text-sm text-foreground">Como posso te ajudar hoje?</p>
-          </motion.div>
-        )}
+      {/* Messages area */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="max-w-[430px] mx-auto px-4 pt-4 pb-4 space-y-4">
+          {/* Opener */}
+          {messages.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-end gap-2"
+            >
+              <CoachAvatar pulse />
+              <div className="relative max-w-[85%] bg-primary/10 border border-primary/25 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+                <p className="text-sm text-foreground leading-relaxed">
+                  Como posso te ajudar hoje?
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-1.5">
+                  Escolha uma das perguntas rápidas abaixo 👇
+                </p>
+              </div>
+            </motion.div>
+          )}
 
-        {/* Messages */}
-        <div className="space-y-3 mb-4">
+          {/* Messages */}
           <AnimatePresence initial={false}>
             {messages.map((m) => (
               <motion.div
                 key={m.id}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={m.role === "user" ? "flex justify-end" : "flex justify-start"}
+                className={m.role === "user" ? "flex justify-end" : "flex items-end gap-2 justify-start"}
               >
+                {m.role === "coach" && <CoachAvatar />}
                 <div
                   className={
                     m.role === "user"
-                      ? "max-w-[85%] bg-primary text-primary-foreground rounded-2xl rounded-tr-md px-4 py-2.5 text-sm"
-                      : "max-w-[90%] bg-card border border-border rounded-2xl rounded-tl-md px-4 py-3"
+                      ? "max-w-[80%] bg-primary text-primary-foreground rounded-2xl rounded-br-md px-4 py-2.5 text-sm shadow-md shadow-primary/20"
+                      : "max-w-[82%] bg-primary/10 border border-primary/25 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm"
                   }
                 >
                   {m.role === "coach" ? (
@@ -145,33 +184,54 @@ export default function Coach() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex justify-start"
+              className="flex items-end gap-2 justify-start"
             >
-              <div className="bg-card border border-border rounded-2xl rounded-tl-md px-4 py-3 flex items-center gap-2">
-                <Loader2 size={14} className="animate-spin text-primary" />
-                <span className="text-xs text-muted-foreground">Coach pensando...</span>
+              <CoachAvatar pulse />
+              <div className="bg-primary/10 border border-primary/25 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+                <TypingDots />
               </div>
             </motion.div>
           )}
           <div ref={endRef} />
         </div>
+      </main>
 
-        {/* Chips */}
-        <div className="sticky bottom-20 pt-2 pb-1 bg-gradient-to-t from-background via-background to-transparent">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2 px-1">
-            Perguntas rápidas
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {CHIPS.map((c) => (
-              <button
-                key={c.key}
-                disabled={loading}
-                onClick={() => ask(c.key, c.label)}
-                className="text-xs bg-card hover:bg-secondary border border-border hover:border-primary/40 text-foreground rounded-full px-3 py-2 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {c.label}
-              </button>
-            ))}
+      {/* Bottom composer + chips */}
+      <div className="sticky bottom-[60px] z-30 bg-gradient-to-t from-background via-background to-background/80 backdrop-blur-xl border-t border-border/60">
+        <div className="max-w-[430px] mx-auto px-4 pt-3 pb-3 space-y-3">
+          {/* Chips grid — 2 per row */}
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2 px-0.5">
+              Perguntas rápidas
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {CHIPS.map((c) => (
+                <button
+                  key={c.key}
+                  disabled={loading}
+                  onClick={() => ask(c.key, c.label)}
+                  className="text-left text-xs bg-card hover:bg-secondary border border-border hover:border-primary/40 text-foreground rounded-xl px-3 py-2.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed leading-snug min-h-[44px] flex items-center"
+                >
+                  {c.short}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Disabled composer */}
+          <div className="flex items-center gap-2 bg-card/60 border border-border rounded-2xl px-4 py-2.5 opacity-70">
+            <input
+              disabled
+              placeholder="Em breve: pergunte qualquer coisa"
+              className="flex-1 bg-transparent text-sm text-muted-foreground placeholder:text-muted-foreground/70 outline-none cursor-not-allowed"
+            />
+            <button
+              disabled
+              className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground cursor-not-allowed"
+              aria-label="Enviar (em breve)"
+            >
+              <Send size={14} />
+            </button>
           </div>
         </div>
       </div>
