@@ -192,8 +192,34 @@ const LeagueDetail = () => {
       {/* League header */}
       <motion.div className="bg-card rounded-2xl border border-border p-5 mb-6 card-elevated" initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 border border-primary/25 flex items-center justify-center text-3xl shrink-0">
-            {league?.icon || "🏆"}
+          <div className="relative w-14 h-14 shrink-0">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 border border-primary/25 flex items-center justify-center text-3xl overflow-hidden">
+              {coverUrl ? (
+                <img src={coverUrl} alt={league?.name ?? ""} className="w-full h-full object-cover" />
+              ) : (
+                league?.icon || "🏆"
+              )}
+            </div>
+            {league && currentUserId === league.created_by && (
+              <>
+                <input
+                  ref={coverInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => handleCoverChange(e.target.files?.[0] ?? null)}
+                />
+                <button
+                  type="button"
+                  onClick={() => coverInputRef.current?.click()}
+                  disabled={uploadingCover}
+                  aria-label="Trocar foto de capa"
+                  className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center border-2 border-card shadow-md disabled:opacity-50"
+                >
+                  <Camera size={12} />
+                </button>
+              </>
+            )}
           </div>
           <div className="min-w-0">
             <h1 className="text-xl font-display font-bold truncate">{league?.name}</h1>
